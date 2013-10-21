@@ -1,0 +1,125 @@
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+To add a new command to this program:
+
+1. complete source files foo.c foo.h.  use project.c as an example.
+2. add source files to src/Makefile.am.
+3. in src/licensing.c: 
+      include foo.h header in licensing.c.
+      modify the enum such that FOO is added.
+      modify lu_commands such that "[FOO] = &foo," is added.
+4. add src/foo.c to po/POTFILES.in if it has any translations.
+5. add src/foo.c and src/foo.h to PREBOOTSTRAPFILES in Makefile.am.
+
+or alternatively if your new command is a script:
+1. complete lush script foo (#!/usr/bin env lush).  
+      use new-boilerplate.in as an example.
+2. add shell script to pkglibexec_SCRIPTS in src/Makefile.am
+3. in src/licensing.c:
+      modify the enum such that FOO is added.
+      modify lu_commands such that "[FOO] = &foo," is added.
+      create struct lu_command_t foo.
+4. add src/foo to PREBOOTSTRAPFILES in Makefile.am
+
+The command name must start with a lowercase character.
+The command must not have a space in it, or any other special character.
+
+
+
+
+To add a new commenting style to this program:
+
+1. add it to styles.ac
+      add it here: enable_commenting_styles="c c++ fortran gettext groff haskell m4 pascal scheme shell texinfo /HERE/"
+      and here:
+       '/HERE/')support_/here/_style=1]AC_DEFINE([SUPPORT_/HERE/_STYLE],[1],
+            [define to 1 if we want to support /here/ style comments])[;;
+      and finally:
+       AM_CONDITIONAL(SUPPORT_/HERE/_STYLE, test "x${support_/here/_style}" != "x")
+
+2. fill out the /here/-style.c and /here/-style.h files.
+   use src/c-style.[ch] as an example.
+
+3. add it to src/styles.am
+      like so:
+      if SUPPORT_/HERE/_STYLE
+        DEFS+=-DSUPPORT_/HERE/_STYLE
+        liblicenseutils_la_SOURCES+=/here/-style.c /here/-style.h
+      endif
+
+4. add the new .c and .h to Makefile.am PREBOOTSTRAPFILES
+
+5. add the new .c file to po/POTFILES.in
+
+6. add the new commenting style to src/styles.c in 3 places.
+
+      1. alphabetically at the top to include the .h file
+      #ifdef SUPPORT_/HERE/_STYLE
+      #include "/here/-style.h"
+      #endif
+      2. in order that you want the autodetection to take place in lu_styles[]
+      #ifdef SUPPORT_/HERE/_STYLE
+          &/here/_style,
+      #endif
+      3. alphabetically in the parsers array
+      #ifdef SUPPORT_/HERE/_STYLE
+          {&/here/_style_argp},
+      #endif
+
+----
+
+lush is a bash shell with aliases.
+the aliases are made with `licensing --generate-bashrc'
+it also includes some command-line completion stuff.
+
+if you run `licensing' without any commands it starts a lush shell.
+
+----
+
+
+the state for the program is kept in ~/.licenseutils
+
+./selected-comment-style
+the string that indicates which comment style the boilerplate should use.
+the different comment style strings appear in comment.c.
+no newline appears at the end of the line.
+this file is used to create the prompt.
+the command `choose c' or `choose shell' will change this file.
+
+./selected-licenses
+is the string that indicates which license we're using in the prompt.
+the different license strings appear in the various lu_command_t structures instantiated in various license commands.
+no newline appears at the end of the line.
+this file is used to create the prompt.
+the command `choose gplv3+' or `choose gpl' will change this file.
+
+./top-line
+is the string that begins the current working boilerplate.
+this line is terminated with a new line.
+the command `top foo bar' creates this file... with a line that looks like:
+foo bar
+
+./project-line
+is the string that goes in between copyright holders and license notice text.
+the line is terminated with a new line.
+the command `project foo' creates this file... with a line that looks like:
+This file is part of foo.
+
+./license-notice
+this file contains the license notices that we have chosen.
+the command `choose gplv3+' or `choose gpl' will change this file.
+typically this text comes from gnu.org, so it may take a moment to download.
+this text is terminated with a newline.
+
+
+the command new-boilerplate removes all of these files.
+
+the preview command assembles the boilerplate from these files.
+
+the test suite changes ${HOME} to point elsewhere so that make distcheck can complete successfully.
+

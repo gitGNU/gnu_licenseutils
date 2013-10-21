@@ -1,0 +1,29 @@
+#!/bin/sh
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+#here is what we expect
+expected=`mktemp $builddir/licensing.XXXXXX`
+echo "6" > $expected
+
+#generating our results
+cat << EOF | $licensing cbb --lines
+/* this file belongs to the licenseutils test suite.
+we need
+to fill in
+exactly 6 lines
+of boilerplate
+comment */
+EOF
+
+#0001.log is simultaneously created as this script runs.
+diff -uNrd $expected $builddir/0001.log
+retval=$?
+
+#cleanup
+rm $expected
+exit $retval

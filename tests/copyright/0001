@@ -1,0 +1,24 @@
+#!/bin/sh
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+#here is what we expect
+expected=`mktemp $builddir/licensing.XXXXXX`
+cat << EOF > $expected
+Copyright (C) 2001-2008 Free Software Foundation, Inc.
+EOF
+
+#generating our results
+$licensing copyright Free Software Foundation, Inc. 2002-8,2001 -a --dry-run
+
+#0001.log is simultaneously created as this script runs.
+diff -uNrd $expected $builddir/0001.log
+retval=$?
+
+#cleanup
+rm $expected
+exit $retval

@@ -1,0 +1,265 @@
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+What is this?
+
+licenseutils is for creating copyright and license notices at the 
+beginning of source code files.  It can be a pain to put copyright
+and license notices in a collection of source code files.  This
+software will help you accomplish this in a standard-looking way,
+for a variety of different programming languages.
+
+This software does not autodetect licenses in source code files.
+
+licenseutils consists of a program `licensing', and a shell `lush'.
+
+The `licensing' program has many commands that are called like so:
+$ licensing COMMAND
+
+When you run the licenseutils shell `lush', the `licensing' part is 
+not required to run commands.
+
+For example:
+--
+#!/usr/bin/env lush
+welcome
+exit 0
+--
+This lush script is equivalent to running the command: `licensing welcome`
+
+Licenseutils lets you quickly fashion a standard-looking boilerplate and 
+then apply it to one or more source code files.
+
+The term boilerplate to mean the comments at the top of a file 
+that includes identifying information, copyright notices and license 
+notices.
+
+
+Here is an example of how to use lush to add boilerplate to the 
+beginning of a source code file.
+
+   $ lush
+   licenseutils 0.0.1
+   Copyright (C) 2013 Ben Asselstine
+   This is free software with ABSOLUTELY NO WARRANTY.
+   For warranty details type `warranty'.
+   For a list of commands type `help'.
+   licensing> choose gplv3+ c
+   Selected.
+
+This starts the `lush' shell.  The prompt changes to "licensing>" after 
+showing some initial text.
+This `choose' command goes to gnu.org and downloads the license notice 
+for the gpl version 3.  The `c' part means that the new boilerplate will 
+be in C-style comments.  The prompt now conveniently turns into this:
+
+   /* gplv3+ */>
+
+It is a bit strange looking, but it indicates the chosen commenting style 
+(C style comments), and the chosen license.  The next step is to add a 
+copyright notice to the new boilerplate.
+
+   /* gplv3+ */> copyright Yoyodyne, Inc. 1989
+   Copyright (C) 1989 Yoyodyne, Inc.
+   Added.
+   /* gplv3+ */>
+
+Great. The copyright notice has been added to the current working 
+boilerplate.  It can be viewed with the `preview' command.
+
+   /* gplv3+ */> preview
+   /* Copyright (C) 1989 Yoyodyne, Inc.
+      
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, version 3 of the License, or
+      (at your option) any later version.
+      
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+      
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+A beginning line can be added with the `top' command.  The `top' command 
+is normally used to describe what this particular file does, but it is not
+required.
+
+The project can be identified with the `project' command.  This command 
+simply adds a "This file is part of FOO." message before the license 
+notice but after the copyright notices.  It is not required.  Sometimes 
+boilerplates identify the project in the top line just to save space.
+
+The current working boilerplate is complete enough to apply to a file.
+
+   /* gplv3+ */> echo "my yoyodyne C sources" > yoyodyne.c
+   /* gplv3+ */> apply yoyodyne.c
+   apply: yoyodyne.c -> Boilerplate applied.
+   /* gplv3+ */>
+
+Yes, bash commands also work in lush!  lush acts similarly to a bash shell 
+except `licensing' does not have to be put in front of licensing commands.
+
+The apply command prepends the current working boilerplate to yoyodyne.c.
+The apply command can accept many files instead of just one file.
+Here is what the yoyodyne.c file looks like after the boilerplate is 
+applied:
+
+   /* gplv3+ */> cat yoyodyne.c
+
+   /* Copyright (C) 1989 Yoyodyne, Inc.
+      
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, version 3 of the License, or
+      (at your option) any later version.
+      
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+      
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+   
+   my yoyodyne C sources
+   /* gplv3+ */> 
+   
+By default, a yoyodyne.c.bak file has been created.  When backup files are
+not desired, the --no-backup option will override that behaviour.
+
+From here the current working boilerplate can be modified and applied to
+other files, or it can be discarded with the `new-boilerplate' command.
+
+The `copyright' command can also remove copyright lines from the current
+working boilerplate.
+
+There is also a `boilerplate' command that can show the boilerplate at 
+the top of a file.  It can also rewrite the file without its boilerplate.
+
+To see all commands, type `help'.   To see more information on a command, 
+you can type `help COMMAND', or `COMMAND --help'.
+
+Type `exit' to quit the shell.
+
+
+Some exercises for the reader, modifying the current working boilerplate:
+
+To see all of the commenting styles and licenses:
+  licensing> choose --help
+
+To change the commenting style to shell:
+  licensing> choose shell
+
+To apply the boilerplate to a Makefile without making a Makefile.bak file:
+  licensing> apply --no-backup Makefile
+
+To changing the license to the latest version of the lgpl:
+  licensing> choose lgpl
+
+To list the copyright holders:
+  licensing> copyright
+
+To remove the copyright holders:
+  licensing> copyright --remove
+
+To add a project line:
+  licensing> project Yoyorama
+
+To add a top line: 
+  licensing> top Calculations of yoyo spin.
+
+To apply the boilerplate to several .c files:
+  licensing> apply --no-backup *.c
+
+To apply the boilerplate to the comment of a png image:
+  licensing> png-apply foo.png
+
+
+More exercises for the reader, but these commands do not involve the
+current working boilerplate:
+
+To see the boilerplate at the top of foo.c: 
+  licensing> boilerplate foo.c
+
+To see the texinfo boilerplate of f.texi: 
+  licensing> boilerplate --texinfo-style f.texi
+
+To see the C++ boilerplate of f.texi: 
+  licensing> boilerplate --c++-style f.texi
+
+To see the 3rd block of boilerplate in a Makefile: 
+  licensing> boilerplate -b3 Makefile
+
+To remove the boilerplate from a file: 
+  licensing> boilerplate --remove foo.c
+
+To count the boilerplate blocks and boilerplate lines in a file: 
+  licensing> cbb foo.c
+
+To count the number of lines of boilerplate in a file: 
+  licensing> cbb --lines foo.c
+
+To show a message in the scheme commenting style:
+  licensing> echo "foo" | comment --scheme-style
+
+To remove Pascal commenting from a string:
+  licensing> echo " (* foo *) " | uncomment --pascal-style
+
+
+
+Rough edges:
+
+autodetection issues:
+1. we could mistakenly think c pre-processor commands are shell comments, but steps are taken to avoid that. alternatively (and this is more likely) we could mistakenly not recognize shell comments because they look like c pre-processor commands.
+
+2. m4 files on the standard input get a poor treatment in the boilerplate auto-detection.  most m4 files have a shell line and a set of dnl lines (in gnulib anyway).  the auto detection sees the shell comment line and that's it.  unless the file isn't on the standard input and the filename ends in .m4.
+
+3. the auto-detection of comments could mistakenly think a README file that starts with "--" is a haskell file.
+
+we have to recompile code to add new commands when the new command is just a script in libexec.
+alternatively we could automatically generate lu_commands from scripts present in libexec by scanning the dir and grepping the --help
+but do we really want to do that every time we want to run a command?
+maybe just add libexec to our path?
+
+
+removing copyright holders from the current working boilerplate is sometimes awkward because the copyright command can put multiple copyright holders on the same line.  and we can only remove a copyright line, sometimes removing two or more names, which can lead users to have to re-enter copyright info.
+
+
+In the boilerplate command, whitespace is not retained between blocks of boilerplate when we remove or show specific blocks.
+we could retain whitespace optionally, but then which whitespace goes with which block?
+
+
+when we uncomment, text that appears after a c comment on the same line is put on the next line.  
+
+when we remove a comment from a png file (png-boilerplate -r FILE), it overwrites the existing comment with \n\0.   so we don't really remove the comment.  When we apply a comment to a png file (png-apply FILE) we make a new comment before any other one.  This is so the gimp shows it.
+
+
+uncommenting is not as rigorous as the boilerplate check to detect comments.  remember with uncommenting we are only removing the comment delimiters and we are retaining the comment text.  in haskell for example, a strspn is done with "{-}\n ". this means that if you start your comment with "{-"  and then have some more "----", they will get removed.  this is to catch the case of "{--------------", as is often done in C comments e.g. (/*****)
+
+
+there is the idea of using the current selected commenting style in comment, uncomment, and boilerplate.  e.g. although we have C comments selected, we STILL have to pass --c-style as an option.  although the choose command only affects the current working boilerplate, and the boilerplate plate command actually doesn't have anything to do with the current working boilerplate, it is easy to see why users might be confused!
+
+we don't support ada, but haskell comments of "--" are the same.  auto-detection can't easily detect the difference between ada and haskell. vhdl is also "--"
+
+the copyright command goes to lengths to wrap lines, and to not put a newline in a person's name.  but then we go ahead and run the copyright file through fmt, which could do that.  we do this so that many years get wrapped, and we don't really want to write the code that formats the years in C.
+
+perhaps we need a warning when we combine licenses that shouldn't be combined.
+the user could be copying-in code, and the licenses cannot be combined like that.
+ or the user could be dual-licensing the entirety of the work under two incompatible licenses.
+
+
+Maybe also added a written-by command too.  for when copyright is owned by another entity and it's just generally useful to know who wrote the code.
+
+
+how about applying boilerplate to the end of the currently existing boilerplate.
+
+applying boilerplate to shell doesn't work so hot for #!
+
+when we apply a boilerplate to an executable file, the new file is not executable.

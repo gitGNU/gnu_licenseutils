@@ -1,0 +1,51 @@
+# Copyright (C) 2013 Ben Asselstine
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+__licensing_options()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    command=`echo ${COMP_LINE} | cut -f2 -d' '`
+    chooseopts=""
+    if [[ "$command" == choose ]]; then
+        chooseopts="gpl gplv3+ gplv3 gplv2+ gplv2 gplv1+ gplv1 lgpl lgplv3+ lgplv3 lgplv2+ lgplv2 lgplv1+ lgplv1 agpl agplv3+ agplv3 fdl fdlv13+ fdlv13 fdlv12+ fdlv12 fdlv11+ fdlv11 all-permissive bsd bsd3clause bsd2clause apache apachev2 mit isc openbsd c c++ no-license shell scheme texinfo m4 haskell groff troff gettext fortran no-style"
+    fi
+
+    commands=""
+    if [[ $COMP_CWORD -eq 1 ]]; then
+      commands=`licensing help | grep "^[a-z]" | cut -f1 -d' ' | tr  '\n,' ' '`
+    fi
+
+    if [[ "${cur}" == -* ]] ; then
+        #if [[ "x$command" != "x" ]]; then
+        if [[ $COMP_CWORD -ne 1 ]]; then
+          opts=`licensing $command --help | egrep  "(^  -., |^      --)" | cut -c7-29 | sed -e 's/=[A-Z]* //g' | tr  '\n,' ' ' | tr -s " "`
+        else
+          opts=`licensing --help | egrep  "(^  -., |^      --)" | cut -c7-29 | sed -e 's/=[A-Z]* //g' | tr  '\n,' ' ' | tr -s " "`
+        fi
+	COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    elif [[ "${chooseopts}" != "" ]] ; then
+	COMPREPLY=($(compgen -W "${chooseopts}" -- "${cur}"))
+    elif [[ "$commands" != "" ]]; then
+	COMPREPLY=($(compgen -W "${commands}" -- "${cur}"))
+    elif [[ "${cur}" == * ]] ; then
+        COMPREPLY=($(compgen -A file -- "${cur}"))
+	return 0
+    fi
+
+    return 0
+}
+complete -F __licensing_options licensing

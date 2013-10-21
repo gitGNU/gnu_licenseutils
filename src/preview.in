@@ -1,0 +1,96 @@
+#!/usr/bin/env @INTERPRETER@
+# Copyright (C) 2013 Ben Asselstine
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+showusage() {
+  cat <<EOF
+Usage: $(basename $0) [-?] [--help] [--usage]
+EOF
+}
+
+showhelp() {
+  cat <<EOF
+Usage: $(basename $0) [OPTION...]
+Show the current working boilerplate.
+
+  -?, --help                 give this help list
+      --usage                give a short usage message
+EOF
+}
+
+for option
+do
+  case $option in
+  --help)
+    showhelp
+    exit;;
+  --usage)
+    showusage
+    exit;;
+  --*)
+    echo >&2 "$(basename $0): $option: unknown option"
+    exit 1;;
+  esac
+done
+
+if [[ $# -ge 1 ]]; then
+  echo "$(basename $0): Too many arguments"
+  echo "Try '$(basename $0) --help' or '$(basename $0) --usage' for more information."
+  exit 1
+fi
+
+if [[ ! -f ~/.@PACKAGE@/license-notice ]]; then
+  echo "$(basename $0): Can't preview because a license has not been selected"
+  echo "Try 'choose --help' for more information."
+  exit 1
+fi
+
+if [[ ! -f ~/.@PACKAGE@/copyright-holders ]]; then
+  echo "$(basename $0): Can't preview because copyright holders not been specified"
+  echo "Try 'copyright --help' for more information."
+  exit 1
+fi
+
+
+preview=`mktemp`
+tmpfile=`mktemp`
+echo "" > $tmpfile
+if [ -f ~/.@PACKAGE@/top-line ]; then
+  cat ~/.@PACKAGE@/top-line $tmpfile 2>/dev/null > $preview
+fi
+
+cat ~/.@PACKAGE@/copyright-holders $tmpfile |fmt 2> /dev/null >> $preview
+
+if [ -f ~/.@PACKAGE@/project-line ]; then
+  cat ~/.@PACKAGE@/project-line >> $preview
+  cat $tmpfile >> $preview
+fi
+
+if [ -f ~/.@PACKAGE@/extra-line ]; then
+  cat ~/.@PACKAGE@/extra-line | fmt  >> $preview
+  cat $tmpfile >> $preview
+fi
+
+style=`eval cat ~/.@PACKAGE@/selected-comment-style`
+if [ "x$style" != "x" ]; then
+  cat ~/.@PACKAGE@/license-notice | sed -e 's/^[ ]*//g' >> $preview
+  @PROGRAM@ comment --style=$style $preview 
+else
+  cat ~/.@PACKAGE@/license-notice >> $preview
+  cat $tmpfile >> $preview
+  cat $preview
+fi
+rm $preview
+rm $tmpfile

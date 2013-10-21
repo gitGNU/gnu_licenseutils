@@ -1,0 +1,42 @@
+#!/bin/sh
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+#here is what we expect
+expected=`mktemp $builddir/licensing.XXXXXX`
+echo -n "lgplv3+" > $expected
+cat <<EOF >>$expected
+This library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+EOF
+
+#generating our results
+$licensing choose lgplv3+ --quiet
+cat ${HOME}/.licenseutils/selected-licenses
+cat ${HOME}/.licenseutils/license-notice
+
+#0002.log is simultaneously created as this script runs.
+diff -uNrd $expected $builddir/0002.log
+retval=$?
+
+#cleanup
+rm $expected
+rm ${HOME}/.licenseutils/selected-licenses
+rm ${HOME}/.licenseutils/license-notice
+rmdir ${HOME}/.licenseutils
+
+exit $retval

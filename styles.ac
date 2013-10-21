@@ -1,0 +1,66 @@
+dnl Copyright (C) 2013 Ben Asselstine
+dnl 
+dnl Copying and distribution of this file, with or without modification,
+dnl are permitted in any medium without royalty provided the copyright
+dnl notice and this notice are preserved.  This file is offered as-is,
+dnl without any warranty.
+
+AC_ARG_ENABLE([commenting-styles],
+  AS_HELP_STRING([--enable-commenting-styles=WHICH], [foo]), 
+  [
+    if test "$enable_commenting_styles" = "no"; then
+      enable_commenting_styles="c"
+    elif test "$enable_commenting_styles" = "yes"; then
+      enable_commenting_styles="default"
+    fi
+   ], 
+   [enable_commenting_styles="default"])
+
+[
+    if test "$enable_commenting_styles" = "default"; then
+      enable_commenting_styles="c c++ fortran gettext groff haskell m4 pascal scheme shell texinfo"
+    fi
+#here we have one case per commenting style.
+    for commenting_style in $enable_commenting_styles; do
+      case $commenting_style in
+       'c')support_c_style=1]AC_DEFINE([SUPPORT_C_STYLE],[1],
+            [define to 1 if we want to support c style comments])[;;
+       'c++')support_cplusplus_style=1]AC_DEFINE([SUPPORT_CPLUSPLUS_STYLE],[1],
+            [define to 1 if we want to support c++ style comments])[;;
+       'fortran')support_fortran_style=1]AC_DEFINE([SUPPORT_FORTRAN_STYLE],[1],
+            [define to 1 if we want to support fortran style comments])[;;
+       'gettext')support_gettext_style=1]AC_DEFINE([SUPPORT_GETTEXT_STYLE],[1],
+            [define to 1 if we want to support gettext style comments])[;;
+       'groff')support_groff_style=1]AC_DEFINE([SUPPORT_GROFF_STYLE],[1],
+            [define to 1 if we want to support groff style comments])[;;
+       'haskell')support_haskell_style=1]AC_DEFINE([SUPPORT_HASKELL_STYLE],[1],
+            [define to 1 if we want to support haskell style comments])[;;
+       'm4')support_m4_style=1]AC_DEFINE([SUPPORT_M4_STYLE],[1],
+            [define to 1 if we want to support m4 style comments])[;;
+       'pascal')support_pascal_style=1]AC_DEFINE([SUPPORT_PASCAL_STYLE],[1],
+            [define to 1 if we want to support pascal style comments])[;;
+       'scheme')support_scheme_style=1]AC_DEFINE([SUPPORT_SCHEME_STYLE],[1],
+            [define to 1 if we want to support scheme style comments])[;;
+       'shell')support_shell_style=1]AC_DEFINE([SUPPORT_SHELL_STYLE],[1],
+            [define to 1 if we want to support shell style comments])[;;
+       'texinfo')support_texinfo_style=1]AC_DEFINE([SUPPORT_TEXINFO_STYLE],[1],
+            [define to 1 if we want to support texinfo style comments])[;;
+       *)]
+         AC_MSG_ERROR([invalid commenting style `$commenting_style'.]
+           [from --commenting-styles="$enable_commenting_styles".])
+         [;;
+      esac
+    done
+]
+#here we have one am conditional per commenting style.
+AM_CONDITIONAL(SUPPORT_C_STYLE, test "x${support_c_style}" != "x")
+AM_CONDITIONAL(SUPPORT_CPLUSPLUS_STYLE, test "x${support_cplusplus_style}" != "x")
+AM_CONDITIONAL(SUPPORT_FORTRAN_STYLE, test "x${support_fortran_style}" != "x")
+AM_CONDITIONAL(SUPPORT_GETTEXT_STYLE, test "x${support_gettext_style}" != "x")
+AM_CONDITIONAL(SUPPORT_GROFF_STYLE, test "x${support_groff_style}" != "x")
+AM_CONDITIONAL(SUPPORT_HASKELL_STYLE, test "x${support_haskell_style}" != "x")
+AM_CONDITIONAL(SUPPORT_M4_STYLE, test "x${support_m4_style}" != "x")
+AM_CONDITIONAL(SUPPORT_PASCAL_STYLE, test "x${support_pascal_style}" != "x")
+AM_CONDITIONAL(SUPPORT_SCHEME_STYLE, test "x${support_scheme_style}" != "x")
+AM_CONDITIONAL(SUPPORT_SHELL_STYLE, test "x${support_shell_style}" != "x")
+AM_CONDITIONAL(SUPPORT_TEXINFO_STYLE, test "x${support_texinfo_style}" != "x")

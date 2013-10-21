@@ -1,0 +1,27 @@
+# List of source files which contain translatable strings.
+src/opts.c
+src/licensing.c
+src/gpl.c
+src/lgpl.c
+src/agpl.c
+src/all-permissive.c
+src/bsd.c
+src/mit.c
+src/isc.c
+src/apache.c
+src/fdl.c
+src/warranty.c
+src/welcome.c
+src/help.c
+src/boilerplate.c
+src/png-boilerplate.c
+src/png-apply.c
+src/copyright.c
+src/comment.c
+src/uncomment.c
+src/cbb.c
+src/choose.c
+src/top.c
+src/project.c
+src/extra.c
+src/apply.c

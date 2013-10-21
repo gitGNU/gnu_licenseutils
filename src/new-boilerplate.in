@@ -1,0 +1,60 @@
+#!/usr/bin/env @INTERPRETER@
+# Copyright (C) 2013 Ben Asselstine
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+showusage() {
+  cat <<EOF
+Usage: $(basename $0) [-?] [--help] [--usage]
+EOF
+}
+
+showhelp() {
+  cat <<EOF
+Usage: $(basename $0) [OPTION...]
+Clear the current working boilerplate.
+
+  -?, --help                 give this help list
+      --usage                give a short usage message
+
+EOF
+}
+
+for option
+do
+  case $option in
+  --help)
+    showhelp
+    exit;;
+  --usage)
+    showusage
+    exit;;
+  *)
+    echo >&2 "$(basename $0): $option: unknown option"
+    exit 1;;
+  esac
+done
+
+rm -f ~/.@PACKAGE@/selected-comment-style 2> /dev/null && \
+rm -f ~/.@PACKAGE@/top-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/copyright-holders 2> /dev/null && \
+rm -f ~/.@PACKAGE@/project-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/extra-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/selected-licenses 2>/dev/null && \
+rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
+retval="$?"
+
+echo "Removed." >> /dev/stderr
+
+exit $retval
