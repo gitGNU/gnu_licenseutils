@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <argz.h>
+#include <sys/stat.h>
 #include "licensing_priv.h"
 #include "prepend.h"
 #include "gettext-more.h"
@@ -93,9 +94,11 @@ lu_prepend_parse_argp (struct lu_state_t *state, int argc, char **argv)
 int 
 lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
 {
+  struct stat st;
   int err = 0;
   FILE *src = NULL;
   FILE *dst = NULL;
+  memset (&st, 0, sizeof (st));
   if (strcmp (options->source, "-") == 0 || options->source == NULL)
     src = stdin;
   else if (is_a_file (options->source) != 0)
@@ -135,6 +138,7 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
       else
         fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
                  prepend.name, options->dest, strerror (errno));
+      fclose (dst);
       return 1;
     }
 
@@ -148,6 +152,7 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
           memmove (dest, dest + strlen (hashbang), 
                    strlen (dest) - strlen (hashbang) + 1);
         }
+      fstat (fileno (dst), &st);
       fclose (dst);
     }
 
@@ -166,6 +171,8 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
       fflush (out);
       fsync (fileno (out));
       fclose (out);
+
+      err = chmod (tmp, st.st_mode);
       if (options->backup)
         {
           char *backup = xasprintf ("%s.bak", options->dest);
