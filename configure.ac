@@ -118,6 +118,17 @@ AC_SUBST(BASH_COMPLETION_DIR)
 bash_completiondir="${BASH_COMPLETION_DIR}"
 AM_CONDITIONAL(USE_BASH_COMPLETION, test "${BASH_COMPLETION_DIR}" != "")
 
+dnl GNU help2man creates man pages from --help output; in many cases, this
+dnl is sufficient, and obviates the need to maintain man pages separately.
+dnl However, this means invoking executables, which we generally cannot do
+dnl when cross-compiling, so we test to avoid that (the variable
+dnl "cross_compiling" is set by AC_PROG_CC).
+AS_IF([test $cross_compiling = no], [
+  AM_MISSING_PROG([HELP2MAN], [help2man])
+], [
+  HELP2MAN=:
+])
+
 m4_include([styles.ac])
 echo "supported comment styles: $enable_commenting_styles"
 

@@ -103,8 +103,6 @@ help_filter (int key, const char *text, void *input)
       char *commands = lu_list_of_commands_for_help(0);
       argz_add (&argz, &len, commands);
       free (commands);
-      argz_add (&argz, &len, "");
-      argz_add (&argz, &len, "Options:");
       argz_stringify (argz, len, '\n');
       return argz;
     }
