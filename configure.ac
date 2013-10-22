@@ -7,7 +7,7 @@ dnl without any warranty.
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([licenseutils],[0.0.5],[bing@nym.hush.com])
+AC_INIT([licenseutils],[0.0.6],[bing@nym.hush.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AC_PREREQ(2.60)

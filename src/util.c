@@ -27,6 +27,7 @@
 #include "trim.h"
 #include "read-file.h"
 #include "xvasprintf.h"
+#include "styles.h"
 
 static int
 find_start_of_matching_text (char *text, const char *match)
@@ -398,4 +399,31 @@ get_comment_blocks (FILE *fp, char **argz, size_t *len, char **hashbang, char *r
     }
   free (data);
   return *len > 0;
+}
+
+char *
+get_comments_and_whitespace (FILE *fp, char *file, struct lu_comment_style_t *style)
+{
+  long start = ftell (fp);
+  char *argz = NULL;
+  size_t len = 0;
+  if (style == NULL)
+    auto_detect_comment_blocks (file, fp, &argz, &len, NULL);
+  else
+    style->get_initial_comment (fp, &argz, &len, NULL);
+
+  free (argz);
+  //fp now points to after the boilerplate if there is any.
+  long pos = ftell (fp);
+  fseek (fp, start, SEEK_SET);
+  if (len == 0)
+    return NULL;
+  size_t data_len;
+  char *data = fread_file (fp, &data_len);
+  data[pos-start]='\0';
+  char *comments = strdup (data);
+  free (data);
+  fseek (fp, pos, SEEK_SET);
+
+  return comments;
 }

@@ -24,13 +24,16 @@
 #include "prepend.h"
 #include "gettext-more.h"
 #include "xvasprintf.h"
-#include "util.h"
 #include "read-file.h"
+#include "util.h"
+#include "styles.h"
 
 static struct argp_option argp_options[] = 
 {
     {"no-backup", 'n', NULL, 0, 
       N_("don't retain original source file in a .bak file")},
+    {"after", 'a', NULL, 0,
+      N_("prepend after existing boilerplate if any")},
     {0}
 };
 
@@ -42,6 +45,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
     opt = (struct lu_prepend_options_t*) state->input;
   switch (key)
     {
+    case 'a':
+      opt->after = 1;
+      break;
     case 'n':
       opt->backup = 0;
       break;
@@ -58,11 +64,19 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->source = NULL;
       opt->dest = 0;
       opt->backup = 1;
+      opt->style = NULL;
+      opt->after = 0;
+      state->child_inputs[0] = &opt->style;
       break;
     case ARGP_KEY_FINI:
       if (opt->dest == NULL)
         {
           argp_failure (state, 0, 0, N_("no files specified"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
+      if (opt->style && opt->after == 0)
+        {
+          argp_failure (state, 0, 0, N_("did you mean to use --after?"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
       break;
@@ -72,10 +86,14 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 
-
+static struct argp_child parsers[]=
+{
+    { &styles_argp, 0, N_("Commenting Style Options (for use with --after):"), 0 },
+    { 0 }
+};
 #undef PREPEND_DOC
 #define PREPEND_DOC N_("Prepend SOURCE to the beginning DEST.  With no SOURCE, or if it is \"-\", read from the standard input.\vSOURCE is prepended after #! when it is present as a beginning line in DEST.")
-static struct argp argp = { argp_options, parse_opt, "SOURCE DEST\nDEST", PREPEND_DOC};
+static struct argp argp = { argp_options, parse_opt, "SOURCE DEST\nDEST", PREPEND_DOC, parsers};
 
 int 
 lu_prepend_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -122,13 +140,22 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
   if (src != stdin && src != NULL)
     fclose (src);
   
+  char *comments = NULL;
   size_t dest_len = 0;
   char *dest = NULL;
+  char *hashbang = NULL;
   if (is_a_file (options->dest) != 0)
     {
       dst = fopen (options->dest, "r");
       if (dst)
-        dest = fread_file (dst, &dest_len);
+        {
+          get_hashbang_or_rewind (dst, &hashbang);
+          if (options->after)
+            comments = get_comments_and_whitespace (dst, options->dest, 
+                                                    options->style);
+          //the rest
+          dest = fread_file (dst, &dest_len);
+        }
     }
   else
     {
@@ -138,25 +165,17 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
       else
         fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
                  prepend.name, options->dest, strerror (errno));
-      fclose (dst);
       return 1;
     }
 
-  char *hashbang = NULL;
   if (dst)
     {
-      rewind (dst);
-      get_hashbang_or_rewind (dst, &hashbang);
-      if (hashbang)
-        {
-          memmove (dest, dest + strlen (hashbang), 
-                   strlen (dest) - strlen (hashbang) + 1);
-        }
       fstat (fileno (dst), &st);
       fclose (dst);
     }
 
   //okay we have source, and we have dest, and we have hashbang.
+  //we might also have comments
   char tmp[sizeof(PACKAGE) + 13];
   snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
   int fd = mkstemp (tmp);
@@ -166,6 +185,8 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
     {
       if (hashbang)
         fprintf (out, "%s", hashbang);
+      if (options->after && comments)
+        fprintf (out, "%s", comments);
       fprintf (out, "%s", source);
       fprintf (out, "%s", dest);
       fflush (out);

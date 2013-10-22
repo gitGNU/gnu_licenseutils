@@ -29,6 +29,8 @@ struct lu_apply_options_t
   size_t input_files_len;
   int backup;
   int quiet;
+  struct lu_comment_style_t *style;
+  int after;
 };
 
 int lu_apply_parse_argp (struct lu_state_t *, int argc, char **argv);

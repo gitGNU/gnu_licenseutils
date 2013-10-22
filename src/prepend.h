@@ -28,6 +28,8 @@ struct lu_prepend_options_t
   char *source;
   char *dest;
   int backup;
+  struct lu_comment_style_t *style;
+  int after;
 };
 
 int lu_prepend_parse_argp (struct lu_state_t *, int argc, char **argv);

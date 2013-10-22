@@ -24,12 +24,16 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "util.h"
+#include "prepend.h"
+#include "styles.h"
 
 static struct argp_option argp_options[] = 
 {
     {"no-backup", 'n', NULL, 0, 
       N_("don't retain original source file in a .bak file")},
     {"quiet", 'q', NULL, 0, N_("don't show diagnostic messages")},
+    {"after", 'a', NULL, 0,
+      N_("prepend after existing boilerplate if any")},
     {0}
 };
 
@@ -41,6 +45,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
     opt = (struct lu_apply_options_t*) state->input;
   switch (key)
     {
+    case 'a':
+      opt->after = 1;
+      break;
     case 'q':
       opt->quiet = 1;
       break;
@@ -55,11 +62,19 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->input_files_len = 0;
       opt->backup = 1;
       opt->quiet = 0;
+      opt->style = NULL;
+      opt->after = 0;
+      state->child_inputs[0] = &opt->style;
       break;
     case ARGP_KEY_FINI:
       if (opt->input_files == NULL)
         {
           argp_failure (state, 0, 0, N_("no files specified"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
+      if (opt->style && opt->after == 0)
+        {
+          argp_failure (state, 0, 0, N_("did you mean to use --after?"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
       break;
@@ -70,9 +85,15 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 
 
+static struct argp_child parsers[]=
+{
+    { &styles_argp, 0, N_("Commenting Style Options (for use with --after):"), 0 },
+    { 0 }
+};
 #undef APPLY_DOC
 #define APPLY_DOC N_("Prepend the current working boilerplate to a file.")
-static struct argp argp = { argp_options, parse_opt, "FILE...", APPLY_DOC};
+static struct argp argp = { argp_options, parse_opt, "FILE...", APPLY_DOC,
+parsers};
 
 int 
 lu_apply_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -125,16 +146,19 @@ lu_apply (struct lu_state_t *state, struct lu_apply_options_t *options)
               continue;
             }
         }
-      char *cmd = xasprintf ("prepend %s %s %s", 
-                             options->backup == 0 ? "--no-backup" : "",
-                             boilerplate, f);
-      err = lu_parse_command (state, cmd);
+      
+      struct lu_prepend_options_t prepend_options;
+      prepend_options.backup = options->backup;
+      prepend_options.after = options->after;
+      prepend_options.style = options->style;
+      prepend_options.source = boilerplate;
+      prepend_options.dest = f;
+      err = lu_prepend (state, &prepend_options);
       if (!err)
         {
           if (options->quiet == 0)
             fprintf (stderr, "%s: %s -> Boilerplate applied.\n", apply.name, f);
         }
-      free (cmd);
       if (err)
         break;
     }

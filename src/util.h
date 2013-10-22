@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include "licensing.h"
+#include "comment-style.h"
 int show_lines_after (struct lu_state_t *state, char *text, const char *match, int lines, int replace_flag, char *search, char *replace);
 int is_a_file_where_hash_includes_are_not_comments (char *filename);
 void replace_html_entities (char *text);
@@ -30,4 +31,5 @@ void uncomment_comments (char **argz, size_t *len, char *delimiters, char *synon
 char * create_line_comment (char *text, char *delimiter);
 void get_hashbang_or_rewind (FILE *fp, char **hashbang);
 int get_comment_blocks (FILE *fp, char **argz, size_t *len, char **hashbang, char *regex);
+char * get_comments_and_whitespace (FILE *fp, char *file, struct lu_comment_style_t *style);
 #endif
