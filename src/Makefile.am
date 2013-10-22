@@ -7,7 +7,7 @@
 localedir = $(datadir)/locale
 bin_SCRIPTS=lush
 bin_PROGRAMS=licensing
-pkglibexec_SCRIPTS=preview new-boilerplate
+pkglibexec_SCRIPTS=preview new-boilerplate notice
 DEFS += -DLOCALEDIR=\"$(localedir)\" -DPROGRAM=\"$(PROGRAM)\" -DPKGLIBEXECDIR=\"$(pkglibexecdir)\" -DINTERPRETER=\"$(INTERPRETER)\" -DINTERPRETER_PATH=\"$(bindir)/$(INTERPRETER)\" @DEFS@
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
 lib_LTLIBRARIES=liblicenseutils.la 

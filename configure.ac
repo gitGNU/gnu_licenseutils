@@ -127,6 +127,7 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  src/lush
                  src/preview
                  src/new-boilerplate
+                 src/notice
                  tests/Makefile
                  tests/boilerplate/Makefile
                  tests/cbb/Makefile

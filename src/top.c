@@ -128,7 +128,7 @@ struct lu_command_t top =
 {
   .name         = N_("top"),
   .doc          = TOP_DOC,
-  .flags        = SHOW_IN_HELP | SAVE_IN_HISTORY,
+  .flags        = DO_NOT_SHOW_IN_HELP | SAVE_IN_HISTORY,
   .argp         = &argp,
   .parser       = lu_top_parse_argp
 };

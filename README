@@ -258,8 +258,4 @@ the user could be copying-in code, and the licenses cannot be combined like that
 Maybe also added a written-by command too.  for when copyright is owned by another entity and it's just generally useful to know who wrote the code.
 
 
-how about applying boilerplate to the end of the currently existing boilerplate.
-
-applying boilerplate to shell doesn't work so hot for #!
-
-when we apply a boilerplate to an executable file, the new file is not executable.
+various commands say something like "Try `choose --help'" in their error messaging.  this doesn't quite make sense for users running the bash shell instead of the lush shell.  it should say "Try licensing `choose --help'" instead when it's supposed to do that.

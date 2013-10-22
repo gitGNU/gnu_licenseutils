@@ -83,6 +83,7 @@ $(srcdir)/src/main.c \
 $(srcdir)/src/lush.in \
 $(srcdir)/src/new-boilerplate.in \
 $(srcdir)/src/preview.in \
+$(srcdir)/src/notice.in \
 $(srcdir)/tests/Makefile.am \
 $(srcdir)/tests/boilerplate/Makefile.am \
 $(srcdir)/tests/boilerplate/0001 \

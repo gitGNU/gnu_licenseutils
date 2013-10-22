@@ -1,0 +1,135 @@
+#!/bin/bash
+# Copyright (C) 2013 Ben Asselstine
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+showusage() {
+  cat <<EOF
+Usage: $(basename $0) [-?] [-l LICENSE] [-s COMMENTING-STYLE] [-c NAME-AND-YEAR] FILE...
+EOF
+}
+
+showhelp() {
+  cat <<EOF
+Usage: $(basename $0) [OPTION...] FILE...
+A simple wrapper script for writing license notices to source files.
+
+Supported Licenses: gpl gplv3+ gplv3 gplv2+ gplv2 gplv1+ gplv1 lgpl lgplv3+
+lgplv3 lgplv2+ lgplv2 lgplv1+ lgplv1 agpl agplv3+ agplv3 fdl fdlv13+ fdlv13
+fdlv12+ fdlv12 fdlv11+ fdlv11 all-permissive bsd bsd3clause bsd2clause apache
+apachev2 mit isc openbsd
+
+Supported Comment Styles: c c++ shell scheme texinfo m4 haskell groff gettext
+fortran pascal
+
+  -c NAME-AND-YEAR           specify the copyright holder
+  -l LICENSE                 specify the license
+  -s COMMENTING-STYLE        specify the comment style
+  -n                         don't retain a backup file
+  -?, --help                 give this help list
+
+This wrapper script is for users who want to do everything on single line.
+If greater control than what is offered here is required, try running the 
+choose, copyright, and apply commands individually.
+EOF
+}
+
+if [[ "$#" = 1 && "x$1" = x--help ]]; then
+  showhelp
+  exit 0
+fi
+
+if [[ "$#" = 0 ]]; then
+  showhelp
+  exit 0
+fi
+license=""
+style=""
+copyright=""
+backup=""
+
+readopt='getopts $opts opt;rc=$?;[ $rc$opt == 0? ]&&exit 1;[ $rc == 0 ]||{ shift $[OPTIND-1];false; }'
+
+opts=n?l:s:c:
+
+# Enumerating options
+while eval $readopt
+do
+  case "$opt" in
+  \?)
+    showhelp
+    exit;;
+  n)
+    backup="--no-backup"
+    ;;
+  l)
+    license=$OPTARG
+    ;;
+  s)
+    style=$OPTARG
+    ;;
+  c)
+    copyright=$OPTARG
+    ;;
+  esac
+done
+
+# Validating arguments
+for arg
+do
+  if [ ! -f $arg ]; then
+    echo $(basename $0): cannot open $arg for writing
+    exit 1
+  fi
+done
+
+if [ "x$license" == "x" ]; then
+  echo "$(basename $0): you must supply a license with -l"
+  echo "Try '$(basename $0) --help' for more information."
+  exit 1
+fi
+if [ "x$style" == "x" ]; then
+  echo "$(basename $0): you must supply a commenting style with -s"
+  echo "Try '$(basename $0) --help' for more information."
+  exit 1
+fi
+if [ "x$copyright" == "x" ]; then
+  echo "$(basename $0): you must supply a copyright holder with -c"
+  echo "Try '$(basename $0) --help' for more information."
+  exit 1
+fi
+if [ "$#" == "0" ]; then
+  echo "$(basename $0): no files specified"
+  echo "Try '$(basename $0) --help' for more information."
+  exit 1
+fi
+
+#copy the old files away
+oldconf=`mktemp -d`
+cp ~/.@PACKAGE@/* $oldconf
+
+rm -f ~/.@PACKAGE@/top-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/copyright-holders 2> /dev/null && \
+rm -f ~/.@PACKAGE@/project-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/extra-line  2> /dev/null && \
+rm -f ~/.@PACKAGE@/selected-licenses 2>/dev/null && \
+rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
+
+@PROGRAM@ new-boilerplate --quiet && @PROGRAM@ choose --quiet $license $style && @PROGRAM@ copyright --quiet $copyright && @PROGRAM@ apply --quiet $backup $* && @PROGRAM@ new-boilerplate --quiet
+retval=$?
+
+#put the old files back
+mv $oldconf/* ~/.@PACKAGE@/
+rmdir $oldconf
+
+exit $retval

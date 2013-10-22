@@ -60,7 +60,7 @@
 
 enum 
 {
-  GPL = 0, LGPL, AGPL, FDL, BOILERPLATE, HELP, WARRANTY, WELCOME, 
+  NOTICE = 0, GPL, LGPL, AGPL, FDL, BOILERPLATE, HELP, WARRANTY, WELCOME, 
   COPYRIGHT, CBB, COMMENT, UNCOMMENT, PREPEND, CHOOSE, TOP, PROJECT,
   PREVIEW, APPLY, NEW_BOILERPLATE, ALL_PERMISSIVE, BSD, APACHE, MIT, 
   EXTRA, PNG_BOILERPLATE, PNG_APPLY, ISC, THE_END
@@ -96,6 +96,16 @@ struct lu_command_t preview =
   .parser       = NULL 
 };
 
+struct lu_command_t notice = 
+{
+  .name         = N_("notice"),
+  .doc          = 
+    N_("A simple script to write license notices to files."),
+  .flags        = SHOW_IN_HELP | SAVE_IN_HISTORY,
+  .argp         = NULL,
+  .parser       = NULL 
+};
+
 struct lu_command_t* lu_commands[]=
 {
   [GPL]             = &gpl,
@@ -125,6 +135,7 @@ struct lu_command_t* lu_commands[]=
   [APACHE]          = &apache,
   [EXTRA]           = &extra,
   [ISC]             = &isc,
+  [NOTICE]          = &notice,
   [THE_END]     = NULL
 };
 
