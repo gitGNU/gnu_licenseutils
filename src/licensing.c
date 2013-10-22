@@ -205,7 +205,6 @@ lu_parse_command (struct lu_state_t *state, char *line)
       free (cmd);
     }
   
-  err = 0;
   return err;
 }
 

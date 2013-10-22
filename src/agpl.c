@@ -121,6 +121,15 @@ show_lu_agpl(struct lu_state_t *state, struct lu_agpl_options_t *options)
   fflush (fileptr);
   fsync (fileno (fileptr));
   fclose (fileptr);
+  int response = 0;
+  curl_easy_getinfo (state->curl, CURLINFO_RESPONSE_CODE, &response);
+  if (response != 200)
+    {
+      remove (tmp);
+      err = 1;
+      return err;
+    }
+  free (url);
   fileptr = fopen (tmp, "r");
   size_t data_len = 0;
   char *data = fread_file (fileptr, &data_len);
@@ -133,7 +142,6 @@ show_lu_agpl(struct lu_state_t *state, struct lu_agpl_options_t *options)
     show_lines_after (state, data, "    This program is free software:", 12,
                       !options->future_versions, 
                       "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
-  free (url);
   free (data);
   return err;
 }

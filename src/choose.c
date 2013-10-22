@@ -299,33 +299,27 @@ load_selected_licenses ()
   return data;
 }
 
-static void
+static int
 write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *options)
 {
+  int err = 0;
   if (options->licenses == NULL)
     {
       char *f = get_config_file ("selected-licenses");
       remove (f);
       f = get_config_file ("license-notice");
       remove (f);
-      return;
+      return err;
     }
   char *licenses = options->licenses;
-  char *f = get_config_file ("selected-licenses");
+  char *f = get_config_file ("license-notice");
   if (f)
     {
-      FILE *fp = fopen (f, "w");
-      if (fp)
-        {
-          fprintf (fp, "%s", licenses ? licenses: "");
-          fclose (fp);
-        }
-      free (f);
-    }
-  f = get_config_file ("license-notice");
-  if (f)
-    {
-      FILE *fp = fopen (f, "w");
+      char tmp[sizeof(PACKAGE) + 13];
+      snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
+      int fd = mkstemp(tmp);
+      close (fd);
+      FILE *fp = fopen (tmp, "w");
       if (fp)
         {
           char *cmds = lu_list_of_license_keyword_commands();
@@ -343,7 +337,15 @@ write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *o
               char *cmd = get_command (license_commands, license_len, l);
               FILE *old_out = state->out;
               state->out = fp;
-              lu_parse_command (state, cmd);
+              err = lu_parse_command (state, cmd);
+              if (err)
+                {
+                  fprintf (stderr, N_("%s: failed to select license `%s' " 
+                                      "(network down or missing webpage?)\n"), 
+                           choose.name, l);
+                  state->out = old_out;
+                  break;
+                }
               if (count > 1)
                 {
                   fprintf (fp, "\n");
@@ -356,14 +358,38 @@ write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *o
           free (argz);
           fclose (fp);
           free (license_commands);
+          //install it
+          if (!err)
+            {
+              remove (f);
+              char *cmd = xasprintf ("mv %s %s\n", tmp, f);
+              system (cmd);
+              free (cmd);
+            }
         }
       free (f);
     }
+  if (!err)
+    {
+      f = get_config_file ("selected-licenses");
+      if (f)
+        {
+          FILE *fp = fopen (f, "w");
+          if (fp)
+            {
+              fprintf (fp, "%s", licenses ? licenses: "");
+              fclose (fp);
+            }
+          free (f);
+        }
+    }
+  return err;
 }
 
 int 
 lu_choose (struct lu_state_t *state, struct lu_choose_options_t *options)
 {
+  int err = 0;
   char *old_style = load_selected_comment_style ();
   char *old_license = load_selected_licenses ();
   char *l = NULL;
@@ -436,16 +462,16 @@ lu_choose (struct lu_state_t *state, struct lu_choose_options_t *options)
       if (old_license && strcmp (old_license, options->licenses) == 0)
         ;
       else
-        write_selected_licenses (state, options);
+        err = write_selected_licenses (state, options);
     }
   else
-    write_selected_licenses (state, options);
+    err = write_selected_licenses (state, options);
   free (p);
   free (style);
   free (options->licenses);
   free (old_style);
   free (old_license);
-  if (options->quiet == 0)
+  if (options->quiet == 0 && !err)
     fprintf (stderr, "Selected.\n");
   return 0;
 }

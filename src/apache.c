@@ -95,6 +95,15 @@ show_lu_apache(struct lu_state_t *state, struct lu_apache_options_t *options)
   fflush (fileptr);
   fsync (fileno (fileptr));
   fclose (fileptr);
+  int response = 0;
+  curl_easy_getinfo (state->curl, CURLINFO_RESPONSE_CODE, &response);
+  if (response != 200)
+    {
+      remove (tmp);
+      err = 1;
+      return err;
+    }
+  free (url);
   fileptr = fopen (tmp, "r");
   size_t data_len = 0;
   char *data = fread_file (fileptr, &data_len);
@@ -108,7 +117,6 @@ show_lu_apache(struct lu_state_t *state, struct lu_apache_options_t *options)
   else
     show_lines_after (state, data, "   Licensed under the Apache License", 11, 0, 
                       NULL, NULL);
-  free (url);
   free (data);
   return err;
 }
