@@ -25,15 +25,20 @@ showhelp() {
 Usage: $(basename $0) [OPTION...]
 Clear the current working boilerplate.
 
+      --quiet                don't show diagnostic messages
   -?, --help                 give this help list
       --usage                give a short usage message
 
 EOF
 }
 
+quiet=0
 for option
 do
   case $option in
+  --quiet)
+    quiet=1
+    ;;
   --help)
     showhelp
     exit;;
@@ -55,6 +60,8 @@ rm -f ~/.@PACKAGE@/selected-licenses 2>/dev/null && \
 rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
 retval="$?"
 
-echo "Removed." >> /dev/stderr
+if [ "$quiet" == "0" ]; then
+  echo "Removed." >> /dev/stderr
+fi
 
 exit $retval
