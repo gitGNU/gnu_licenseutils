@@ -7,7 +7,7 @@
 ACLOCAL_AMFLAGS = -I lib/m4 -I m4 
 SUBDIRS=lib src po tests
 EXTRA_DIST = bootstrap bootstrap.conf TODO build-aux/config.rpath \
-	     HACKING completion/licensing
+	     HACKING completion/licensing lush.1
 
 if USE_BASH_COMPLETION
   bash_completion_DATA = completion/licensing
@@ -31,6 +31,7 @@ $(srcdir)/TODO \
 $(srcdir)/HACKING \
 $(srcdir)/INSTALL \
 $(srcdir)/ChangeLog \
+$(srcdir)/lush.1 \
 $(srcdir)/po/POTFILES.in \
 $(srcdir)/po/LINGUAS \
 $(srcdir)/completion/licensing \
@@ -123,18 +124,21 @@ CLEANFILES=.manifest licensing licensing.1
 #this chunk of makery is about getting a man page to build,
 #despite a horribly broken help2man, and a non-standard --help in licensing.
 noinst_SCRIPTS=licensing
-man1_MANS=licensing.1
+man1_MANS=licensing.1 lush.1
 
 licensing: $(builddir)/src/licensing
 	echo "#!/bin/sh" > $(builddir)/licensing && \
+        echo -n 'if [ "x$$' >> $(builddir)/licensing && \
+	echo '1" == "x--version" ]; then' >> $(builddir)/licensing && \
+        echo "  echo $(PROGRAM) $(PACKAGE_VERSION)" >>$(builddir)/licensing && \
+        echo "  exit 0" >> $(builddir)/licensing && \
+        echo "fi" >> $(builddir)/licensing && \
         echo "cat << EOF" >> $(builddir)/licensing && \
-	$(builddir)/src/licensing --help | sed -e 's/\(^[a-z]*\)\( *\)\([A-Z]\)/ \1: \3/1' | sed -e 's/^ : //g'| sed -e s'/`/\\`/g' | sed -e 's/^ \([a-z]\)/\n \1/g' | sed -e 's/^Usage: lt\-/Usage: /g' >> $(builddir)/licensing && \
+	$(builddir)/src/licensing --help | sed -e 's/\(^[a-z]*\)\( *\)\([A-Z]\)/ \1: \3/1' | sed -e 's/^ : //g'| sed -e s'/`/\\`/g' | sed -e 's/^ \([a-z]\)/\n \1/g' >> $(builddir)/licensing && \
 	echo "EOF" >> licensing && \
 	chmod +x licensing
 
 licensing.1: $(builddir)/licensing
-	$(HELP2MAN) --output=$(builddir)/$@.e --name='a program for adding license notices to files' --source licenseutils --no-info --libtool  $(builddir)/licensing && \
-	cat $(builddir)/licensing.1.e | head -n41  | sed -e 's/[Uu][Ss][Aa][Gg][Ee]:/licensing/g' > $(builddir)/licensing.1 && \
-	rm $(builddir)/licensing.1.e
+	$(HELP2MAN) --output=$(builddir)/$@ --name='a program for adding license notices to files' --source licenseutils --libtool  $(builddir)/licensing
 
 
