@@ -64,7 +64,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 
 #undef EXTRA_DOC
-#define EXTRA_DOC N_("Add or modify the pre-license text of the working boilerplate." "\v" "Long lines will be automatically wrapped with the `fmt' command.")
+#define EXTRA_DOC N_("Add some pre-license text to the working boilerplate." "\v" "Long lines will be automatically wrapped with the `fmt' command.")
 static struct argp argp = { argp_options, parse_opt, "TEXT", EXTRA_DOC};
 
 int 
