@@ -119,26 +119,13 @@ predist: ${builddir}/.manifest
 	rm -f ${PACKAGE}.tar.gz 2>/dev/null ;\
 	tar --dereference --directory=.. -zcvf ${PACKAGE}.tar.gz `cat ${builddir}/.manifest` && rm ${builddir}/.manifest
 
-CLEANFILES=.manifest licensing licensing.1
+CLEANFILES=.manifest licensing.1
 
 #this chunk of makery is about getting a man page to build,
 #despite a horribly broken help2man, and a non-standard --help in licensing.
-noinst_SCRIPTS=licensing
 man1_MANS=licensing.1 lush.1
 
-licensing: $(builddir)/src/licensing
-	echo "#!/bin/sh" > $(builddir)/licensing && \
-        echo -n 'if [ "x$$' >> $(builddir)/licensing && \
-	echo '1" == "x--version" ]; then' >> $(builddir)/licensing && \
-        echo "  echo $(PROGRAM) $(PACKAGE_VERSION)" >>$(builddir)/licensing && \
-        echo "  exit 0" >> $(builddir)/licensing && \
-        echo "fi" >> $(builddir)/licensing && \
-        echo "cat << EOF" >> $(builddir)/licensing && \
-	$(builddir)/src/licensing --help | sed -e 's/\(^[a-z]*\)\( *\)\([A-Z]\)/ \1: \3/1' | sed -e 's/^ : //g'| sed -e s'/`/\\`/g' | sed -e 's/^ \([a-z]\)/\n \1/g' >> $(builddir)/licensing && \
-	echo "EOF" >> licensing && \
-	chmod +x licensing
-
-licensing.1: $(builddir)/licensing
-	$(HELP2MAN) --output=$(builddir)/$@ --name='a program for adding license notices to files' --source licenseutils --libtool  $(builddir)/licensing
+licensing.1: $(builddir)/src/licensing
+	$(HELP2MAN) --output=$(builddir)/$@ --name='a program for adding license notices to files' --source licenseutils --libtool  $(builddir)/src/licensing
 
 

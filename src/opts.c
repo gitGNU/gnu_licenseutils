@@ -30,7 +30,7 @@
 #include "opts.h"
 #include "licensing_priv.h"
 
-#define FULL_VERSION PACKAGE_NAME " " PACKAGE_VERSION
+#define FULL_VERSION PROGRAM " " PACKAGE_VERSION
 
 const char *argp_program_version = FULL_VERSION;
 const char *argp_program_bug_address = "<" PACKAGE_BUGREPORT ">";
@@ -99,10 +99,11 @@ help_filter (int key, const char *text, void *input)
       argz_add (&argz, &len, text);
       argz_add (&argz, &len, "");
       argz_add (&argz, &len, "The most commonly used commands are:");
-      argz_add (&argz, &len, "");
       char *commands = lu_list_of_commands_for_help(0);
       argz_add (&argz, &len, commands);
       free (commands);
+      argz_add (&argz, &len, "");
+      argz_add (&argz, &len, "Options:");
       argz_stringify (argz, len, '\n');
       return argz;
     }

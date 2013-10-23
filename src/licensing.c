@@ -401,7 +401,8 @@ lu_list_of_commands_for_help (int control)
           if (vert_sep)
             vert_sep[0] = '\0';
         }
-      char *cmd = xasprintf ("%-17s %s", lu_commands[i]->name, doc ? doc : "");
+      char *cmd = xasprintf ("  %-15s %s", lu_commands[i]->name, 
+                             doc ? doc : "");
       free (doc);
       argz_add (&argz, &len, cmd);
       free (cmd);
