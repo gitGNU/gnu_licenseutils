@@ -27,7 +27,7 @@
 
 static struct argp_option argp_options[] = 
 {
-    {"remove", 'r', NULL, 0, N_("remove the comment in FILE.")},
+    {"remove", 'r', NULL, 0, N_("remove the comment in FILE")},
     {"no-backup", 'n', NULL, 0, N_("don't save .bak files when removing boilerplate")},
     {0}
 };
