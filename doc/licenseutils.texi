@@ -385,7 +385,28 @@ When the source code file begins with a @samp{#!} line, the boilerplate command 
 @cindex count boilerplate blocks in source files
 @cindex count lines of boilerplate in source files
 
-foo
+The command @command{cbb} stands for "count comment blocks".  The purpose of this command is to display the size of the boilerplate in the given files.  Here is how the command is normally executed:
+
+@example
+$ licensing cbb foo.c
+2 17 foo.c
+@end example
+This example shows that there are 2 comment-blocks at the beginning of foo.c, having 17 lines in total.
+
+By default the @command{cbb} command automatically detects comments, but any of the commenting-style options can be used to detect a particular commenting-style instead.  See @ref{Common Commenting-style options} for more information.
+
+The @option{--lines} option causes @command{cbb} to display only the number of lines in the boilerplate, and the @option{--blocks} option displays only the number of blocks.
+
+The @command{cbb} command can assist in iterating through the various comment-blocks in boilerplate.
+@example
+#!/bin/bash
+blocks=`licensing cbb foo.c | cut -f1 -d' '`
+for (( b=1; b<=$blocks; b++ )); do
+  licensing boilerplate -b$b foo.c
+done
+@end example
+
+When the input file is @file{-}, it is read from the standard input.
 
 @node png-boilerplate invocation
 @section @command{png-boilerplate}: Show or remove the boilerplate in .png files
