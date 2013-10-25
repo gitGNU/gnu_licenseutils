@@ -5,6 +5,7 @@
 # notice and this notice are preserved.  This file is offered as-is,
 # without any warranty.
 localedir = $(datadir)/locale
+EXTRA_DIST=styles.am
 bin_SCRIPTS=lush
 bin_PROGRAMS=licensing
 pkglibexec_SCRIPTS=preview new-boilerplate notice
@@ -15,7 +16,7 @@ lib_LTLIBRARIES=liblicenseutils.la
 pkginclude_HEADERS=licensing.h gpl.h lgpl.h agpl.h fdl.h boilerplate.h  help.h \
 		   warranty.h welcome.h copyright.h cbb.h comment.h \
 		   uncomment.h choose.h top.h project.h apply.h \
-		   all-permissive.h bsd.h apache.h mit.h extra.h \ 
+		   all-permissive.h bsd.h apache.h mit.h extra.h \
 		   png-boilerplate.h png-apply.h isc.h prepend.h
 
 liblicenseutils_la_SOURCES=licensing.c gettext-more.h licensing_priv.h \

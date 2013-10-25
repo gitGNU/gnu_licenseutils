@@ -139,6 +139,8 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  src/preview
                  src/new-boilerplate
                  src/notice
+                 doc/Makefile
+                 doc/version.texi
                  tests/Makefile
                  tests/boilerplate/Makefile
                  tests/cbb/Makefile

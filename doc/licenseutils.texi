@@ -1,0 +1,722 @@
+\input texinfo
+@c %**start of header
+@setfilename licenseutils.info
+@settitle Licenseutils
+
+@c %**end of header
+
+@include version.texi
+
+@c Define new indices.
+@defcodeindex op
+@defcodeindex fl
+
+@c Put everything in one index (arbitrarily chosen to be the concept index).
+@syncodeindex fl cp
+@syncodeindex fn cp
+@syncodeindex ky cp
+@syncodeindex op cp
+@syncodeindex pg cp
+@syncodeindex vr cp
+
+@dircategory Software development
+@direntry
+* Licensing: (licenseutils).    Utility for adding license notices.
+@end direntry
+
+@dircategory Individual utilities
+@direntry
+* licensing: (licenseutils)licensing invocation.   Make and write notices.
+@end direntry
+
+@copying
+This manual documents version @value{VERSION} of Licenseutils.
+
+Copyright @copyright{} 2013 Ben Asselstine
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled ``GNU
+Free Documentation License''.
+@end quotation
+@end copying
+
+@titlepage
+@title @code{Licenseutils}
+@subtitle License Utilities
+@subtitle for version @value{VERSION}
+@author Ben Asselstine
+
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+@shortcontents
+@contents
+
+@ifnottex
+@node Top
+@top Licenseutils
+
+@insertcopying
+@end ifnottex
+
+@cindex license utilities
+
+@menu
+* Introduction::                 Caveats, overview, and authors
+* Scanning for boilerplate::     boilerplate cbb png-boilerplate
+* Creating boilerplate::         new-boilerplate choose copyright top project
+                                 extra
+* Writing boilerplate::          apply png-apply prepend notice
+* Working with comments::        comment uncomment
+* License commands::             gpl lgpl agpl fdl bsd apache mit isc 
+                                 all-permissive
+* Informational commands::       preview welcome warranty help
+* Common Commenting-style options:: Command-line options for commenting-styles
+* GNU Free Documentation License:: Copying and sharing this manual
+* Concept index::                General index
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Introduction
+
+* licensing invocation::         License utility program
+
+Scanning for boilerplate
+
+* boilerplate invocation::       Show or remove boilerplate in source files
+* cbb invocation::               Count the boilerplate blocks in source files
+* png-boilerplate invocation::   Show or remove the boilerplate in .png files
+
+Creating boilerplate     
+
+* new-boilerplate invocation::   Reset the current working boilerplate
+* choose invocation::            Pick license and comment style for boilerplate
+* copyright invocation::         Add a copyright notice to the boilerplate
+* top invocation::               Add a top line to the boilerplate
+* project invocation::           Add a project-identifier to the boilerplate
+* extra invocation::             Add some extra text to the boilerplate
+
+Writing boilerplate      
+
+* apply invocation::             Write the working boilerplate to source files
+* png-apply invocation::         Write the working boilerplate to .png files
+* prepend invocation::           Add arbitrary text to the start of a file
+* notice invocation::            Create and write a boilerplate to a file
+
+Working with comments
+
+* comment invocation::           Create a comment block in a given style
+* uncomment invocation::         Remove comment delimiters from some text
+
+License commands
+
+* gpl invocation::               Show the GNU General Public License notice
+* lgpl invocation::              Show the GNU LGPL License notice
+* agpl invocation::              Show the GNU AGPL License notice
+* fdl invocation::               Show the GNU Free Documentation License notice
+* all-permissive invocation::    Show the GNU All-Permissive License
+* bsd invocation::               Show the Berkeley Software Distribution license
+* apache invocation::            Show the Apache License notice
+* mit invocation::               Show the MIT (also X11) License
+* isc invocation::               Show the ISC (OpenBSD) License
+
+Informational Commands    
+
+* preview invocation::           Show the current working boilerplate
+* welcome invocation::           Show the welcome message
+* warranty invocation::          Show the warranty message
+* help invocation::              Get help on commands
+
+Copying This Manual
+
+* GNU Free Documentation License::     Copying and sharing this manual
+
+@end detailmenu
+@end menu
+
+
+@node Introduction
+@chapter Introduction
+
+Boilerplate is that necessary bit of text at the top of source code files that conveys the copyright holders and license of the file.  It's not always identical from file to file, but it certainly has a standard look and feel to it.
+
+Programming languages generally support copyright and license notices through their commenting facility.  For example, the C language has a different commenting style then haskell: @samp{/* foo */} vs @samp{@{- bar -@}}
+
+Free software depends on copyright and license notices being present because individual files have a way of propagating independently from their parent project..  Adding these notices can be time-consuming even for small projects.
+
+licenseutils consists of a program @command{licensing}, and a shell called @command{lush}.  Together they provide a set of commands to quickly and easily modifying files to include a standard-looking free software boilerplate for various different programming languages.
+
+@menu
+* licensing invocation::    Licensing utility program.
+@end menu
+
+@node licensing invocation
+@section @command{licensing}: Licensing utility program.
+@pindex licensing
+@cindex current working boilerplate
+@cindex configuration files
+
+The @command{licensing} program has various commands.  To run them, type:
+
+@example
+$ licensing COMMAND
+@end example
+
+Some commands involve the concept of a current working boilerplate, and some do not.  The current working boilerplate is a notional block of text representing the boilerplate that the user wants to add to a file.  It lets the user easily change the commenting style, or copyright holders before applying a similar boilerplate to another kind of file.
+
+@subsection Commands that create the current working boilerplate
+There are commands for creating a current working boilerplate: (see @ref{Creating boilerplate})
+
+@table @command
+@item new-boilerplate 
+Resets the current working boilerplate.  Any previously selected licenses, commenting styles, or copyright holders are thrown out.
+See @ref{new-boilerplate invocation}.
+
+@item choose
+Adds or changes the license notice or commenting style for the current working boilerplate.
+See @ref{choose invocation}.
+
+@item copyright
+Adds or removes a copyright notice to the current working boilerplate.
+See @ref{copyright invocation}.
+
+@item top
+Add a beginning line to the current working boilerplate to describe what the file is for.
+See @ref{top invocation}.
+
+@item project
+Adds a project-identifying line to the current working boilerplate.
+See @ref{project invocation}.
+
+@item extra
+Adds some extra text to the current working boilerplate
+See @ref{extra invocation}.
+
+@end table
+
+@subsection Commands that write the current working boilerplate to files
+The current working boilerplate can be subsequently written to files: (see @ref{Writing boilerplate})
+
+@table @command
+@item apply
+Writes the current working boilerplate to source code files.
+See @ref{apply invocation}.
+
+@item png-apply
+Writes the current working boilerplate to .png image files.
+See @ref{png-apply invocation}.
+
+@item notice
+Creates and writes a simple boilerplate to a source code file.  This command does not reference the current working boilerplate.
+See @ref{notice invocation}.
+
+@item prepend
+Adds some arbitrary text to the start of a file.  This command does not reference the current working boilerplate.
+See @ref{prepend invocation}.
+
+@end table
+
+@subsection Commands that get boilerplate from files
+
+There are a few commands for showing boilerplate in files: (see @ref{Scanning for boilerplate})
+
+@table @command
+@item boilerplate
+Show the boilerplate in source code files.  This command can also remove the boilerplate from a file.
+See @ref{boilerplate invocation}.
+
+@item cbb
+Counts the number of distinct boilerplate blocks in source code files.
+See @ref{cbb invocation}.
+
+@item png-boilerplate
+Show the comment in .png image files.  This command can also remove the comment from a .png file.
+See @ref{png-boilerplate invocation}.
+@end table
+
+@subsection Commands that display license notices
+There are commands that display licenses and their notices: (see @ref{License commands})
+
+@table @command
+@item gpl
+Shows various verisons of the GNU General Public License notice, or optionally the texts of the full license.
+See @ref{gpl invocation}.
+@item lgpl
+Shows various verisons of the GNU Lesser General Public License notice, or optionally the texts of the full licenses.
+See @ref{lgpl invocation}.
+@item agpl
+Shows the GNU Affero General Public License notice, or optionally the texts of the full licenses.
+See @ref{agpl invocation}.
+@item fdl
+Shows various versions of the GNU Free Documentation License notice, or optionally the text of the full licenses.
+See @ref{fdl invocation}.
+@item all-permissive
+Shows the GNU All-Permissive license.
+See @ref{all-permissive invocation}.
+@item bsd
+Shows various versions of the Berkeley Software Distribution license.
+See @ref{bsd invocation}.
+@item apache
+Shows the Apache license notice or optionally the full license text.
+See @ref{apache invocation}.
+@item mit
+Shows the Massachusetts Institute of Technology license.  Also known as the X11 License.
+See @ref{mit invocation}.
+@item isc
+Shows the Internet Systems Consortium license.  Also known as the OpenBSD License.
+See @ref{isc invocation}.
+@end table
+
+@subsection Other commands that display information
+There are commands that operate on commenting styles: (see @ref{Working with comments})
+
+@table @command
+@item comment
+Creates a comment block in a commenting style particular to a programming language.
+See @ref{comment invocation}.
+@item uncomment
+Removes comment delimiters from some text in a file.
+See @ref{uncomment invocation}.
+@end table
+
+And finally there are are a few commands that are informational in nature (see @ref{Informational commands} that display various bits of information:
+
+@table @command
+@item preview
+Shows the current working boilerplate.
+See @ref{preview invocation}.
+@item welcome
+Shows the welcome message.
+See @ref{welcome invocation}.
+@item warranty
+Shows the warranty message.
+See @ref{warranty invocation}.
+@item help
+Shows help on all of these commands.
+See @ref{help invocation}.
+@end table
+
+@subsection Starting the lush shell
+When a command is not given as an argument to @command{licensing}, the interactive @command{lush} shell is started.  The @option{--quiet} option prevents the welcome message from being displayed in the lush shell.
+
+The lush shell is an extended bash shell.  The initialization file for lush is automatically generated, and lives in @file{~/.lushrc}.
+
+The program state (e.g. the current working boilerplate) is kept in @file{~/.licensutils/}.
+
+All of the @command{licensing} commands work in the lush shell without a @command{licensing} command prefixed to it.  
+
+For example:
+@example
+#!/usr/bin/env lush
+welcome
+exit 0
+@end example
+
+This lush script is equivalent to running the command: @command{licensing welcome}.  Although this example shows a lush script, the shell is most often used interactively.
+
+@node Scanning for boilerplate
+@chapter Scanning for boilerplate
+@cindex Scanning for boilerplate
+@cindex boilerplate, scanning of
+
+These commands read boilerplate from files, possibly transforming it 
+in some way.
+
+@menu
+* boilerplate invocation::      Show or remove boilerplate in source files
+* cbb invocation::              Count the boilerplate blocks in source files
+* png-boilerplate invocation::  Show or remove the boilerplate in .png files
+@end menu
+
+@node boilerplate invocation
+@section @command{boilerplate}: Show or remove boilerplate in source files
+@pindex boilerplate
+@cindex show boilerplate in source files
+@cindex remove boilerplate from source files
+
+The boilerplate command shows the comments at the top of source code files.  The most common execution of this command is:
+@example
+$ licensing boilerplate foo.c
+@end example
+The boilerplate command will automatically determine what kind of comment-style is being employed at the beginning of the source code file.  This automatic detection has some drawbacks, so various commenting-style options are provided to force the detection of comments in a particular commenting style.  See @ref{Common Commenting-style options}.
+
+
+@subsection Rules For Automatic-detection of Comments
+Automatic detection of commenting-styles is a heursitic that checks for commenting-styles in a certain order, sometimes avoids paritcular file extensions, and sometimes only operates on certain supported file extensions.  The order for automatic detection is: C, C++, shell, scheme, texinfo, m4, haskell, groff, gettext, fortran, pascal.
+
+C style comments are featured in other languages: Java, PHP, Javascript, Go, and many more.  Shell style commenting is used in python, make, perl, and more.
+
+When auto-detecting shell style comments will not be found in files with extensions: @samp{.c .h .cpp .hpp .hh .cc .m4 .ac .po .pot}.  M4 comments can only be found in files with extensions: @samp{.m4 .ac}.  Fortran comments can only be found in files with extensions: @samp{.f .for .f90 .f95}.  These strategies fail when files are passed via the standard input: e.g. when the file is @file{-}.
+
+@subsection Removing boilerplate
+
+The boilerplate command can also remove boilerplate from one or more source code files by specifying the @option{--remove} option.  For example:
+@example
+$ licensing boilerplate --remove foo.c
+@end example
+By default the commenting style is auto-detected, but each of the commenting style options can be used to remove comment blocks of a specific commenting style.  Particular comment blocks can be removed with the @option{--blocks} option.  The @option{--force} option is used to remove comment blocks that contain copyright notices.  When removing boilerplate, a backup file (@samp{.bak}) is usually made.  The @option{--no-backup} option is provided to prevent this behaviour.  When removing boilerplate from the standard input it cannot be backed up, and the resulting file is simply displayed.
+
+The @option{--quiet} option prevents error messaging from being displayed when a boilerplate is not found, or an invalid comment-block is referred to with the @option{--blocks} option, or when removing a comment-block that contains a copyright notice and the @option{--force} option has not been given.
+
+@subsection Showing or removing specific blocks
+Sometimes the start of a source code file can have more than one comment-block.  Block-style comments denote a comment-block, and whitespace separates blocks of whole-line comments.
+
+The @option{--blocks} option can show or remove one or more comment-blocks.  
+
+For example @samp{licensing boilerplate -b1 foo.c} shows the first comment-block.  And @samp{licensing boilerplate -b1,3 foo.c} shows the first and third comment-blocks.  @samp{licensing boilerplate --remove --blocks=1-3,5 foo.c} removes the first three comment-blocks, and the fifth comment-block too.
+
+Whitespace between comment-blocks is not shown when the @option{--blocks} option is employed.
+
+To find out how many comment-blocks there are in a file, use the @command{cbb} command.  See @ref{cbb invocation} for more information.
+
+@subsection Dealing with source code files that are scripts.
+
+When the source code file begins with a @samp{#!} line, the boilerplate command does not show or remove that line.
+
+@node cbb invocation
+@section @command{cbb}: Count the boilerplate blocks in source files
+@pindex cbb
+@cindex count boilerplate blocks in source files
+@cindex count lines of boilerplate in source files
+
+foo
+
+@node png-boilerplate invocation
+@section @command{png-boilerplate}: Show or remove the boilerplate in .png files
+@pindex png-boilerplate
+@cindex show boilerplate in .png files
+@cindex remove boilerplate from .png files
+
+foo
+
+@node Creating boilerplate
+@chapter Creating boilerplate
+
+@cindex creating boilerplate
+@cindex boilerplate, creation of
+
+These commands modify the current working boilerplate in some way.
+
+@menu
+* new-boilerplate invocation::  Reset the current working boilerplate
+* choose invocation::           Pick license and comment style for boilerplate
+* copyright invocation::        Add a copyright notice to the boilerplate
+* top invocation::              Add a top line to the boilerplate
+* project invocation::          Add a project-identifier to the boilerplate
+* extra invocation::            Add some extra text to the boilerplate
+@end menu
+
+@node new-boilerplate invocation
+@section @command{new-boilerplate}: Reset the current working boilerplate
+@pindex new-boilerplate
+@cindex start a new boilerplate
+@cindex erasing the current working boilerplate
+@cindex current working boilerplate, creating a new
+@cindex current working boilerplate, resetting the
+
+foo
+
+@node choose invocation
+@section @command{choose}: Pick license and comment style for boilerplate
+@pindex choose
+@cindex select a license
+@cindex select a comment style
+@cindex add a license to the current working boilerplate
+@cindex add a comment style to the current working boilerplate
+@cindex current working boilerplate, adding a license notice
+@cindex current working boilerplate, changing the commenting style
+
+foo
+
+@node copyright invocation
+@section @command{copyright}: Add a copyright notice to the boilerplate
+@pindex copyright
+@cindex make a copyright notice
+@cindex add a copyright holder to the current working boilerplate
+@cindex remove a copyright holder from the current working boilerplate
+@cindex current working boilerplate, adding a copyright notice
+
+foo
+
+@node top invocation
+@section @command{top}: Add a top line to the boilerplate
+@pindex top
+@cindex add an initial line to the current working boilerplate
+@cindex current working boilerplate, adding an initial line
+
+foo
+
+@node project invocation
+@section @command{project}: Add a project-identifier to the boilerplate
+@pindex project
+@cindex add a project-identifying line to the current working boilerplate
+@cindex current working boilerplate, adding project identifier
+
+foo
+
+@node extra invocation
+@section @command{extra}: Add some extra text to the boilerplate
+@pindex extra
+@cindex add a some extra text to the current working boilerplate
+@cindex current working boilerplate, adding extra text
+@node Writing boilerplate
+@chapter Writing boilerplate
+
+foo
+
+@cindex writing boilerplate 
+@cindex boilerplate, writing of
+
+These commands write boilerplate to files.
+
+@menu
+* apply invocation::            Write the working boilerplate to source files
+* png-apply invocation::        Write the working boilerplate to .png files
+* prepend invocation::          Add arbtirary text to the start of a file
+* notice invocation::           Create and write boilerplate to a file
+@end menu
+
+@node apply invocation
+@section @command{apply}: Write the working boilerplate to source files
+@pindex apply
+@cindex add boilerplate to a source file
+@cindex current working boilerplate, adding to a source file
+
+foo
+
+@node png-apply invocation
+@section @command{png-apply}: Write the working boilerplate to .png files
+@pindex png-apply
+@cindex add boilerplate to a .png file
+@cindex current working boilerplate, adding to a png file
+
+foo
+
+@node prepend invocation
+@section @command{prepend}: Add arbitrary text to the start of a file
+@pindex prepend
+@cindex add a file to the start of another file
+
+foo
+
+@node notice invocation
+@section @command{notice}: Create and write a copyright and license notice to a file.
+@pindex notice
+
+foo
+
+@node Working with comments
+@chapter Working with comments
+@cindex comments, creating
+@cindex comments, removing delimeters
+
+These commands deal with comments.
+
+@menu
+* comment invocation::          Create a comment block in a given style
+* uncomment invocation::        Remove comment delimiters from some text
+@end menu
+
+@node comment invocation
+@section @command{comment}: Create a comment block in a given style
+@pindex comment
+@cindex create a comment block
+@cindex comments, creating
+
+foo
+
+@node uncomment invocation
+@section @command{uncomment}: Remove comment delimiters from some text
+@pindex uncomment
+@cindex remove comment delimiters
+@cindex comments, removing delimiters
+
+foo
+
+@node License commands
+@chapter License commands
+@cindex license commands
+@cindex license, showing
+@cindex license, displaying
+
+These commands display licenses and license notices.  Licenses are the full terms and conditions, while notices are simply disclaimers about which license is being used.  Some licenses are small enough to not require a license notice.
+
+Licenses and license notices are fetched on-demand from the gnu.org or fsf.org website.
+
+@menu
+* gpl invocation::            Show the GNU General Public License notice
+* lgpl invocation::           Show the GNU Lesser General Public License notice
+* agpl invocation::           Show the GNU Affero General Public License notice
+* fdl invocation::            Show the GNU Free Documentation License notice
+* all-permissive invocation:: Show the GNU All-Permissive License
+* bsd invocation::            Show the Berkeley Software Distribution license
+* apache invocation::         Show the Apache License notice
+* mit invocation::            Show the MIT (also X11) License
+* isc invocation::            Show the ISC (OpenBSD) License
+@end menu
+
+@node gpl invocation
+@section @command{gpl}: Show the GNU General Public License notice
+@pindex gpl
+@pindex GPL
+@cindex GNU GPL, showing the
+@cindex GNU GPL notice, showing the
+
+foo
+
+@node lgpl invocation
+@section @command{lgpl}: Show the GNU Lesser General Public License notice
+@pindex lgpl
+@pindex LGPL
+@cindex GNU LGPL, showing the
+@cindex GNU LGPL notice, showing the
+
+foo
+
+@node agpl invocation
+@section @command{agpl}: Show the GNU Affero General Public License notice
+@pindex agpl
+@pindex AGPL
+@cindex GNU AGPL, showing the
+@cindex GNU AGPL notice, showing the
+
+foo
+
+@node fdl invocation
+@section @command{fdl}: Show the GNU Free Documentation License notice
+@pindex fdl
+@pindex FDL
+@cindex GNU FDL, showing the
+@cindex GNU FDL notice, showing the
+
+foo
+
+@node all-permissive invocation
+@section @command{all-permissive}: Show the GNU All-Permissive License
+@pindex all-permissive
+@cindex GNU All-Permissive License, showing the
+
+foo
+
+@node bsd invocation
+@section @command{bsd}: Show the Berkeley Software Distribution license
+@pindex bsd
+@pindex BSD
+@cindex Berkely Software Distribution license, showing the
+
+foo
+
+@node apache invocation
+@section @command{apache}: Show the Apache License notice
+@pindex apache
+@cindex Apache License, showing the
+@cindex Apache license notice, showing the
+
+foo
+
+@node mit invocation
+@section @command{mit}: Show the MIT license
+@pindex mit
+@pindex MIT
+@cindex MIT license, showing the
+
+foo
+
+@node isc invocation
+@section @command{isc}: Show the ISC license
+@pindex isc
+@pindex ISC
+@cindex ISC license, showing the
+
+foo
+
+@node Informational commands
+@chapter Informational commands
+@cindex informational commands
+
+These commands just display text of one sort or another.
+
+@menu
+* preview invocation::          Show the current working boilerplate
+* welcome invocation::          Show the welcome message
+* warranty invocation::         Show the warranty message
+* help invocation::             Get help on commands
+@end menu
+
+@node preview invocation
+@section @command{preview}: Show the current working boilerplate
+@pindex preview
+@cindex show the current working boilerplate
+@cindex current working boilerplate, showing the
+
+@node welcome invocation
+@section @command{welcome}: Show the welcome message
+@pindex welcome
+
+@node warranty invocation
+@section @command{warranty}: Show the warranty message
+@pindex warranty
+
+@node help invocation
+@section @command{help}: Get help on commands
+@pindex help
+@cindex getting help on commands
+
+@node Common Commenting-style options
+@chapter Common command-line options for commenting-style detection
+
+These options appear in the @command{boilerplate}, @command{cbb}, @command{comment}, and @command{uncomment} commands.
+@table @option
+@item --c-style
+For @command{boilerplate} and @command{cbb}, this option detects comments at the start of the file in blocks like: @samp{/* this */}, or whole-line comments like @samp {// this}.
+For the @command{comment} command, this option creates a comment in the C style.
+@item --c++-style
+Same as @samp{--c-style}.
+For the @command{comment} command, this option creates a comment in the C++ style.
+@item --shell-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}.
+For the @command{comment} command, this option creates a comment in the shell style.
+@item --scheme-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{; this}.
+For the @command{comment} command, this option creates a comment in the scheme style.
+@item --texinfo-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{@@c this} or @samp{@@comment this}.
+For the @command{comment} command, this option creates a comment in the texinfo style.
+@item --m4-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}, or @samp{dnl this}.  
+For the @command{comment} command, this option creates a comment in the m4 style.
+@item --haskell-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in blocks like @samp{@{- this - @}}, or whole-line comments like @samp{-- this}.
+For the @command{comment} command, this option creates a comment in the haskell style.
+@item --groff-style
+Groff is the GNU program for making man pages.  It is also called troff.
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like: @samp{\" this}, @samp{.\" this}, @samp{\" this}, or @samp{.\" this}.
+For the @command{comment} command, this option creates a comment in the groff style.
+@item --gettext-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}.  The space after @samp{#} is required, as @samp{#,} and @samp{#:} are valid gettext symbols and not comments.
+For the @command{comment} command, this option creates a comment in the gettext style.
+@item --fortran-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{C this}, or @samp{! this}.  
+For the @command{comment} command, this option creates a comment in the fortran style.
+@item --pascal-style
+For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in blocks like @samp{(* this *)}, or @samp{@{* this *@}}, or whole-line comments like @samp{// this}.
+For the @command{comment} command, this option creates a comment in the pascal style.
+@end table
+
+@node GNU Free Documentation License
+@appendix GNU Free Documentation License
+
+@include fdl.texi
+
+@node Concept index
+@unnumbered Index
+
+@printindex cp
+
+@bye

@@ -5,9 +5,9 @@
 # notice and this notice are preserved.  This file is offered as-is,
 # without any warranty.
 ACLOCAL_AMFLAGS = -I lib/m4 -I m4 
-SUBDIRS=lib src po tests
+SUBDIRS=lib src po tests doc
 EXTRA_DIST = bootstrap bootstrap.conf TODO build-aux/config.rpath \
-	     HACKING completion/licensing lush.1
+	     HACKING completion/licensing lush.1 styles.ac
 
 if USE_BASH_COMPLETION
   bash_completion_DATA = completion/licensing
@@ -34,6 +34,9 @@ $(srcdir)/ChangeLog \
 $(srcdir)/lush.1 \
 $(srcdir)/po/POTFILES.in \
 $(srcdir)/po/LINGUAS \
+$(srcdir)/doc/Makefile.am \
+$(srcdir)/doc/licenseutils.texi \
+$(srcdir)/doc/version.texi.in \
 $(srcdir)/completion/licensing \
 $(srcdir)/src/Makefile.am \
 $(srcdir)/src/styles.am \
