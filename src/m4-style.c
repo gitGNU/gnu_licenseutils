@@ -81,6 +81,6 @@ struct lu_comment_style_t m4_style=
   .get_initial_comment = get_comment,
   .comment             = comment,
   .uncomment           = uncomment,
-  .support_file_exts   = ".m4",
+  .support_file_exts   = ".m4 .ac",
   .avoid_file_exts     = NULL,
 };
