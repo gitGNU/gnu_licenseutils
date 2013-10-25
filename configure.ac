@@ -65,7 +65,7 @@ fi
 LIBS="$LIBS `$PKG_CONFIG libcurl --libs`"
 CFLAGS="`$PKG_CONFIG libcurl --cflags` $CFLAGS"
 
-PKG_CHECK_MODULES(LIBPNG, [libpng >= 1.5.0])
+PKG_CHECK_MODULES(LIBPNG, [libpng >=  1.2.49])
 AC_SUBST(LIBPNG_CFLAGS)
 AC_SUBST(LIBPNG_LIBS)
 
