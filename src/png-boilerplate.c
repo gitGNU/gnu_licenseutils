@@ -70,7 +70,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 }
 #undef NEW_BOILERPLATE_DOC
 #define NEW_BOILERPLATE_DOC N_("Show or remove the comment in a png file.") "\v" N_("")
-static struct argp argp = { argp_options, parse_opt, "NAME", NEW_BOILERPLATE_DOC};
+static struct argp argp = { argp_options, parse_opt, "FILE", NEW_BOILERPLATE_DOC};
 
 int 
 lu_png_boilerplate_parse_argp (struct lu_state_t *state, int argc, char **argv)
