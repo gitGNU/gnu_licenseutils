@@ -16,8 +16,6 @@
   02110-1301, USA.
 */
 
-//keep it going man.
-
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
