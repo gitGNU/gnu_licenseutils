@@ -2,3 +2,4 @@
 need a texinfo manual
 need a man page
 
+removing boilerplate changes the mode of the file. need to retain the mode.
