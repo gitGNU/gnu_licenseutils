@@ -69,7 +69,8 @@ uncomment (char **argz, size_t *len, int trim)
 static int
 get_comment (FILE *fp, char **argz, size_t *len, char **hashbang)
 {
-  return get_comment_blocks (fp, argz, len, hashbang, "(^\\# .*[\\r\\n])*");
+  return get_comment_blocks (fp, argz, len, hashbang, 
+     "((^C[ ]|^\\![ ]).*[\\r\\n]|(^C[\r\n]|^\\![\r\n]))*");
 }
 
 struct lu_comment_style_t fortran_style=
