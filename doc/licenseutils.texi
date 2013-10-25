@@ -414,7 +414,25 @@ When the input file is @file{-}, it is read from the standard input.
 @cindex show boilerplate in .png files
 @cindex remove boilerplate from .png files
 
-foo
+Sometimes PNG image files contain copyright and license notices.  Authors put these notices in comments section so that when the file propagates, the license propagates too.  The @command{png-boilerplate} command is for showing or removing comments in PNG files.  It is normally executed in this fashion:
+
+@example
+$ licensing png-boilerplate foo.png
+@end example
+This example will result in the comment section of the png file being displayed.  
+The PNG file format allows for many named text sections in the file.  The @command{png-boilerplate} command only operates on the first text section named "Comment".
+
+@subsection Removing comments from a PNG file
+
+To remove the boilerplate from a PNG file, use the @option{--remove} option:
+
+@example
+$ licensing png-boilerplate --remove foo.png
+@end example
+
+This command will modify the first text section named "Comment" in the PNG file foo.png so that it contains an empty string.  This is slightly different than removing the text section entirely.
+
+When removing comments, a @file{.bak} backup file is created by default.  To prevent this behaviour use the @option{--no-backup} option.
 
 @node Creating boilerplate
 @chapter Creating boilerplate
