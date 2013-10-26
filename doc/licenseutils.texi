@@ -739,7 +739,9 @@ apply: bar.c -> Boilerplate applied.
 apply: qux.c -> Boilerplate applied.
 apply: foo.h -> Boilerplate applied.
 @end example
-This example applies the boilerplate to all of the @file{.c} and @file{.h} files in the current directory.
+This example adds the boilerplate to the beginning of the @file{.c} and @file{.h} files in the current directory.
+
+The @command{apply} will fail to operate when the current working boilerplate lacks copyright holders or a license.
 
 When a source file happens to be a script, the boilerplate will appear after the @samp{#!} line.
 To place the boilerplate after any previously existing boilerplate in the source file, use the @option{--after} option.  When the commenting-style is not specified with an option (see @ref{Common Commenting-style options}, it is automatically detected.  For example:
@@ -751,6 +753,7 @@ $ cat foo.sh
 echo hello world
 $ licensing choose all-permissive shell --quiet
 $ licensing copyright Yoyodyne, Inc. 2001 --quiet
+$
 $ licensing apply foo.sh --after --shell-style --no-backup
 apply: foo.sh -> Boilerplate applied.
 $ cat foo.sh
@@ -778,7 +781,21 @@ Subsequent calls to the @command{apply} command are cumulative.  If a mistake ha
 @cindex add boilerplate to a .png file
 @cindex current working boilerplate, adding to a png file
 
-foo
+The @command{png-apply} command adds the current working boilerplate to one or more .png image files.  It is usually used in this fashion:
+
+@example
+$ licensing png-apply foo.png
+png-apply: foo.png -> Boilerplate applied.
+@end example
+This example applies the current working boilerplate to foo.png.
+
+This command will fail to operate when a copyright holder or a license have not been specified in the current working boilerplate.  It will also fail if the given file is not recognized as a valid PNG file.
+
+By default a backup @file{.bak} file is created; to prevent this behaviour use the @option{--no-backup} option. 
+
+The @option{--quiet} option prevents the @samp{Boilerplate applied.} messages from being displayed.
+
+In the PNG file-format, there are named text sections.  This command creates a named text section called "Comment" if it does not exist.  Otherwise @command{png-apply} overwrites an existing one.
 
 @node prepend invocation
 @section @command{prepend}: Add arbitrary text to the start of a file
