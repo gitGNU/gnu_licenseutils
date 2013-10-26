@@ -647,7 +647,34 @@ The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} messag
 @cindex add a project-identifying line to the current working boilerplate
 @cindex current working boilerplate, adding project identifier
 
-foo
+Sometimes projects like to add an identifying line to their boilerplate.  This ensures that the origin of the file is clear when the file propagates out to another project.
+
+The @command{preview} command adds a line to the current working boilerplate that identifies the project.  It is most commonly used like this:
+
+@example
+$ licensutils project GNU findutils
+Added.
+@end example
+
+When the @command{project} command is executed without any arguments, the line will be displayed:
+@example
+$ licensutils project
+This file is part of GNU findutils.
+@end example
+
+The @option{--belongs} option causes an alternative identifying line to be added to the current working boilerplate.
+@example
+$ licensutils project GNU findutils --belongs
+Added.
+$ licensutils project
+This file belongs to the GNU findutils project.
+@end example
+
+Subsequent calls to the @command{project} command override earlier calls.
+
+The @option{--remove} option is provided to completely remove the project line from the current working boilerplate.
+
+The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} message from being displayed.
 
 @node extra invocation
 @section @command{extra}: Add some extra text to the boilerplate
