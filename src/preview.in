@@ -74,7 +74,7 @@ fi
 cat ~/.@PACKAGE@/copyright-holders $tmpfile |fmt 2> /dev/null >> $preview
 
 if [ -f ~/.@PACKAGE@/project-line ]; then
-  cat ~/.@PACKAGE@/project-line >> $preview
+  cat ~/.@PACKAGE@/project-line | fmt >> $preview
   cat $tmpfile >> $preview
 fi
 
