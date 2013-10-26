@@ -426,7 +426,7 @@ lu_copyright (struct lu_state_t *state, struct lu_copyright_options_t *options)
   char *line = strdup (c);
   int remaining = max_width - strlen (line);
   int first = 1;
-  while ((name=argz_next (names, names_len, name)))
+  while ((name = argz_next (names, names_len, name)))
     {
       int length = strlen (name)+1;
       if (remaining > length && options->one_per_line == 0)
