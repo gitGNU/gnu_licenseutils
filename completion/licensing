@@ -26,7 +26,7 @@ __licensing_options()
 
     commands=""
     if [[ $COMP_CWORD -eq 1 ]]; then
-      commands=`licensing help | grep "^[a-z]" | cut -f1 -d' ' | tr  '\n,' ' '`
+      commands=`licensing help | grep "^  [a-z]" | cut -f3 -d' ' | tr  '\n,' ' '`
     fi
 
     if [[ "${cur}" == -* ]] ; then
