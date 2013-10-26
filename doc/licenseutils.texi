@@ -459,19 +459,66 @@ These commands modify the current working boilerplate in some way.
 @cindex current working boilerplate, creating a new
 @cindex current working boilerplate, resetting the
 
-foo
+The @command{new-boilerplate} command throws out the current working boilerplate.  The command is usually executed like so:
+@example
+$ licensing new-boilerplate
+@end example
+Any previously selected licenses or commenting styles are forgotten.  Any previously specified copyright holders are also forgotten.  Lastly, if a project identifier was included, or a top line or an extra line was specified, it is also forgotten.
+
+The @command{new-boilerplate} command is equivalent to:
+@example
+licensing choose no-license no-style --quiet
+licensing copyright --remove --quiet
+licensing project --remove --quiet
+licensing top --remove --quiet
+licensing extra --remove --quiet
+echo "Removed." >&2
+@end example
+
+The @option{--quiet} option prevents the final @samp{Removed.} message from being displayed.
 
 @node choose invocation
 @section @command{choose}: Pick license and comment style for boilerplate
 @pindex choose
 @cindex select a license
-@cindex select a comment style
+@cindex select a commenting style
 @cindex add a license to the current working boilerplate
-@cindex add a comment style to the current working boilerplate
+@cindex add a commenting style to the current working boilerplate
 @cindex current working boilerplate, adding a license notice
 @cindex current working boilerplate, changing the commenting style
 
-foo
+The @command{choose} command selects a license notice and commenting style for the current working boilerplate.  The most common execution of this command is:
+@example
+$ licensing choose gpl c
+Selected.
+@end example
+This example selects the latest version of the GNU General Public License and the C commenting style.  It is equivalent to:
+@example
+$ licensing choose c
+Selected.
+$ licensing choose gplv3+
+Selected.
+@end example
+
+To perform dual-licensing, more than one license can be selected.  For example:
+@example
+$ licensing choose gpl apache c
+Selected.
+@end example
+
+When more than one commenting style is given to the @command{choose} command, the final commenting style is the one that is selected.
+
+Tab completion will display the available commenting styles and licenses.  Alternatively, @command{choose --help} will suffice.
+
+Although all of the available licenses are compatible with the GPL, some of them are not recommended.  To select one of the unrecommended licenses, the @command{choose} command must be called with the @command{--force} option.
+
+When @command{choose} is executed in the @command{lush} shell, the prompt changes to reflect the selected licenses and commenting style.
+
+The @option{--quiet} option prevents the final @samp{Selected.} message from appearing.
+
+@subsection Subsequent calls of the @command{choose} command.
+
+Subsequent calls to the @command{choose} command will override previous calls.  After the current working boilerplate has been applied to some source files, it is often useful to @command{choose} a different commenting style before applying it to another file (e.g. all other aspects of the current working boilerplate are left unchanged except for the commenting style).
 
 @node copyright invocation
 @section @command{copyright}: Add a copyright notice to the boilerplate
