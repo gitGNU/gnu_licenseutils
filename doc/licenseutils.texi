@@ -649,7 +649,7 @@ The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} messag
 
 Sometimes projects like to add an identifying line to their boilerplate.  This ensures that the origin of the file is clear when the file propagates out to another project.
 
-The @command{preview} command adds a line to the current working boilerplate that identifies the project.  It is most commonly used like this:
+The @command{preview} command adds a line to the current working boilerplate that identifies the project.  The new line appears after the copyright holders in the boilerplate.  It is most commonly used like this:
 
 @example
 $ licensutils project GNU findutils
@@ -674,18 +674,40 @@ Subsequent calls to the @command{project} command override earlier calls.
 
 The @option{--remove} option is provided to completely remove the project line from the current working boilerplate.
 
-The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} message from being displayed.
+The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} messages from being displayed.
 
 @node extra invocation
 @section @command{extra}: Add some extra text to the boilerplate
 @pindex extra
 @cindex add a some extra text to the current working boilerplate
 @cindex current working boilerplate, adding extra text
+
+The @command{extra} command specifies some arbitrary text to be shown before the license notices.  Perhaps the copyright holder is an organisation and it is useful to include the actual names of the authors of the file.  Or perhaps it is useful to insert some explanatory text describing how the work is dual-licensed.
+
+To specify some extra text, use the @command{extra} command like so:
+
+@example
+$ licensing extra "Written by Thomas Pynchon <tom@@yoyodyne.net>."
+Added.
+@end example
+
+The double quotes are added in this example so that @samp{<} and @samp{>} aren't treated as redirection symbols by the shell.
+
+As with @command{copyright}, @command{top}, and @command{project}, when the @command{extra} command is executed without any arguments, the current extra text is displayed:
+
+@example
+$ licensing extra
+Written by Thomas Pynchon <tom@@yoyodyne.net>.
+@end example
+
+Subsequent calls of the @command{extra} command override earlier calls.
+
+The @option{--remove} option removes the extra text from the current working boilerplate.
+
+To prevent the @samp{Added.} or @samp{Removed.} messages from being displayed, use the @option{--quiet} option.
+
 @node Writing boilerplate
 @chapter Writing boilerplate
-
-foo
-
 @cindex writing boilerplate 
 @cindex boilerplate, writing of
 
