@@ -528,7 +528,92 @@ Subsequent calls to the @command{choose} command will override previous calls.  
 @cindex remove a copyright holder from the current working boilerplate
 @cindex current working boilerplate, adding a copyright notice
 
-foo
+The @command{copyright} command adds or removes copyright notices to or from the current working boilerplate.  When the @command{copyright} command is called without any arguments, the copyright notices in the current working boilerplate are displayed.
+
+The command is most commonly used to add copyright holders in this way:
+@example
+$ licensing copyright Yoyodyne, Inc. 2001
+Copyright (C) 2001 Yoyodyne, Inc.
+Added.
+@end example
+Years can be given in a comma-separated list, and with a range separated by a hyphen.  For example:
+@example
+$ licensing copyright Yoyodyne, Inc. 2001,2003-2005
+Copyright (C) 2001, 2003, 2004, 2005 Yoyodyne, Inc.
+Added.
+@end example 
+When the years happen to be supplied with an incorrect ordering, (e.g. 2003 before 2001) the @command{copyright} command will sort them properly.
+
+The @option{--abbreviate-years} option (@option{-a}) will abbreviate the years as expected:
+@example
+$ licensing copyright Yoyodyne, Inc. 2001,2003-2005 -a
+Copyright (C) 2001, 2003-2005 Yoyodyne, Inc.
+Added.
+@end example 
+
+More than one copyright holder can be specified in a single call to @command{copyright} by passing the names through the standard input, like so:
+@example
+cat << EOF | licensing copyright 2001-8 -a
+Yoyodyne, Inc.
+Thomas Pynchon
+EOF 
+Copyright (C) 2001-2008 Yoyodyne, Inc., Thomas Pynchon
+Added.
+@end example
+This example separates multiple copyright holders by commas.  Also notice the way that @samp{2001-2008} is originally given as @samp{2001-8}.
+
+The @option{--one-per-line} option dispenses with the commas and shows a single copyright holder per line.  For example:
+@example
+cat << EOF | licensing copyright 2001-8 -a --one-per-line
+Yoyodyne, Inc.
+Thomas Pynchon
+EOF 
+Copyright (C) 2001-2008 Yoyodyne, Inc.
+Copyright (C) 2001-2008 Thomas Pynchon
+Added.
+@end example
+
+When the names of copyright holders can't all fit on the same 80 character line, they are moved to the following line like so:
+@example
+cat << EOF | licensing copyright 2001-8 
+Yoyodyne, Inc.
+Thomas Pynchon
+EOF 
+Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Yoyodyne, Inc.
+Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Thomas Pynchon
+Added.
+@end example
+
+The @option{--quiet} option will prevent the @samp{Added.} message and the copyright notices in the current working boilerplate from being displayed.
+
+There are two options for controlling the appearance of the @samp{(C)}.  The @option{--small-c} option will display @samp{(c)} instead, while the @option{--unicode-sign} option will display @samp{©} instead.
+
+The @option{--dry-run} option simply shows the new copyright line without changing the current working boilerplate.
+
+@subsection Subsequent calls of the @command{copyright} command.
+
+Subsequent calls of the @command{copyright} command will add more copyright holders to the current working boilerplate.  New copyright holders appear after any previously added copyright holders.
+
+When one copyright holder has already been specified and another is added, the @command{copyright} command will subsequently display two lines, not one.  One line is displayed for each copyright holder.
+
+@subsection Removing copyright notices
+
+Recall that to show the copyright holders in the current working boilerplate, the @command{copyright} command is called without any arguments:
+
+@example
+$ licensing copyright
+Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Yoyodyne, Inc.
+Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Thomas Pynchon
+@end example
+
+To remove the second copyright holder (Thomas Pynchon), use the @option{--remove} option:
+
+@example
+$ licensing copyright --remove=1
+Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Yoyodyne, Inc.
+Removed.
+@end example
+The argument to the @option{--remove} option starts counting at 0, so the second line is referenced by the number 1.
 
 @node top invocation
 @section @command{top}: Add a top line to the boilerplate
