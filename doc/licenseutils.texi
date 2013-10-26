@@ -590,6 +590,8 @@ There are two options for controlling the appearance of the @samp{(C)}.  The @op
 
 The @option{--dry-run} option simply shows the new copyright line without changing the current working boilerplate.
 
+Sometimes long lines can be created by the @command{copyright} command.  These long lines will be wrapped in the @command{preview} and @command{apply} commands.
+
 @subsection Subsequent calls of the @command{copyright} command.
 
 Subsequent calls of the @command{copyright} command will add more copyright holders to the current working boilerplate.  New copyright holders appear after any previously added copyright holders.
@@ -621,7 +623,23 @@ The argument to the @option{--remove} option starts counting at 0, so the second
 @cindex add an initial line to the current working boilerplate
 @cindex current working boilerplate, adding an initial line
 
-foo
+Boilerplate can sometimes have an initial line that gives a short description of the file.  The @command{top} command is used to specify that "top" line of the current working boilerplate:
+@example
+$ licensing top "frcode.c: front-compress a sorted list"
+Added.
+@end example
+
+Subsequent calls of the @command{top} command will override previous calls.  The idea here is to iterate through each source file, and calling @command{top} before @command{apply}-ing the boilerplate.
+
+Running the @command{top} command without any arguments displays the top line in the current working boilerplate:
+@example
+$ licensing top
+frcode.c: front-compress a sorted list
+@end example
+
+The @option{--remove} option will remove the top line from the current working boilerplate.
+
+The @option{--quiet} option prevents the @samp{Added.} or @samp{Removed.} message from being displayed.
 
 @node project invocation
 @section @command{project}: Add a project-identifier to the boilerplate
