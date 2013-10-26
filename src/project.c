@@ -32,7 +32,7 @@ static struct argp_option argp_options[] =
 {
     {"remove", 'r', NULL, 0, 
       N_("remove the project line from the current working boilerplate.")},
-    {"belongs", OPT_BELONGS, NULL, 0, N_("use `this file belongs' altenative text")},
+    {"belongs", OPT_BELONGS, NULL, 0, N_("use `this file belongs' alternative text")},
     {"quiet", 'q', NULL, 0, N_("don't show diagnostic messages")},
     {0}
 };
