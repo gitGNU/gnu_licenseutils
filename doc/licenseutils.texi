@@ -795,6 +795,10 @@ For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option d
 For the @command{comment} command, this option creates a comment in the pascal style.
 @end table
 
+There is a @option{--style} option that requires the name of a commenting style as an argument.  This option does not appear in the @option{--help} of commands, but it still works.
+
+For the sake of brevity, only a subset of the commenting styles are shown in the @option{--help} of commands.  The @option{--help-all-styles} option will display all of the supported commenting style options.
+
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
 
