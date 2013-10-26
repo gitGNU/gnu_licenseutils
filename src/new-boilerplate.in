@@ -61,7 +61,7 @@ rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
 retval="$?"
 
 if [ "$quiet" == "0" ]; then
-  echo "Removed." >> /dev/stderr
+  echo "Removed." >&2
 fi
 
 exit $retval
