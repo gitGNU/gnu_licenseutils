@@ -440,7 +440,7 @@ When removing comments, a @file{.bak} backup file is created by default.  To pre
 @cindex creating boilerplate
 @cindex boilerplate, creation of
 
-These commands modify the current working boilerplate in some way.
+These commands modify the current working boilerplate in some way.  It is natural to run the @command{preview} command after running one of these commands to see how the current working boilerplate looks.
 
 @menu
 * new-boilerplate invocation::  Reset the current working boilerplate
@@ -515,6 +515,8 @@ Although all of the available licenses are compatible with the GPL, some of them
 When @command{choose} is executed in the @command{lush} shell, the prompt changes to reflect the selected licenses and commenting style.
 
 The @option{--quiet} option prevents the final @samp{Selected.} message from appearing.
+
+The @command{choose} command requires internet connectivity to download the licenses from the @url{www.fsf.org} or @url{www.gnu.org}.
 
 @subsection Subsequent calls of the @command{choose} command.
 
@@ -726,7 +728,49 @@ These commands write boilerplate to files.
 @cindex add boilerplate to a source file
 @cindex current working boilerplate, adding to a source file
 
-foo
+After a current working boilerplate has been created, and it looks good in the @command{preview} command, it is time to actually put the boilerplate into files.  @command{apply} is the command that is used to write the current working boilerplate to source code files.  When starting a new project, it is used like so:
+
+@example
+$ ls
+bar.c  foo.c  foo.h  Makefile  qux.c
+$ licensing apply *.[ch]
+apply: foo.c -> Boilerplate applied.
+apply: bar.c -> Boilerplate applied.
+apply: qux.c -> Boilerplate applied.
+apply: foo.h -> Boilerplate applied.
+@end example
+This example applies the boilerplate to all of the @file{.c} and @file{.h} files in the current directory.
+
+When a source file happens to be a script, the boilerplate will appear after the @samp{#!} line.
+To place the boilerplate after any previously existing boilerplate in the source file, use the @option{--after} option.  When the commenting-style is not specified with an option (see @ref{Common Commenting-style options}, it is automatically detected.  For example:
+
+@example
+$ cat foo.sh
+#!/bin/bash
+# hello world
+echo hello world
+$ licensing choose all-permissive shell --quiet
+$ licensing copyright Yoyodyne, Inc. 2001 --quiet
+$ licensing apply foo.sh --after --shell-style --no-backup
+apply: foo.sh -> Boilerplate applied.
+$ cat foo.sh
+#!/bin/bash
+# hello world
+# Copyright (C) 2001 Yoyodyne, Inc.
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+echo hello world
+@end example
+This example puts the current working boilerplate after the shell boilerplate in foo.sh.
+
+By default a backup @file{.bak} file is created; to prevent this behaviour use the @option{--no-backup} option. 
+
+The @option{--quiet} option prevents the @samp{Boilerplate applied.} messages from being displayed.
+
+Subsequent calls to the @command{apply} command are cumulative.  If a mistake has been made, it can be removed with the @samp{boilerplate --remove} command.
 
 @node png-apply invocation
 @section @command{png-apply}: Write the working boilerplate to .png files
@@ -785,7 +829,7 @@ foo
 
 These commands display licenses and license notices.  Licenses are the full terms and conditions, while notices are simply disclaimers about which license is being used.  Some licenses are small enough to not require a license notice.
 
-Licenses and license notices are fetched on-demand from the gnu.org or fsf.org website.
+Licenses and license notices are fetched on-demand from the @url{gnu.org} or @url{fsf.org} website.
 
 @menu
 * gpl invocation::            Show the GNU General Public License notice
@@ -909,43 +953,36 @@ These commands just display text of one sort or another.
 @node Common Commenting-style options
 @chapter Common command-line options for commenting-style detection
 
-These options appear in the @command{boilerplate}, @command{cbb}, @command{comment}, and @command{uncomment} commands.
+These options appear in the @command{boilerplate}, @command{cbb}, @command{comment}, @command{uncomment}, and @command{apply} commands.
 @table @option
 @item --c-style
 For @command{boilerplate} and @command{cbb}, this option detects comments at the start of the file in blocks like: @samp{/* this */}, or whole-line comments like @samp {// this}.
-For the @command{comment} command, this option creates a comment in the C style.
 @item --c++-style
 Same as @samp{--c-style}.
-For the @command{comment} command, this option creates a comment in the C++ style.
 @item --shell-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}.
-For the @command{comment} command, this option creates a comment in the shell style.
 @item --scheme-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{; this}.
-For the @command{comment} command, this option creates a comment in the scheme style.
 @item --texinfo-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{@@c this} or @samp{@@comment this}.
-For the @command{comment} command, this option creates a comment in the texinfo style.
 @item --m4-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}, or @samp{dnl this}.  
-For the @command{comment} command, this option creates a comment in the m4 style.
 @item --haskell-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in blocks like @samp{@{- this - @}}, or whole-line comments like @samp{-- this}.
-For the @command{comment} command, this option creates a comment in the haskell style.
 @item --groff-style
 Groff is the GNU program for making man pages.  It is also called troff.
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like: @samp{\" this}, @samp{.\" this}, @samp{\" this}, or @samp{.\" this}.
-For the @command{comment} command, this option creates a comment in the groff style.
 @item --gettext-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}.  The space after @samp{#} is required, as @samp{#,} and @samp{#:} are valid gettext symbols and not comments.
-For the @command{comment} command, this option creates a comment in the gettext style.
 @item --fortran-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{C this}, or @samp{! this}.  
-For the @command{comment} command, this option creates a comment in the fortran style.
 @item --pascal-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in blocks like @samp{(* this *)}, or @samp{@{* this *@}}, or whole-line comments like @samp{// this}.
-For the @command{comment} command, this option creates a comment in the pascal style.
 @end table
+
+For the @command{apply} command, these options put the current working boilerplate after the existing boilerplate in the given style.
+
+For the @command{comment} command, this option creates a comment in the given style.
 
 There is a @option{--style} option that requires the name of a commenting style as an argument.  This option does not appear in the @option{--help} of commands, but it still works.
 
