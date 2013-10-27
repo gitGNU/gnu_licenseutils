@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <argz.h>
 #include <glib.h>
+#include <sys/stat.h>
 #include "licensing_priv.h"
 #include "boilerplate.h"
 #include "gettext-more.h"
@@ -271,12 +272,14 @@ comments_contain_copyright_notice (char *argz, size_t len)
 static int
 remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t *options, char *filename, int from_stdout)
 {
+  struct stat st;
   char *comment_blocks = NULL;
   size_t len = 0;
   int err = 0;
   FILE *fp = fopen (filename, "r");
   if (!fp)
     return err;
+  fstat (fileno (fp), &st);
   char *hashbang = NULL;
   if (options->style == NULL)
     auto_detect_comment_blocks (filename, fp, &comment_blocks, &len, &hashbang);
@@ -317,6 +320,7 @@ remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t
       len = 0;
     }
 
+
   char *swpfilename = xasprintf ("%s.swp", filename);
   char *bakfilename = xasprintf ("%s.bak", filename);
   FILE *out;
@@ -351,6 +355,7 @@ remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t
       free(line);
       if (!from_stdout)
         fclose (out);
+      err = chmod (swpfilename, st.st_mode);
       rename (filename, bakfilename);
       rename (swpfilename, filename);
       if (from_stdout || options->no_backups)
