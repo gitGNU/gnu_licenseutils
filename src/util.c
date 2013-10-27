@@ -314,7 +314,10 @@ uncomment_comment (char **comment, char *delimiters, char *synonymous_delimiter,
             end = strspn (rev, synonymous_delimiter);
           free (rev);
           t[strlen (t)-end] = '\0';
-          argz_add (&argz, &len, t+start);
+          if (strlen (t+start) == 0 && whitespace)
+            ;
+          else
+            argz_add (&argz, &len, t+start);
           free (t);
         }
       c = ++nl;
