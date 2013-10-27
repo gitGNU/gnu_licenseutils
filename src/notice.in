@@ -116,7 +116,7 @@ fi
 
 #copy the old files away
 oldconf=`mktemp -d`
-cp ~/.@PACKAGE@/* $oldconf
+cp ~/.@PACKAGE@/* $oldconf 2>/dev/null
 
 rm -f ~/.@PACKAGE@/top-line  2> /dev/null && \
 rm -f ~/.@PACKAGE@/copyright-holders 2> /dev/null && \
@@ -129,7 +129,7 @@ rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
 retval=$?
 
 #put the old files back
-mv $oldconf/* ~/.@PACKAGE@/
-rmdir $oldconf
+mv $oldconf/* ~/.@PACKAGE@/ 2>/dev/null
+rmdir $oldconf 2>/dev/null
 
 exit $retval
