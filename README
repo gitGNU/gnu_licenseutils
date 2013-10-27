@@ -261,3 +261,5 @@ Maybe also added a written-by command too.  for when copyright is owned by anoth
 
 
 various commands say something like "Try `choose --help'" in their error messaging.  this doesn't quite make sense for users running the bash shell instead of the lush shell.  it should say "Try licensing `choose --help'" instead when it's supposed to do that.
+
+The help command in the lush shell cannot be autocompleted because there's another completion script `help' that matches first.
