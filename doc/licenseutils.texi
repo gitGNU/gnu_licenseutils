@@ -802,7 +802,24 @@ In the PNG file-format, there are named text sections.  This command creates a n
 @pindex prepend
 @cindex add a file to the start of another file
 
-foo
+When the current working boilerplate that @command{licensing} produces is insufficient in some way, the @command{prepend} command provides more control.  For example, some free software developers prefer to change the GNU GPL license notice to replace @samp{This software} with the name of their program.  Others may have different tastes in commenting styles or indentation.  The purpose of this command is to allow that kind of extra control.
+
+The @command{prepend} command is similar to the @command{apply} command but instead of adding the current working boilerplate to the beginning of source code files, an arbitrary file can be added.  A file can be prepended in two ways.  The first way looks like this:
+
+@example
+$ licensing prepend myfile.txt foo.c --no-backup
+@end example
+
+In the second way, the same input file can be added via the standard input.
+@example
+$ cat myfile.txt | licensing prepend foo.c --no-backup
+@end example
+
+These two commands are equivalent.  Both add @file{myfile.txt} to the beginning of @file{foo.c}, while not retaining the original @file{foo.c} file in a backup file.
+
+When the destination file happens to be a script, the input file will appear after the @samp{#!} line.
+
+To place the input file after any previously existing boilerplate in the source file, use the @option{--after} option.  Specify a commenting-style with one of the common options (see @ref{Common Commenting-style options}, or the previously existing boilerplate in the destination file is automatically detected.
 
 @node notice invocation
 @section @command{notice}: Create and write a copyright and license notice to a file.
