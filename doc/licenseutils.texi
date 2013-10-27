@@ -965,7 +965,25 @@ The @command{uncomment} tries to not operate on comments that it thinks are inva
 
 These commands display licenses and license notices.  Licenses are the full terms and conditions, while notices are simply disclaimers about which license is being used.  Some licenses are small enough to not require a license notice.
 
-Licenses and license notices are fetched on-demand from the @url{gnu.org} or @url{fsf.org} website.
+There could be a slight delay in the operation of these commands because licenses and license notices are fetched on-demand from the @url{www.gnu.org} or @url{www.fsf.org} websites.
+
+Each of these license commands provides one or more license keywords to the @command{choose} command.  To see the license keywords that a command provides, run @samp{licensing COMMAND --list-licenses}.  For example:
+@example
+$ licensing gpl --list-licenses
+gplv3+ gpl --v3
+gplv3  gpl --v3 --jerkwad
+gplv2+ gpl --v2
+gplv2  gpl --v2 --jerkwad
+gplv1+ gpl --v1
+gplv1  gpl --v1 --jerkwad
+@end example
+This example shows the licensing keywords that the @command{gpl} command provides to the @command{choose} command.  The use of @option{--jerkwad} is special -- when the @command{choose} command gets a license keyword that uses it, the license is not recommended, and the @option{--force} option must be used.  For example:
+@example
+$ licensing choose gplv3
+choose: `gplv3' is unrecommended!  Use --force, or maybe try `gplv3+'
+@end example
+This example shows how the @command{choose} command requires a @option{--force} option when a license keyword includes the @option{--jerkward} option.
+Although the GNU General Public License version 3 is a fine license, it is not recommended to remove the @emph{Or any later version} clause because future improvements to the GPL cannot be automatically granted.
 
 @menu
 * gpl invocation::            Show the GNU General Public License notice
@@ -986,7 +1004,13 @@ Licenses and license notices are fetched on-demand from the @url{gnu.org} or @ur
 @cindex GNU GPL, showing the
 @cindex GNU GPL notice, showing the
 
-foo
+The @command{gpl} command displays the license notice for the latest version of the GNU General Public License.  Options @option{--v1}, @option{--v2}, and @option{--v3} control which version of the license is shown.
+
+To display the full license text instead of just the license notice, use the @option{--full} option.  To see the full text in html, use the @option{--full-html} option.
+
+The @option{--jerkwad} option removes the @emph{Or any later version} clause from the license notice.
+
+This command downloads the license from @url{www.gnu.org/licenses/gpl.txt}.
 
 @node lgpl invocation
 @section @command{lgpl}: Show the GNU Lesser General Public License notice
@@ -995,7 +1019,13 @@ foo
 @cindex GNU LGPL, showing the
 @cindex GNU LGPL notice, showing the
 
-foo
+The @command{lgpl} command displays the license notice for the latest version of the GNU Lesser General Public License.  Options @option{--v2}, @option{--v2.1}, and @option{--v3} control which version of the license is shown.
+
+To display the full license text instead of just the license notice, use the @option{--full} option.  To see the full text in html, use the @option{--full-html} option.
+
+The @option{--jerkwad} option removes the @emph{Or any later version} clause from the license notice.
+
+This command downloads the license from @url{www.gnu.org/licenses/lgpl.txt}, except for version 3 of the license notice.  A local copy of the version 3 license notice is used.
 
 @node agpl invocation
 @section @command{agpl}: Show the GNU Affero General Public License notice
@@ -1004,7 +1034,13 @@ foo
 @cindex GNU AGPL, showing the
 @cindex GNU AGPL notice, showing the
 
-foo
+The @command{agpl} command displays the license notice for the GNU Affero General Public License. 
+
+To display the full license text instead of just the license notice, use the @option{--full} option.  To see the full text in html, use the @option{--full-html} option.
+
+The @option{--jerkwad} option removes the @emph{Or any later version} clause from the license notice.
+
+This command downloads the license from @url{www.gnu.org/licenses/agpl.txt}.
 
 @node fdl invocation
 @section @command{fdl}: Show the GNU Free Documentation License notice
@@ -1013,22 +1049,38 @@ foo
 @cindex GNU FDL, showing the
 @cindex GNU FDL notice, showing the
 
-foo
+The @command{fdl} command displays the license notice for the latest version of the GNU Free Documentation License.  Options @option{--v1.1}, @option{--v1.2}, and @option{--v1.3} control which version of the license is displayed.
+
+To display the full license text instead of just the license notice, use the @option{--full} option.  To see the full text in html, use the @option{--full-html} option.
+
+The @option{--jerkwad} option removes the @emph{Or any later version} clause from the license notice.
+
+This command downloads the license from @url{www.gnu.org/licenses/fdl.txt}.
 
 @node all-permissive invocation
 @section @command{all-permissive}: Show the GNU All-Permissive License
 @pindex all-permissive
 @cindex GNU All-Permissive License, showing the
 
-foo
+The @command{all-permissive} command displays the GNU All-Permissive License.
+
+This license is short enough to also serve as a license notice.
+
+@command{all-permissive} downloads the license from @url{www.gnu.org/prep/maintain/html_node/License-Notices-for-Other-Files.html}.
 
 @node bsd invocation
 @section @command{bsd}: Show the Berkeley Software Distribution license
 @pindex bsd
 @pindex BSD
-@cindex Berkely Software Distribution license, showing the
+@cindex Berkeley Software Distribution license, showing the
 
-foo
+The @command{bsd} command displays the Berkeley Software Distribution License.  The options @option{--2-clause} and @option{--3-clause} control which variant of the license is displayed.
+
+This license is short enough to also serve as a license notice.
+
+This command downloads the license from @url{directory.fsf.org/wiki/License:BSD_3Clause}.
+
+By default the three clause BSD license is shown.  This license is easily confused with the OpenBSD license.  See @ref{isc invocation} for more information.
 
 @node apache invocation
 @section @command{apache}: Show the Apache License notice
@@ -1036,7 +1088,11 @@ foo
 @cindex Apache License, showing the
 @cindex Apache license notice, showing the
 
-foo
+The @command{apache} command displays the license notice for the latest version of the Apache License.
+
+To display the full license text instead of just the license notice, use the @option{--full} option.
+
+This command downloads the Apache License from @url{directory.fsf.org/wiki/License:Apache2.0}.
 
 @node mit invocation
 @section @command{mit}: Show the MIT license
@@ -1044,7 +1100,11 @@ foo
 @pindex MIT
 @cindex MIT license, showing the
 
-foo
+The @command{mit} command displays the Massachusetts Institute of Technology License.  It is also known as the X11 License.
+
+This license is short enough to also serve as a license notice.
+
+@command{mit} downloads the license from @url{directory.fsf.org/wiki/License:X11}.
 
 @node isc invocation
 @section @command{isc}: Show the ISC license
@@ -1052,7 +1112,11 @@ foo
 @pindex ISC
 @cindex ISC license, showing the
 
-foo
+The @command{isc} command displays the Internet Systems Consortium License.  It is also known as the OpenBSD License.
+
+This license is short enough to also serve as a license notice.
+
+@command{isc} downloads the license from @url{directory.fsf.org/wiki/License:ISC}.
 
 @node Informational commands
 @chapter Informational commands
@@ -1073,18 +1137,72 @@ These commands just display text of one sort or another.
 @cindex show the current working boilerplate
 @cindex current working boilerplate, showing the
 
+The current working boilerplate is sort of a notional concept.  It doesn't exist as a file anywhere until the @command{preview} command generates it.  The @command{preview} command simply displays the current working boilerplate on the standard output.
+
+It will fail to display when license has not been selected (with the @command{choose} command, see @ref{choose invocation}), or a copyright holder hasn't been specified yet (with the @command{copyright} command, see @ref{copyright invocation}.)
+
+Here is an example of the preview command:
+@example
+$ licensing choose all-permissive
+Selected.
+$ licensing copyright Yoyodyne, Inc. 2001  --quiet
+$ licensing preview
+Copyright (C) 2001 Yoyodyne, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
+
+@end example
+In this example we see the preview command displaying a simple all-permisive boilerplate.
+
+It is natural to run this command often after making changes to the current working boilerplate.  To see which commands can change the current working boilerplate see @ref{Creating boilerplate}.  Some users may wish to pipe the output of @command{preview} through @command{less} when it is large; for example: @samp{licesning preview | less}.
+
+The @command{apply} and @command{png-apply} commands rely on the @command{preview} command to generate the current working boilerplate before writing it to files.
+
 @node welcome invocation
 @section @command{welcome}: Show the welcome message
 @pindex welcome
+
+The @command{welcome} command is displayed when the @command{lush} shell is started in interactive-mode.  It looks like this:
+
+@example
+licenseutils 0.0.6
+Copyright (C) 2013 Ben Asselstine
+This is free software with ABSOLUTELY NO WARRANTY.
+For warranty details type `warranty'.
+For a list of commands type `help'.
+@end example
+
+To start the @command{lush} shell without the welcome message, run @samp{licensing --quiet}.
 
 @node warranty invocation
 @section @command{warranty}: Show the warranty message
 @pindex warranty
 
+The @command{warranty} command displays the version and license of Licenseutils, which includes a disclaimer about the warranty of the software.  It is included for completeness, and also the because the GPL suggests it be present.
+
 @node help invocation
 @section @command{help}: Get help on commands
 @pindex help
 @cindex getting help on commands
+
+The @command{help} command displays a list of all commands, and also can display the @option{--help} of individual commands.
+
+To see a list of all of the commands that @command{licensing} accepts, type @samp{licensing help}.  The list of commands will be separated into license commands, and the rest.
+
+To get more help on a specific command, type @samp{licensing help COMMAND}.  For example:
+
+@example
+$ licensing help all-permissive
+Usage: all-permissive [OPTION...] 
+Show the GNU All-Permissive License.
+
+  -?, --help                 give this help list
+      --usage                give a short usage message
+@end example
+This example displays the help for the @command{all-permissive} command.  It is equivalent to running @samp{licensing all-permissive --help}.
 
 @node Common Commenting-style options
 @chapter Common command-line options for commenting-style detection
