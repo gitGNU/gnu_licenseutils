@@ -1,6 +1,4 @@
 
-need a texinfo manual
-
 removing boilerplate changes the mode of the file. need to retain the mode.
 
 png-boilerplate needs a --force option when a copyright notice is encountered.
