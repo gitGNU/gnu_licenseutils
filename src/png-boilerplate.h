@@ -27,6 +27,7 @@ struct lu_png_boilerplate_options_t
   struct lu_state_t *state;
   int remove;
   int no_backups;
+  int force;
   char *input_files;
   size_t input_files_len;
 };

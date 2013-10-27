@@ -29,6 +29,7 @@ static struct argp_option argp_options[] =
 {
     {"remove", 'r', NULL, 0, N_("remove the comment in FILE")},
     {"no-backup", 'n', NULL, 0, N_("don't save .bak files when removing boilerplate")},
+    {"force", 'f', NULL, 0, N_("force the removal copyright notices")},
     {0}
 };
 
@@ -40,6 +41,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
     opt = (struct lu_png_boilerplate_options_t*) state->input;
   switch (key)
     {
+    case 'f':
+      opt->force = 1;
+      break;
     case 'n':
       opt->no_backups = 1;
       break;
@@ -52,6 +56,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case ARGP_KEY_INIT:
       opt->remove = 0;
       opt->no_backups = 0;
+      opt->force = 0;
       opt->input_files = NULL;
       opt->input_files_len = 0;
       break;
@@ -60,6 +65,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
         {
           argp_failure (state, 0, 0, 
                         N_("--no-backup can only be used with --remove"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
+      if (opt->force && !opt->remove)
+        {
+          argp_failure (state, 0, 0, 
+                        N_("--force can only be used with --remove"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
       break;
@@ -137,6 +148,16 @@ nowarn (png_structp png, const char *msg)
 {
   return;
 }
+
+static int
+contains_copyright (char *text)
+{
+  if (g_regex_match_simple ("[Cc]opyright.*(19[0-9][0-9]|20[0-9][0-9])", text, 
+                            G_REGEX_CASELESS, 0))
+    return 1;
+  return 0;
+}
+
 static void
 remove_comment (FILE *fp, FILE *out)
 {
@@ -206,7 +227,6 @@ remove_comment (FILE *fp, FILE *out)
     row_pointers[i] = raster + (i * rowbytes);
   png_read_image (inpng, row_pointers);
 
-
   //now write it all out
 
   png_write_info (outpng, ininfo);
@@ -238,6 +258,18 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
   FILE *fp = fopen (f, "rb");
   if (fp)
     {
+      char *text = get_comment (fp, f);
+      if (text)
+        {
+          if (contains_copyright (text) && !options->force)
+            {
+              fprintf (stderr, _("%s: `%s' contains copyright notices.  use --force to remove them.'\n"), png_boilerplate.name, f);
+              free (text);
+              return;
+            }
+          free (text);
+        }
+      rewind (fp);
       memset (signature, 0, sizeof (signature));
       if (fread (signature, 1, 8, fp) != 8)
         {
@@ -259,8 +291,22 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
   if (options->no_backups == 0)
     {
       char *new_filename = xasprintf ("%s.bak", f);
-      rename (f, new_filename);
-      rename (tmp, f);
+      if (new_filename)
+        {
+          int err = rename (f, new_filename);
+          if (err)
+            {
+              fprintf (stderr, "%s: couldn't move %s -> %s (%s)\n", 
+                       png_boilerplate.name, f, new_filename, strerror(errno));
+              return;
+            }
+          char *cmd = xasprintf ("mv %s %s", tmp, f);
+          if (cmd)
+            {
+              system (cmd);
+              free (cmd);
+            }
+        }
     }
   else
     {
