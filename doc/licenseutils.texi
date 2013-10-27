@@ -592,7 +592,7 @@ There are two options for controlling the appearance of the @samp{(C)}.  The @op
 
 The @option{--dry-run} option simply shows the new copyright line without changing the current working boilerplate.
 
-Sometimes long lines can be created by the @command{copyright} command.  These long lines will be wrapped in the @command{preview} and @command{apply} commands.
+Long lines can sometimes be created by the @command{copyright} command.
 
 @subsection Subsequent calls of the @command{copyright} command
 
@@ -829,9 +829,9 @@ To place the input file after any previously existing boilerplate in the source 
 @section @command{notice}: Create and write a copyright and license notice to a file.
 @pindex notice
 
-The @command{notice} command is a simple way to add a boilerplate to a set of source code files that has a single copyright holder and a single license notice.
+The @command{notice} command is a simple way to add a boilerplate to a set of source code files.
 
-The copyright option @option{-c}  and license option @option{-l} are @emph{required options} in the @command{notice} command.  When specified more than once only the final option is used.
+The copyright option @option{-c}, license option @option{-l} and commenting style option @option{-s} are @emph{required options} in the @command{notice} command.  When @option{-s} is specified more than once only the final option is used.  Options @option{-c} and @option{-l} can be specified more than once to add more than one copyright holder, or more than one license notice.
 
 The @command{notice} command is most often used like so:
 @example

@@ -63,6 +63,8 @@ readopt='getopts $opts opt;rc=$?;[ $rc$opt == 0? ]&&exit 1;[ $rc == 0 ]||{ shift
 opts=n?l:s:c:
 
 # Enumerating options
+declare -a copyright_holders
+count=0
 while eval $readopt
 do
   case "$opt" in
@@ -73,13 +75,21 @@ do
     backup="--no-backup"
     ;;
   l)
-    license=$OPTARG
+    license="$license $OPTARG"
     ;;
   s)
     style=$OPTARG
     ;;
   c)
-    copyright=$OPTARG
+    licensing copyright --dry-run -- $OPTARG 2>/dev/null >/dev/null
+    retval=$?
+    if [ "x$retval" == "x0" ]; then
+      copyright_holders[$count]=`echo $OPTARG`
+      count=`expr $count + 1`
+    else
+      licensing copyright --dry-run -- $OPTARG
+      exit 1
+    fi
     ;;
   esac
 done
@@ -103,7 +113,7 @@ if [ "x$style" == "x" ]; then
   echo "Try '$(basename $0) --help' for more information."
   exit 1
 fi
-if [ "x$copyright" == "x" ]; then
+if [ "x$count" == "x0" ]; then
   echo "$(basename $0): you must supply a copyright holder with -c"
   echo "Try '$(basename $0) --help' for more information."
   exit 1
@@ -125,8 +135,15 @@ rm -f ~/.@PACKAGE@/extra-line  2> /dev/null && \
 rm -f ~/.@PACKAGE@/selected-licenses 2>/dev/null && \
 rm -f ~/.@PACKAGE@/license-notice 2>/dev/null
 
-@PROGRAM@ new-boilerplate --quiet && @PROGRAM@ choose --quiet $license $style && @PROGRAM@ copyright --quiet $copyright && @PROGRAM@ apply --quiet $backup $* && @PROGRAM@ new-boilerplate --quiet
+@PROGRAM@ new-boilerplate --quiet 
+
+count=`expr $count - 1`
+for i in `seq 0 $count`; do
+  @PROGRAM@ copyright --quiet -- ${copyright_holders[$i]} 
+done
+@PROGRAM@ choose --quiet -- $license $style && @PROGRAM@ apply $backup -- $* 
 retval=$?
+@PROGRAM@ new-boilerplate --quiet
 
 #put the old files back
 mv $oldconf/* ~/.@PACKAGE@/ 2>/dev/null
