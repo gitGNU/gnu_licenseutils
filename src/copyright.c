@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 #include <argz.h>
 #include "licensing_priv.h"
 #include "copyright.h"
@@ -117,11 +118,123 @@ display_copyright()
     }
 }
 
+int compare_ints (const void *l, const void *r)
+{
+  int left = *(int*)l;
+  int right = *(int*)r;
+  return left > right;
+}
+
+static int*
+make_lineno_array (char *argz, size_t len, size_t *count)
+{
+  int max = argz_count (argz, len);
+  int *lines = (int*) malloc (max * sizeof (int));
+
+  char *n = NULL;
+  *count = 0;
+  while ((n = argz_next (argz, len, n)))
+    {
+      lines[*count] = atoi (n);
+      (*count)++;
+    }
+  qsort (lines, *count, sizeof (int), compare_ints);
+  return lines;
+}
+
 static int
-remove_copyright_line (int line, struct lu_copyright_options_t *options)
+remove_lines (FILE *fp, int *linenos, size_t count, char **data)
+{
+  char *argz = NULL;
+  size_t argz_len = 0;
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t read;
+
+  int lineno = 0;
+  while ((read = getline (&line, &len, fp)) != -1) 
+    {
+      int found = 0;
+      /* holy lame-ola batman */
+      for (int i = 0; i < count; i++)
+        {
+          if (linenos[i] == lineno)
+            {
+              found = 1;
+              break;
+            }
+        }
+      if (!found)
+        {
+          char *nl = strchr (line, '\n');
+          if (nl)
+            nl[0] = '\0';
+        argz_add (&argz, &argz_len, line);
+        }
+      lineno++;
+    }
+  if (argz)
+    {
+      argz_add (&argz, &argz_len, "");
+      argz_stringify (argz, argz_len, '\n');
+      *data = argz;
+    }
+  else 
+    *data = strdup("");
+  free (line);
+  return 0;
+}
+
+static int
+remove_copyright_lines (char *argz, size_t len, int quiet, int dry_run)
 {
   int err = 0;
   char *data = NULL;
+  size_t count = 0;
+  int *lineno = make_lineno_array (argz, len, &count);
+  char *file = get_config_file ("copyright-holders");
+  if (file)
+    {
+      FILE *fp = fopen (file, "r");
+      if (fp)
+        {
+          err = remove_lines (fp, lineno, count, &data);
+          fclose (fp);
+        }
+      else
+        err = -1;
+      free (file);
+    }
+  free (lineno);
+  if (!err && data)
+    {
+      if (!dry_run)
+        {
+          char *file = get_config_file ("copyright-holders");
+          if (file)
+            {
+              FILE *fp = fopen (file, "w");
+              if (fp)
+                {
+                  fprintf (fp, "%s", data);
+                  fclose (fp);
+                }
+              free (file);
+              if (quiet == 0)
+                display_copyright();
+            }
+        }
+      else
+        printf ("%s", data);
+      free (data);
+    }
+  return err;
+}
+
+static int
+max_copyright_lines()
+{
+  int lines = 0;
   char *file = get_config_file ("copyright-holders");
   if (file)
     {
@@ -129,62 +242,27 @@ remove_copyright_line (int line, struct lu_copyright_options_t *options)
       if (fp)
         {
           size_t data_len = 0;
-          data = fread_file (fp, &data_len);
-          fclose (fp);
-          char *ptr = &data[0];
-          for (int i = 0; i < line; i++)
+          char *data = fread_file (fp, &data_len);
+          if (data)
             {
-              ptr = strchr (++ptr, '\n');
-              if (ptr == NULL)
-                break;
-            }
-          if (ptr)
-            {
-              char *start = ptr;
-              if (*start == '\n')
-                start++;
-              if (*start != '\0')
+              char *ptr = data;
+              while (1)
                 {
-                  ptr = strchr (++ptr, '\n');
+                  ptr = strchr (ptr, '\n');
                   if (ptr)
                     {
+                      lines++;
                       ptr++;
-                      memmove (start, ptr, strlen (ptr) + 1);
                     }
                   else
-                    *start = '\0';
+                    break;
                 }
-              else
-                err = -1;
             }
-          else
-            err = -1;
+          fclose (fp);
         }
-      else
-        err = -1;
       free (file);
     }
-  if (!err && data)
-    {
-      char *file = get_config_file ("copyright-holders");
-      if (file)
-        {
-          FILE *fp = fopen (file, "w");
-          if (fp)
-            {
-              fprintf (fp, "%s", data);
-              fclose (fp);
-            }
-          free (file);
-          if (options->quiet == 0)
-            {
-              display_copyright();
-              fprintf (stderr, "Removed.\n");
-            }
-        }
-      free (data);
-    }
-  return err;
+  return lines;
 }
 
 static error_t 
@@ -199,38 +277,30 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->quiet = 1;
       break;
     case 'r':
+      if (arg)
         {
-          if (arg)
+          char *end = NULL;
+          unsigned long int lineno = strtoul (arg, &end, 10);
+          if (end == NULL || *end != '\0' || (int)lineno < 0)
             {
-              char *end = NULL;
-              unsigned long int lineno = strtoul (arg, &end, 10);
-              if (end == NULL || *end != '\0' || (int)lineno < 0)
+              argp_failure (state, 0, 0, 
+                            N_("`%s' is an invalid line number"), arg);
+              argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+            }
+          else
+            {
+              if (lineno >= max_copyright_lines())
                 {
                   argp_failure (state, 0, 0, 
                                 N_("`%s' is an invalid line number"), arg);
                   argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
                 }
               else
-                {
-                  int err = remove_copyright_line (lineno, opt);
-                  if (err)
-                    {
-                      argp_failure (state, 0, 0, 
-                                    N_("`%s' is an invalid line number"), arg);
-                      argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
-                    }
-                  exit (err);
-                }
-            }
-          else
-            {
-              char *file = get_config_file ("copyright-holders");
-              remove (file);
-              free (file);
-              if (opt->quiet == 0)
-                fprintf (stderr, "Removed.\n");
+                argz_add (&opt->remove, &opt->remove_len, arg);
             }
         }
+      else
+        opt->remove_all = 1;
       break;
     case 'd':
       opt->dry_run = 1;
@@ -272,6 +342,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->name_len = 0;
       opt->dry_run = 0;
       opt->quiet = 0;
+      opt->remove = NULL;
+      opt->remove_len = 0;
+      opt->remove_all = 0;
       break;
     case ARGP_KEY_FINI:
       if (opt->yearspec == NULL)
@@ -280,8 +353,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
         argz_stringify (opt->name, opt->name_len, ' ');
       break;
     case ARGP_KEY_NO_ARGS:
-      display_copyright();
-      exit (0);
+      if (opt->remove == NULL && opt->remove_all == 0)
+        {
+          display_copyright();
+          exit (0);
+        }
       break;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -393,6 +469,30 @@ lu_copyright (struct lu_state_t *state, struct lu_copyright_options_t *options)
   size_t names_len = 0;
   char *file = NULL;
   FILE *fp = stdout;
+
+  if (options->remove_all)
+    {
+      if (options->dry_run == 0)
+        {
+          char *file = get_config_file ("copyright-holders");
+          if (file)
+            {
+              remove (file);
+              free (file);
+              if (options->quiet == 0)
+                fprintf (stderr, "Removed.\n");
+            }
+        }
+      return 0;
+    }
+  if (options->remove)
+    {
+      int err = remove_copyright_lines (options->remove, options->remove_len,
+                                        options->quiet, options->dry_run);
+      if (options->quiet == 0 && !err && options->dry_run == 0)
+        fprintf (stderr, "Removed.\n");
+      return err;
+    }
   if (!options->dry_run)
     {
       file = get_config_file ("copyright-holders");
