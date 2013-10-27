@@ -428,10 +428,12 @@ _licensing_options()\n\
     moreopts=\"\"\n\
     if [[ \"$command\" == choose ]]; then\n\
       moreopts=\"%s no-license %s no-style\"\n\
+    elif [[ \"$command\" == help ]]; then\n\
+      moreopts=`licensing help | grep \"^  [a-z]\" | cut -f3 -d' ' | tr  '\n,' ' '`\n\
     fi\n\
 \n\
     if [[ \"${cur}\" == -* ]] ; then\n\
-        opts=`/usr/local/bin/licensing help $command | egrep  \"(^  -., |^      --)\" | cut -c7-29 | sed -e 's/=[A-Z]* //g' | tr  '\\n,' ' ' | tr -s \" \"`\n\
+        opts=`licensing help $command | egrep  \"(^  -., |^      --)\" | cut -c7-29 | sed -e 's/=[A-Z]* //g' | tr  '\\n,' ' ' | tr -s \" \"`\n\
 	COMPREPLY=($(compgen -W \"${opts}\" -- \"${cur}\"))\n\
     elif [[ \"${moreopts}\" != \"\" ]] ; then\n\
 	COMPREPLY=($(compgen -W \"${moreopts}\" -- \"${cur}\"))\n\
