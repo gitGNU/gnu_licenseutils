@@ -196,8 +196,9 @@ create_block_comment (char *text, char *open_delimiter, char *close_delimiter)
     return xasprintf ("%s %s", open_delimiter, close_delimiter);
   char *argz = NULL;
   size_t len = 0;
-  size_t length = strspn (text, " \t\r\n\v");
-  text+=length;
+  //size_t length=0;
+  //size_t length = strspn (text, " \t\r\n\v");
+  //text+=length;
   //add 3 spaces to the start of every line
   char *nl = strchr (text, '\n');
   //if (nl)
@@ -205,9 +206,9 @@ create_block_comment (char *text, char *open_delimiter, char *close_delimiter)
       //but treat the first line specially. 
       if(nl)
         nl[0] = '\0';
-      char *trimmed = trim (text);
-      char *line = xasprintf ("%s %s", open_delimiter, trimmed);
-      free (trimmed);
+      //char *trimmed = trim (text);
+      char *line = xasprintf ("%s %s", open_delimiter, text);
+      //free (trimmed);
       argz_add (&argz, &len, line);
       free (line);
       if (nl)
