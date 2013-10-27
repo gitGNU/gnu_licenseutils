@@ -110,7 +110,8 @@ $(srcdir)/tests/top/0001 \
 $(srcdir)/tests/uncomment/Makefile.am \
 $(srcdir)/tests/uncomment/0001 \
 $(srcdir)/tests/uncomment/0002 \
-$(srcdir)/tests/uncomment/0003
+$(srcdir)/tests/uncomment/0003 \
+$(srcdir)/tests/uncomment/0004
 
 manifest:
 	@echo ${PREBOOTSTRAPFILES}

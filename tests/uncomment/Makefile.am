@@ -8,7 +8,7 @@ AM_COLOR_TESTS=no
 AM_TESTS_ENVIRONMENT=export licensing=${top_builddir}/src/licensing; \
 		     export builddir=${builddir};
 
-uncomment_tests=0001 0002 0003
+uncomment_tests=0001 0002 0003 0004
 TESTS=${uncomment_tests}
 check_SCRIPTS=${uncomment_tests}
 
