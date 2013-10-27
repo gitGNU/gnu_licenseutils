@@ -375,7 +375,7 @@ Whitespace between comment-blocks is not shown when the @option{--blocks} option
 
 To find out how many comment-blocks there are in a file, use the @command{cbb} command.  See @ref{cbb invocation} for more information.
 
-@subsection Dealing with source code files that are scripts.
+@subsection Dealing with source code files that are scripts
 
 When the source code file begins with a @samp{#!} line, the boilerplate command does not show or remove that line.
 
@@ -518,7 +518,7 @@ The @option{--quiet} option prevents the final @samp{Selected.} message from app
 
 The @command{choose} command requires internet connectivity to download the licenses from the @url{www.fsf.org} or @url{www.gnu.org}.
 
-@subsection Subsequent calls of the @command{choose} command.
+@subsection Subsequent calls of the @command{choose} command
 
 Subsequent calls to the @command{choose} command will override previous calls.  After the current working boilerplate has been applied to some source files, it is often useful to @command{choose} a different commenting style before applying it to another file (e.g. all other aspects of the current working boilerplate are left unchanged except for the commenting style).
 
@@ -594,7 +594,7 @@ The @option{--dry-run} option simply shows the new copyright line without changi
 
 Sometimes long lines can be created by the @command{copyright} command.  These long lines will be wrapped in the @command{preview} and @command{apply} commands.
 
-@subsection Subsequent calls of the @command{copyright} command.
+@subsection Subsequent calls of the @command{copyright} command
 
 Subsequent calls of the @command{copyright} command will add more copyright holders to the current working boilerplate.  New copyright holders appear after any previously added copyright holders.
 
@@ -775,6 +775,8 @@ The @option{--quiet} option prevents the @samp{Boilerplate applied.} messages fr
 
 Subsequent calls to the @command{apply} command are cumulative.  If a mistake has been made, it can be removed with the @samp{boilerplate --remove} command.
 
+The @command{apply} command uses the @command{preview} command to generate the current working boilerplate.
+
 @node png-apply invocation
 @section @command{png-apply}: Write the working boilerplate to .png files
 @pindex png-apply
@@ -863,7 +865,44 @@ These commands deal with comments.
 @cindex create a comment block
 @cindex comments, creating
 
-foo
+Th @command{comment} command makes a comment in a given style.  If no style is given, the comment is created in the C-style.  For example:
+
+@example
+$ echo "foo" | licensing comment
+/* foo */
+@end example
+
+The @command{comment} command can also operate on files specified as arguments, but it does not modify those files.  The result is always displayed on the standard output.  For example:
+
+@example
+$ echo "foo" > foo.txt
+$ licensing comment foo.txt
+/* foo */
+@end example
+
+To specify a particiular commenting style, use one of the common comment-style options (see @ref{Common Commenting-style options}).  For example:
+@example
+$ echo "foo" | licensing comment --c++-style
+// foo
+@end example
+This example makes a comment in the C++ style.
+
+The @command{preview} command uses @command{comment} to help generate the current working boilerplate.
+
+@subsection Dealing with indentation
+The @command{comment} command tries to retain existing indentation by pushing the whole text to the right.  When a block-style comment is being created the text is pushed three columns to the right.  In the case of whole-line comments, the number of columns pushed is the size of the comment delimiter plus one.
+
+@example
+$ cat foo.txt
+    foo
+    bar
+$ licensing comment foo.txt 
+/*     foo
+       bar */
+@end example
+This example shows that 3 columns are added to the beginning of every line.  The @file{foo.txt} file has four spaces of indentation, and the result moves the @samp{foo} and @samp{bar} to the seventh column.
+
+When a block-style comment is being created, and the final line of the comment is over 78 characters, the closing delimiter is placed on the following line by itself.
 
 @node uncomment invocation
 @section @command{uncomment}: Remove comment delimiters from some text
