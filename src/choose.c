@@ -61,8 +61,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
             argz_add (&opt->licenses, &opt->licenses_len, match);
           else
             argp_failure (state, 22, 0, 
-                          N_("Using `%s' is not recommended!  "
-                             "Use --force to select this license"), arg);
+                          N_("`%s' is not recommended!  "
+                             "Use --force, "
+                             "or maybe try `%s+'"), arg, arg);
           free (match);
         }
       else
@@ -141,20 +142,6 @@ lu_choose_parse_argp (struct lu_state_t *state, int argc, char **argv)
     return err;
 }
 
-static int 
-needs_force (char *arg)
-{
-  int need = 0;
-  if (strcmp (arg, "gplv1") == 0 || strcmp (arg, "gplv1+") == 0 ||
-      strcmp (arg, "gplv2") == 0 || strcmp (arg, "gplv3") == 0 ||
-      strcmp (arg, "agplv3") == 0 || strcmp (arg, "lgplv2") == 0 ||
-      strcmp (arg, "lgplv21") == 0 || strcmp (arg, "lgplv3") == 0 ||
-      strcmp (arg, "fdlv11") == 0 || strcmp (arg, "fdlv12") == 0 ||
-      strcmp (arg, "fdlv13") == 0)
-    need = 1;
-  return need;
-}
-
 static char *
 get_command (char *argz, size_t len, char *license)
 {
@@ -178,6 +165,24 @@ get_command (char *argz, size_t len, char *license)
     }
   return NULL;
 }
+
+static int 
+needs_force (char *arg)
+{
+  /* check to see if --jerkward is used in this license */
+  int need = 0;
+  char *cmds = lu_list_of_license_keyword_commands();
+  char *license_commands = NULL;
+  size_t len = 0;
+  argz_create_sep (cmds, '\n', &license_commands, &len);
+  free (cmds);
+  char *cmd = get_command(license_commands, len, arg);
+  if (cmd && strstr (cmd, "--jerkwad"))
+    need = 1;
+  free (license_commands);
+  return need;
+}
+
 
 static char *
 get_license_by_command (char *argz, size_t len, char *command)
