@@ -791,6 +791,8 @@ png-apply: foo.png -> Boilerplate applied.
 @end example
 This example applies the current working boilerplate to foo.png.
 
+The commenting style is automatically removed from the current working boilerplate before it is added to a .png file.  This means that an @emph{uncommented} form of the current working boilerplate is copied into the comment section of the PNG file.
+
 This command will fail to operate when a copyright holder or a license have not been specified in the current working boilerplate.  It will also fail if the given file is not recognized as a valid PNG file.
 
 By default a backup @file{.bak} file is created; to prevent this behaviour use the @option{--no-backup} option. 

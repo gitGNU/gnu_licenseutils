@@ -1,6 +1,4 @@
 
-should png-apply automatically remove the commenting style?
-
 how do --remove and --dry-run play together in the copyright command?
   also removing multiple lines problematic.
 

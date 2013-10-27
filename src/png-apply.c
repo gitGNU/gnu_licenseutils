@@ -241,8 +241,8 @@ lu_png_apply (struct lu_state_t *state, struct lu_png_apply_options_t *options)
   snprintf (boilerplate, sizeof boilerplate, "/tmp/%s.XXXXXX", PACKAGE);
   int fd = mkstemp (boilerplate);
   close (fd);
-  char *generate_cmd = xasprintf ("%s preview > %s", INTERPRETER_PATH, 
-                                  boilerplate);
+  char *generate_cmd = xasprintf ("%s preview --no-commenting-style > %s", 
+                                  INTERPRETER_PATH, boilerplate);
   system (generate_cmd);
 
   FILE *fileptr = fopen (boilerplate, "r");
