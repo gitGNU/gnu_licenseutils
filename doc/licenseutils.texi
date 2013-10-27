@@ -825,7 +825,25 @@ To place the input file after any previously existing boilerplate in the source 
 @section @command{notice}: Create and write a copyright and license notice to a file.
 @pindex notice
 
-foo
+The @command{notice} command is a simple way to add a boilerplate to a set of source code files that has a single copyright holder and a single license notice.
+
+The copyright option @option{-c}  and license option @option{-l} are @emph{required options} in the @command{notice} command.  When specified more than once only the final option is used.
+
+The @command{notice} command is most often used like so:
+@example
+$ licensing notice -c 'Yoyodyne,\ Inc.\ 2001' -l gpl -s c -n *.[ch] 
+apply: foo.c -> Boilerplate applied.
+apply: bar.c -> Boilerplate applied.
+apply: qux.c -> Boilerplate applied.
+apply: foo.h -> Boilerplate applied.
+@end example
+This example creates a boilerplate and adds it to the beginning of all @file{.c} and @file{.h} files, while not retaining any backup files.  Everything in the argument to @option{-c} is passed to the @command{copyright} command to operate on.  The boilerplate includes the GNU GPL notice and a copyright line for Yoyodyne, Inc.  The @option{-s} option is being used to set the commenting style to the C-style.  The @option{-n} turns off backups.  To see what licenses and styles are available, type @samp{licensing notice --help}.
+
+The backslashes in the @option{-c} command ensure that the argument is parsed as a single argument.
+
+Often greater precision is required than the @command{notice} command provides.  This command is included to offer a simpler way to add boilerplate in small cases.
+
+When the copyright option @option{-c} is given an argument that results in an error in the @command{copyright} command (for example a malformed year specification), notices are not applied to any source code files.
 
 @node Working with comments
 @chapter Working with comments
