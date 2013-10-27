@@ -83,7 +83,11 @@ if [ -f ~/.@PACKAGE@/extra-line ]; then
   cat $tmpfile >> $preview
 fi
 
-style=`eval cat ~/.@PACKAGE@/selected-comment-style`
+if [ -f ~/.@PACKAGE@/selected-comment-style ]; then
+  style=`eval cat ~/.@PACKAGE@/selected-comment-style`
+else
+  style=""
+fi
 if [ "x$style" != "x" ]; then
   cat ~/.@PACKAGE@/license-notice | sed -e 's/^[ ]*//g' >> $preview
   @PROGRAM@ comment --style=$style $preview 
