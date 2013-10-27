@@ -910,7 +910,52 @@ When a block-style comment is being created, and the final line of the comment i
 @cindex remove comment delimiters
 @cindex comments, removing delimiters
 
-foo
+The @command{uncomment} command removes comment delimiters from some text.
+
+@example
+$ echo "/* foo */" | licensing uncomment
+ foo 
+@end example
+In this example the text @samp{foo} is left behind, while the C-style comment delimiters are removed.
+
+Notice that the beginning space is present before @samp{foo}.  Use the @option{--trim} option to remove initial and trailing whitespace.  For example:
+@example
+$ echo "/* foo */" | licensing uncomment --trim
+foo 
+@end example
+
+By default the @command{uncomment} command removes C-style comments.  To specify a particiular commenting style to remove, use one of the common comment-style options (see @ref{Common Commenting-style options}).
+
+Like the @command{comment} command, the @command{uncomment} command will also read files given as arguments, but the result is always displayed on the standard output.
+
+Uncommenting is not as rigorous as the boilerplate check to detect comments.  An attempt is made to remove block comment delimiters from the start and ending of every line.  The idea is to remove overzealous commenting in examples like this:
+@example
+$ cat foo.txt
+/*******
+ * foo *
+ *******/
+$ cat foo.txt | licensing uncomment 
+
+ foo 
+
+$
+@end example
+In this example the extra asterisks are removed.  It is easy to imagine a scenario by which a line in a C comment ends with an asterisk that isn't intended as a comment!  With haskell comments, it is just as bad when valid hyphens are removed from lines.
+
+The @command{uncomment} command is provided so that previously existing boilerplate can be easily reformatted.
+
+@example 
+$ cat foo.c
+/*******
+ * foo *
+ *******/
+int foo = 1;
+$ licensing boilerplate foo.c | licensing uncomment | licensing comment
+/* foo */
+@end example
+This example shows how the extra asterisks in a C-style boilerplate can be removed.  To replace the boilerplate, the old one can be removed with @samp{boilerplate --remove foo.c --no-backup}, and the new one added with @samp{cat new.txt | prepend foo.c --no-backup}.
+
+The @command{uncomment} tries to not operate on comments that it thinks are invalid.
 
 @node License commands
 @chapter License commands
