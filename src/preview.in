@@ -16,7 +16,7 @@
 
 showusage() {
   cat <<EOF
-Usage: $(basename $0) [-?] [--help] [--usage]
+Usage: $(basename $0) [-?] [--no-commenting-style] [--help] [--usage]
 EOF
 }
 
@@ -25,11 +25,12 @@ showhelp() {
 Usage: $(basename $0) [OPTION...]
 Show the current working boilerplate.
 
+      --no-commenting-style  show the boilerplate without comment delimiters
   -?, --help                 give this help list
       --usage                give a short usage message
 EOF
 }
-
+nostyle=
 for option
 do
   case $option in
@@ -39,6 +40,9 @@ do
   --usage)
     showusage
     exit;;
+  --no-commenting-style)
+    nostyle=1
+    shift;;
   --*)
     echo >&2 "$(basename $0): $option: unknown option"
     exit 1;;
@@ -88,6 +92,10 @@ if [ -f ~/.@PACKAGE@/selected-comment-style ]; then
 else
   style=""
 fi
+if [ "x$nostyle" == "x1" ]; then
+  style=""
+fi
+
 if [ "x$style" != "x" ]; then
   cat ~/.@PACKAGE@/license-notice | sed -e 's/^[ ]*//g' >> $preview
   @PROGRAM@ comment --style=$style $preview 

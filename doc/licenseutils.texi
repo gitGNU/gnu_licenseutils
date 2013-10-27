@@ -1159,6 +1159,8 @@ In this example we see the preview command displaying a simple all-permisive boi
 
 It is natural to run this command often after making changes to the current working boilerplate.  To see which commands can change the current working boilerplate see @ref{Creating boilerplate}.  Some users may wish to pipe the output of @command{preview} through @command{less} when it is large; for example: @samp{licesning preview | less}.
 
+The @option{--no-commenting-style} option is used to display the current working boilerplate in an uncommented form, even when a commenting-style has already been specified.
+
 The @command{apply} and @command{png-apply} commands rely on the @command{preview} command to generate the current working boilerplate before writing it to files.
 
 @node welcome invocation
