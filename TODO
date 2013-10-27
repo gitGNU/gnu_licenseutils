@@ -10,8 +10,6 @@ change the notice command to allow for multiple -c and -l options.
 
 any time we call uncomment twice on some text, it probably won't have the desired result.  this happens in pascal and groff styles.
 
-provide command-line completion for the help command.
-
 remove the system mv commands in choose and png-boilerplate.
 
 always check if renames fail
