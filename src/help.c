@@ -74,6 +74,7 @@ lu_help_parse_argp (struct lu_state_t *state, int argc, char **argv)
 int 
 lu_help (struct lu_state_t *state, struct lu_help_options_t *options)
 {
+  int err = 0;
   if (options->command)
     {
       if (lu_is_command (options->command))
@@ -84,7 +85,10 @@ lu_help (struct lu_state_t *state, struct lu_help_options_t *options)
           free (options->command);
         }
       else
-        error (0, 0, N_("unknown command `%s'"), options->command);
+        {
+          error (0, 0, N_("unknown command `%s'"), options->command);
+          err = 1;
+        }
     } 
   else
     {
@@ -99,7 +103,7 @@ lu_help (struct lu_state_t *state, struct lu_help_options_t *options)
       fprintf (state->out, "\n%s\n", 
                N_("For more information on a command, type `help COMMAND'."));
     }
-  return 0;
+  return err;
 }
 
 struct lu_command_t help = 
