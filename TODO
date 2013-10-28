@@ -2,5 +2,3 @@
 any time we call uncomment twice on some text, it probably won't have the desired result.  this happens in pascal and groff styles.
 
 add more tests
-
-clean up the extra tempfiles that are hanging around
