@@ -25,6 +25,7 @@
 #include "gettext-more.h"
 #include "read-file.h"
 #include "xvasprintf.h"
+#include "copy-file.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -190,6 +191,7 @@ save_comment (FILE *fp, FILE *out, char *data, size_t data_len)
 static int 
 lu_save_comment (struct lu_state_t *state, struct lu_png_apply_options_t *options, char *f, char *text, size_t text_len)
 {
+  int err = 0;
   unsigned char signature[8];
   char tmp[sizeof(PACKAGE) + 13];
   snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
@@ -219,15 +221,17 @@ lu_save_comment (struct lu_state_t *state, struct lu_png_apply_options_t *option
   if (options->backup)
     {
       char *new_filename = xasprintf ("%s.bak", f);
-      rename (f, new_filename);
-      rename (tmp, f);
+      err = rename (f, new_filename);
+      if (!err)
+        err = qcopy_file_preserving (tmp, f);
     }
   else
     {
-      remove (f);
-      rename (tmp, f);
+      err = remove (f);
+      if (!err)
+        err = rename (tmp, f);
     }
-  return 0;
+  return err;
 }
 
 int 

@@ -24,6 +24,7 @@
 #include "png-boilerplate.h"
 #include "gettext-more.h"
 #include "xvasprintf.h"
+#include "copy-file.h"
 
 static struct argp_option argp_options[] = 
 {
@@ -247,9 +248,10 @@ remove_comment (FILE *fp, FILE *out)
   png_destroy_read_struct (&inpng, &ininfo, NULL);
 }
 
-static void
+static int
 lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t *options, char *f)
 {
+  int err = 0;
   unsigned char signature[8];
   char tmp[sizeof(PACKAGE) + 13];
   snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
@@ -265,7 +267,7 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
             {
               fprintf (stderr, _("%s: `%s' contains copyright notices.  use --force to remove them.'\n"), png_boilerplate.name, f);
               free (text);
-              return;
+              return 1;
             }
           free (text);
         }
@@ -275,12 +277,12 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
         {
           fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name,
                   f);
-          return;
+          return 2;
         }
       if (png_sig_cmp (signature, 0, 8) != 0)
         {
           fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name, f);
-          return;
+          return 3;
         }
     }
   FILE *out = fopen (tmp, "wb");
@@ -293,31 +295,29 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
       char *new_filename = xasprintf ("%s.bak", f);
       if (new_filename)
         {
-          int err = rename (f, new_filename);
+          err = rename (f, new_filename);
           if (err)
             {
               fprintf (stderr, "%s: couldn't move %s -> %s (%s)\n", 
                        png_boilerplate.name, f, new_filename, strerror(errno));
-              return;
+              return err;
             }
-          char *cmd = xasprintf ("mv %s %s", tmp, f);
-          if (cmd)
-            {
-              system (cmd);
-              free (cmd);
-            }
+          err = qcopy_file_preserving (tmp, f);
         }
     }
   else
     {
-      remove (f);
-      rename (tmp, f);
+      err = remove (f);
+      if (!err)
+        err = rename (tmp, f);
     }
+  return err;
 }
 
 int 
 lu_png_boilerplate (struct lu_state_t *state, struct lu_png_boilerplate_options_t *options)
 {
+  int err = 0;
   char *f = NULL;
   while ((f = argz_next (options->input_files, options->input_files_len, f)))
     {
@@ -355,10 +355,10 @@ lu_png_boilerplate (struct lu_state_t *state, struct lu_png_boilerplate_options_
                        png_boilerplate.name, f, strerror (errno));
               continue;
             }
-          lu_remove_comment (state, options, f);
+          err = lu_remove_comment (state, options, f);
         }
     }
-  return 0;
+  return err;
 }
 
 struct lu_command_t png_boilerplate = 

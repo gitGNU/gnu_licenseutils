@@ -25,6 +25,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "copy-file.h"
 #include "util.h"
 #include "styles.h"
 
@@ -197,15 +198,14 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
       if (options->backup)
         {
           char *backup = xasprintf ("%s.bak", options->dest);
-          rename (options->dest, backup);
+          err = rename (options->dest, backup);
           free (backup);
         }
       else
         remove (options->dest);
 
-      char *cmd = xasprintf ("mv %s %s", tmp, options->dest);
-      system (cmd);
-      free (cmd);
+      if (!err)
+        err = qcopy_file_preserving (tmp, options->dest);
     }
   free (source);
   free (dest);
