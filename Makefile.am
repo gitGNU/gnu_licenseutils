@@ -37,6 +37,7 @@ $(srcdir)/po/LINGUAS \
 $(srcdir)/doc/Makefile.am \
 $(srcdir)/doc/licenseutils.texi \
 $(srcdir)/doc/version.texi.in \
+$(srcdir)/doc/gendocs \
 $(srcdir)/completion/licensing \
 $(srcdir)/src/Makefile.am \
 $(srcdir)/src/styles.am \
