@@ -25,6 +25,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "copy-file.h"
+#include "error.h"
 
 static struct argp_option argp_options[] = 
 {
@@ -107,13 +108,13 @@ get_comment (FILE *fp, char *f)
   memset (signature, 0, sizeof (signature));
   if (fread (signature, 1, 8, fp) != 8)
     {
-      fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name, f);
+      error (0, 0, N_("`%s' is not a PNG file"), f);
       return NULL;
     }
 
   if (png_sig_cmp (signature, 0, 8) != 0)
     {
-      fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name, f);
+      error (0, 0, N_("`%s' is not a PNG file"), f);
       return NULL;
     }
   rewind (fp);
@@ -265,7 +266,8 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
         {
           if (contains_copyright (text) && !options->force)
             {
-              fprintf (stderr, _("%s: `%s' contains copyright notices.  use --force to remove them.'\n"), png_boilerplate.name, f);
+              error (0, 0, N_("`%s' contains copyright notices.  "
+                              "use --force to remove them."), f);
               free (text);
               return 1;
             }
@@ -275,13 +277,12 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
       memset (signature, 0, sizeof (signature));
       if (fread (signature, 1, 8, fp) != 8)
         {
-          fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name,
-                  f);
+          error (0, 0, N_("`%s' is not a PNG file"), f);
           return 2;
         }
       if (png_sig_cmp (signature, 0, 8) != 0)
         {
-          fprintf(stderr, "%s: `%s' is not a PNG file\n", png_boilerplate.name, f);
+          error (0, 0, N_("`%s' is not a PNG file"), f);
           return 3;
         }
     }
@@ -298,8 +299,7 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
           err = rename (f, new_filename);
           if (err)
             {
-              fprintf (stderr, "%s: couldn't move %s -> %s (%s)\n", 
-                       png_boilerplate.name, f, new_filename, strerror(errno));
+              error (0, errno, N_("couldn't move %s -> %s"), f, new_filename);
               return err;
             }
           err = qcopy_file_preserving (tmp, f);
@@ -324,11 +324,9 @@ lu_png_boilerplate (struct lu_state_t *state, struct lu_png_boilerplate_options_
       if (is_a_file (f) == 0)
         {
           if (errno == EISDIR)
-            fprintf (stderr, N_("%s: %s: %s\n"),
-                     png_boilerplate.name, f, strerror (errno));
+            error (0, errno, "%s", f);
           else
-            fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                     png_boilerplate.name, f, strerror (errno));
+            error (0, errno, N_("could not open `%s' for reading"), f);
           continue;
         }
       if (options->remove == 0)
@@ -350,9 +348,7 @@ lu_png_boilerplate (struct lu_state_t *state, struct lu_png_boilerplate_options_
         {
           if (access (f, W_OK) != 0)
             {
-              fprintf (stderr, 
-                       N_("%s: could not open `%s' for writing: %s\n"),
-                       png_boilerplate.name, f, strerror (errno));
+              error (0, errno, N_("could not open `%s' for writing"), f);
               continue;
             }
           err = lu_remove_comment (state, options, f);

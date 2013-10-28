@@ -25,6 +25,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 #include "styles.h"
@@ -155,11 +156,9 @@ create_comment_from_files (struct lu_state_t *state, struct lu_comment_options_t
       if (is_a_file (f) == 0 && strcmp (f, "-") != 0)
         {
           if (errno == EISDIR)
-            fprintf (stderr, N_("%s: %s: %s\n"),
-                     comment.name, f, strerror (errno));
+            error (0, errno, "%s", f);
           else
-            fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                     comment.name, f, strerror (errno));
+            error (0, errno, N_("could not open `%s' for reading"), f);
           continue;
         }
       if (strcmp (f, "-") == 0)

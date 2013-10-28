@@ -13,15 +13,22 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+if [[ "$BASH_ENV" == *\.lushrc* ]]; then
+  progname=$(basename $0)
+else
+  progname="licensing $(basename $0)"
+fi
+
 showusage() {
   cat <<EOF
-Usage: $(basename $0) [-?] [-l LICENSE] [-s COMMENTING-STYLE] [-c NAME-AND-YEAR] FILE...
+Usage: ${progname} [-?] [-l LICENSE] [-s COMMENTING-STYLE] [-c NAME-AND-YEAR] FILE...
 EOF
 }
 
 showhelp() {
   cat <<EOF
-Usage: $(basename $0) [OPTION...] FILE...
+Usage: ${progname} [OPTION...] FILE...
 A simple wrapper script for writing license notices to source files.
 
 Supported Licenses: gpl gplv3+ gplv3 gplv2+ gplv2 gplv1+ gplv1 lgpl lgplv3+
@@ -98,29 +105,29 @@ done
 for arg
 do
   if [ ! -f $arg ]; then
-    echo $(basename $0): cannot open $arg for writing
+    echo ${progname}: cannot open $arg for writing
     exit 1
   fi
 done
 
 if [ "x$license" == "x" ]; then
-  echo "$(basename $0): you must supply a license with -l"
-  echo "Try '$(basename $0) --help' for more information."
+  echo "${progname}: you must supply a license with -l"
+  echo "Try '${progname} --help' for more information."
   exit 1
 fi
 if [ "x$style" == "x" ]; then
-  echo "$(basename $0): you must supply a commenting style with -s"
-  echo "Try '$(basename $0) --help' for more information."
+  echo "${progname}: you must supply a commenting style with -s"
+  echo "Try '${progname} --help' for more information."
   exit 1
 fi
 if [ "x$count" == "x0" ]; then
-  echo "$(basename $0): you must supply a copyright holder with -c"
-  echo "Try '$(basename $0) --help' for more information."
+  echo "${progname}: you must supply a copyright holder with -c"
+  echo "Try '${progname} --help' for more information."
   exit 1
 fi
 if [ "$#" == "0" ]; then
-  echo "$(basename $0): no files specified"
-  echo "Try '$(basename $0) --help' for more information."
+  echo "${progname}: no files specified"
+  echo "Try '${progname} --help' for more information."
   exit 1
 fi
 

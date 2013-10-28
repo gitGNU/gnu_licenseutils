@@ -29,6 +29,7 @@
 #include "gettext-more.h"
 #include "trim.h"
 #include "xvasprintf.h"
+#include "progname.h"
 
 #include "opts.h"
 #include "gpl.h"
@@ -75,16 +76,6 @@ struct lu_command_t new_boilerplate =
   .argp         = NULL,
   .parser       = NULL 
 };
-
-//struct lu_command_t prepend = 
-//{
-  //.name         = N_("prepend"),
-  //.doc          = 
-    //N_("Prepend the contents of one file to the start of another."),
-  //.flags        = DO_NOT_SHOW_IN_HELP | SAVE_IN_HISTORY,
-  //.argp         = NULL,
-  //.parser       = NULL 
-//};
 
 struct lu_command_t preview = 
 {
@@ -178,6 +169,14 @@ make_command_line (char *cmd, int *argc, char ***argv)
       if (*argv)
         (*argv)[(*argc)] = 0;
       free (s1);
+
+      char *bash_env = getenv("BASH_ENV");
+      if (bash_env && strstr (bash_env, ".lushrc"))
+        set_program_name (strdup((*argv)[0]));
+      else
+        set_program_name (xasprintf ("%s %s", PROGRAM, (*argv)[0]));
+      free ((*argv)[0]);
+      (*argv)[0] = (char*) program_name;
     }
 }
 
@@ -238,7 +237,7 @@ lu_parse_untrimmed_command (struct lu_state_t *state, char *line)
 }
 
 struct lu_state_t *
-lu_init(struct lu_options_t *arguments)
+lu_init (struct lu_options_t *arguments)
 {
   struct lu_state_t *state;
   state = malloc(sizeof(struct lu_state_t));
@@ -258,6 +257,7 @@ lu_init(struct lu_options_t *arguments)
   else
     mkdir (dir, 0755);
   free (dir);
+
   return state;
 }
 
@@ -280,7 +280,7 @@ licensing (struct lu_options_t *arguments)
 {
   int run_lush = 0;
   int err = 0;
-  struct lu_state_t *state = lu_init(arguments);
+  struct lu_state_t *state = lu_init (arguments);
   if (!state)
     return -1;
 

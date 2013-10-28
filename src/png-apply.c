@@ -26,6 +26,7 @@
 #include "read-file.h"
 #include "xvasprintf.h"
 #include "copy-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -203,13 +204,12 @@ lu_save_comment (struct lu_state_t *state, struct lu_png_apply_options_t *option
       memset (signature, 0, sizeof (signature));
       if (fread (signature, 1, 8, fp) != 8)
         {
-          fprintf (stderr, "%s: `%s' is not a PNG file\n", png_apply.name,
-                  f);
+          error (0, 0, N_("`%s' is not a PNG file"), f);
           return 1;
         }
       if (png_sig_cmp (signature, 0, 8) != 0)
         {
-          fprintf (stderr, "%s: `%s' is not a PNG file\n", png_apply.name, f);
+          error (0, 0, N_("`%s' is not a PNG file"), f);
           return 1;
         }
     }
@@ -260,19 +260,16 @@ lu_png_apply (struct lu_state_t *state, struct lu_png_apply_options_t *options)
       if (is_a_file (f) == 0)
         {
           if (errno == EISDIR)
-            fprintf (stderr, N_("%s: %s: %s\n"),
-                     png_apply.name, f, strerror (errno));
+            error (0, errno, "%s", f);
           else
-            fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                     png_apply.name, f, strerror (errno));
+            error (0, errno, N_("could not open `%s' for reading"), f);
           continue;
         }
       else
         {
           if (access (f, W_OK) != 0)
             {
-              fprintf (stderr, N_("%s: could not open `%s' for writing: %s\n"),
-                       png_apply.name, f, strerror (errno));
+              error (0, errno, N_("could not open `%s' for writing"), f);
               continue;
             }
         }
@@ -280,7 +277,7 @@ lu_png_apply (struct lu_state_t *state, struct lu_png_apply_options_t *options)
       if (!err)
         {
           if (options->quiet == 0)
-            fprintf (stderr, "%s: %s -> Boilerplate applied.\n", png_apply.name, f);
+            error (0, 0, N_("%s -> Boilerplate applied."), f);
         }
       if (err)
         break;

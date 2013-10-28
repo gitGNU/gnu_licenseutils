@@ -26,6 +26,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "trim.h"
+#include "error.h"
 #include "util.h"
 #include "styles.h"
 
@@ -230,10 +231,8 @@ show_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t *
     {
       if (options->blockspec && 
           get_max_block (options->blocks) > argz_count (comment_blocks, len))
-        {
-          luprintf (state, _("%s: invalid block id %d\n"), 
-                     boilerplate.name, get_max_block (options->blocks));
-        }
+        error (0, 0, N_("invalid block id %d"), 
+               get_max_block (options->blocks));
       else
         {
           if (options->blockspec)
@@ -252,8 +251,7 @@ show_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t *
   else
     {
       if (options->quiet == 0)
-        luprintf (state, _("%s: no boilerplate found in `%s'\n"), 
-                  boilerplate.name, file);
+        error (0, 0, N_("no boilerplate found in `%s'"), file);
     }
   return 0;
 }
@@ -287,16 +285,15 @@ remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t
     options->style->get_initial_comment (fp, &comment_blocks, &len, &hashbang);
   if (comment_blocks == NULL)
     {
-      luprintf (state, _("%s: no boilerplate found in `%s'\n"), 
-                 boilerplate.name, filename);
+      error (0, 0, N_("no boilerplate found in `%s'"), filename);
       return err;
     }
   if (comments_contain_copyright_notice (comment_blocks, len))
     {
       if (options->force == 0)
         {
-          luprintf (state, _("%s: `%s' contains copyright notices.  use --force to remove them.'\n"), 
-                     boilerplate.name, filename);
+          error (0, 0, N_("`%s' contains copyright notices.  "
+                          "use --force to remove them."), filename);
           free (comment_blocks);
           return 0;
         }
@@ -304,8 +301,7 @@ remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t
   if (options->blockspec && 
       get_max_block (options->blocks) > argz_count (comment_blocks, len))
     {
-      luprintf (state, _("%s: invalid block id %d\n"), 
-                 boilerplate.name, get_max_block (options->blocks));
+      error (0, 0, N_("invalid block id %d"), get_max_block (options->blocks));
       free (comment_blocks);
       return 0;
     }
@@ -419,12 +415,9 @@ show_lu_boilerplate_for_files(struct lu_state_t *state, struct lu_boilerplate_op
               if (options->quiet == 0)
                 {
                   if (errno == EISDIR)
-                    fprintf (stderr, N_("%s: %s: %s\n"),
-                             boilerplate.name, f, strerror (errno));
+                    error (0, errno, "%s", f);
                   else
-                    fprintf (stderr, 
-                             N_("%s: could not open `%s' for reading: %s\n"),
-                             boilerplate.name, f, strerror (errno));
+                    error (0, errno, N_("could not open `%s' for reading"), f);
                 }
               continue;
             }
@@ -433,9 +426,7 @@ show_lu_boilerplate_for_files(struct lu_state_t *state, struct lu_boilerplate_op
               if (access (f, W_OK) != 0)
                 {
                   if (options->quiet == 0)
-                    fprintf (stderr, 
-                             N_("%s: could not open `%s' for writing: %s\n"),
-                             boilerplate.name, f, strerror (errno));
+                    error (0, errno, N_("could not open `%s' for writing"), f);
 
                   continue;
                 }

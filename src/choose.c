@@ -27,6 +27,7 @@
 #include "comment.h"
 #include "read-file.h"
 #include "trim.h"
+#include "error.h"
 #include "styles.h"
 
 static struct argp_option argp_options[] = 
@@ -345,9 +346,8 @@ write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *o
               err = lu_parse_command (state, cmd);
               if (err)
                 {
-                  fprintf (stderr, N_("%s: failed to select license `%s' " 
-                                      "(network down or missing webpage?)\n"), 
-                           choose.name, l);
+                  error (0, 0, N_("failed to select license `%s' "
+                                  "(network down or missing webpage?"), l);
                   state->out = old_out;
                   break;
                 }

@@ -23,6 +23,7 @@
 #include "apply.h"
 #include "gettext-more.h"
 #include "xvasprintf.h"
+#include "error.h"
 #include "util.h"
 #include "prepend.h"
 #include "styles.h"
@@ -130,19 +131,16 @@ lu_apply (struct lu_state_t *state, struct lu_apply_options_t *options)
       if (is_a_file (f) == 0)
         {
           if (errno == EISDIR)
-            fprintf (stderr, N_("%s: %s: %s\n"),
-                     apply.name, f, strerror (errno));
+            error (0, errno, "%s", f);
           else
-            fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                     apply.name, f, strerror (errno));
+            error (0, errno, N_("could not open `%s' for reading"), f);
           continue;
         }
       else
         {
           if (access (f, W_OK) != 0)
             {
-              fprintf (stderr, N_("%s: could not open `%s' for writing: %s\n"),
-                       apply.name, f, strerror (errno));
+              error (0, errno, N_("could not open `%s' for writing"), f);
               continue;
             }
         }
@@ -157,7 +155,7 @@ lu_apply (struct lu_state_t *state, struct lu_apply_options_t *options)
       if (!err)
         {
           if (options->quiet == 0)
-            fprintf (stderr, "%s: %s -> Boilerplate applied.\n", apply.name, f);
+            error (0, 0, N_("%s -> Boilerplate applied."), f);
         }
       if (err)
         break;

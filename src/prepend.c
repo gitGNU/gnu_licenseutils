@@ -26,6 +26,7 @@
 #include "xvasprintf.h"
 #include "read-file.h"
 #include "copy-file.h"
+#include "error.h"
 #include "util.h"
 #include "styles.h"
 
@@ -125,11 +126,9 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
   else
     {
       if (errno == EISDIR)
-        fprintf (stderr, N_("%s: %s: %s\n"),
-                 prepend.name, options->source, strerror (errno));
+        error (0, errno, "%s", options->source);
       else
-        fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                 prepend.name, options->source, strerror (errno));
+        error (0, errno, N_("could not open `%s' for reading"), options->source);
       return 1;
     }
   size_t source_len = 0;
@@ -161,11 +160,9 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
   else
     {
       if (errno == EISDIR)
-        fprintf (stderr, N_("%s: %s: %s\n"),
-                 prepend.name, options->dest, strerror (errno));
+        error (0, errno, "%s", options->dest);
       else
-        fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                 prepend.name, options->dest, strerror (errno));
+        error (0, errno, N_("could not open `%s' for reading"), options->dest);
       return 1;
     }
 

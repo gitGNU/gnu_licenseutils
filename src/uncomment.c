@@ -24,6 +24,7 @@
 #include "uncomment.h"
 #include "gettext-more.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 #include "styles.h"
 
@@ -105,11 +106,9 @@ lu_uncomment_file (struct lu_state_t *state, struct lu_uncomment_options_t *opts
   if (is_a_file (file) == 0)
     {
       if (errno == EISDIR)
-        fprintf (stderr, N_("%s: %s: %s\n"),
-                 uncomment.name, file, strerror (errno));
+        error (0, errno, "%s", file);
       else
-        fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                 uncomment.name, file, strerror (errno));
+        error (0, errno, N_("could not open `%s' for reading"), file);
       return 0;
     }
   if (opts->style == NULL)

@@ -22,6 +22,7 @@
 #include "licensing_priv.h"
 #include "cbb.h"
 #include "gettext-more.h"
+#include "error.h"
 #include "util.h"
 #include "styles.h"
 
@@ -150,11 +151,9 @@ count_boilerplate_blocks (struct lu_state_t *state, struct lu_cbb_options_t *opt
   if (is_a_file (file) == 0)
     {
       if (errno == EISDIR)
-        fprintf (stderr, N_("%s: %s: %s\n"),
-                 cbb.name, file, strerror (errno));
+        error (0, errno, "%s", file);
       else
-        fprintf (stderr, N_("%s: could not open `%s' for reading: %s\n"),
-                 cbb.name, file, strerror (errno));
+        error (0, errno, N_("could not open `%s' for reading"), file);
       return 0;
     }
   FILE *fp = fopen (file, "r");

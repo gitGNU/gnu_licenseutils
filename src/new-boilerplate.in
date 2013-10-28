@@ -1,4 +1,4 @@
-#!/usr/bin/env @INTERPRETER@
+#!/usr/bin/env bash
 # Copyright (C) 2013 Ben Asselstine
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -14,15 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+if [[ "$BASH_ENV" == *\.lushrc* ]]; then
+  progname=$(basename $0)
+else
+  progname="licensing $(basename $0)"
+fi
+
 showusage() {
   cat <<EOF
-Usage: $(basename $0) [-?] [--help] [--usage]
+Usage: ${progname} [-?] [--help] [--usage]
 EOF
 }
 
 showhelp() {
   cat <<EOF
-Usage: $(basename $0) [OPTION...]
+Usage: ${progname} [OPTION...]
 Clear the current working boilerplate.
 
       --quiet                don't show diagnostic messages
@@ -46,7 +52,7 @@ do
     showusage
     exit;;
   *)
-    echo >&2 "$(basename $0): $option: unknown option"
+    echo >&2 "${progname}: $option: unknown option"
     exit 1;;
   esac
 done
