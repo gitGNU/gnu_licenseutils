@@ -148,6 +148,13 @@ static struct lu_command_t *get_command (char *line)
     }
   return command;
 }
+int
+lu_is_command (char *line)
+{
+  if (get_command (line))
+    return 1;
+  return 0;
+}
 
 static void 
 make_command_line (char *cmd, int *argc, char ***argv)

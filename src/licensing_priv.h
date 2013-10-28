@@ -29,4 +29,5 @@ char *lu_list_of_commands_for_help(int show_all);
 void lu_generate_bashrc_file (FILE *fp);
 char * get_config_file (char *file);
 int is_a_file (char *filename);
+int lu_is_command (char *line);
 #endif

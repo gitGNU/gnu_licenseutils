@@ -23,6 +23,7 @@
 #include "help.h"
 #include "gettext-more.h"
 #include "xvasprintf.h"
+#include "error.h"
 #include "opts.h"
 
 static error_t 
@@ -75,10 +76,15 @@ lu_help (struct lu_state_t *state, struct lu_help_options_t *options)
 {
   if (options->command)
     {
-      char *cmd = xasprintf ("%s --help", options->command);
-      lu_parse_command (state, cmd);
-      free (cmd);
-      free (options->command);
+      if (lu_is_command (options->command))
+        {
+          char *cmd = xasprintf ("%s --help", options->command);
+          lu_parse_command (state, cmd);
+          free (cmd);
+          free (options->command);
+        }
+      else
+        error (0, 0, N_("unknown command `%s'"), options->command);
     } 
   else
     {
