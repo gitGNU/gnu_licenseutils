@@ -27,11 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 EOF
 
 #generating our results
-#unfortunately we have to call the scripts specially here because there is nothing in the installation directory yet
-/bin/bash $top_builddir/src/new-boilerplate --quiet
+$licensing new-boilerplate --quiet
 $licensing choose lgpl --quiet
 $licensing copyright Ben 2013 --quiet
-/bin/bash $top_builddir/src/preview
+$licensing preview
 
 #0001.log is simultaneously created as this script runs.
 diff -uNrd $expected $builddir/0001.log

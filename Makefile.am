@@ -82,10 +82,11 @@ $(srcdir)/src/scheme-style.c    $(srcdir)/src/scheme-style.h \
 $(srcdir)/src/shell-style.c     $(srcdir)/src/shell-style.h \
 $(srcdir)/src/texinfo-style.c   $(srcdir)/src/texinfo-style.h \
 $(srcdir)/src/styles.c          $(srcdir)/src/styles.h \
+$(srcdir)/src/new-boilerplate.c $(srcdir)/src/new-boilerplate.h \
+$(srcdir)/src/preview.c         $(srcdir)/src/preview.h \
 $(srcdir)/src/comment-style.h \
 $(srcdir)/src/main.c \
 $(srcdir)/src/lush.in \
-$(srcdir)/src/new-boilerplate.in \
 $(srcdir)/src/preview.in \
 $(srcdir)/src/notice.in \
 $(srcdir)/tests/Makefile.am \

@@ -26,6 +26,7 @@
 #include "error.h"
 #include "util.h"
 #include "prepend.h"
+#include "preview.h"
 #include "styles.h"
 
 static struct argp_option argp_options[] = 
@@ -121,9 +122,17 @@ lu_apply (struct lu_state_t *state, struct lu_apply_options_t *options)
   snprintf (boilerplate, sizeof boilerplate, "/tmp/%s.XXXXXX", PACKAGE);
   int fd = mkstemp (boilerplate);
   close (fd);
-  char *generate_cmd = xasprintf ("%s/preview > %s", PKGLIBEXECDIR, 
-                                  boilerplate);
-  system (generate_cmd);
+  FILE *fp = fopen (boilerplate, "w");
+  if (!fp)
+    {
+      remove (boilerplate);
+      return -2;
+    }
+  struct lu_preview_options_t preview_options;
+  memset (&preview_options, 0, sizeof (preview_options));
+  preview_options.state = state;
+  err = generate_boilerplate (state, &preview_options, fp);
+  fclose (fp);
 
   char *f = NULL;
   while ((f = argz_next (options->input_files, options->input_files_len, f)))

@@ -25,3 +25,5 @@ src/top.c
 src/project.c
 src/extra.c
 src/apply.c
+src/preview.c
+src/new-boilerplate.c

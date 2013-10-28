@@ -136,8 +136,6 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  lib/Makefile
                  src/Makefile
                  src/lush
-                 src/preview
-                 src/new-boilerplate
                  src/notice
                  doc/Makefile
                  doc/version.texi

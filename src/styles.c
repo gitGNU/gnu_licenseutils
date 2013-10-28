@@ -21,7 +21,9 @@
 #include <stdlib.h>
 #include "styles.h"
 #include "gettext-more.h"
+#include "licensing_priv.h"
 #include "c-ctype.h"
+#include "read-file.h"
 
 #ifdef SUPPORT_C_STYLE
 #include "c-style.h"
@@ -270,6 +272,30 @@ show_all_comment_style_options()
         }
       style++;
     }
+}
+
+struct lu_comment_style_t *
+lu_get_current_commenting_style()
+{
+  struct lu_comment_style_t *style = NULL;
+  char *f = get_config_file ("selected-comment-style");
+  if (f)
+    {
+      FILE *fp = fopen (f, "r");
+      if (fp)
+        {
+          size_t data_len = 0;
+          char *data = fread_file (fp, &data_len);
+          if (data)
+            {
+              style = lu_lookup_comment_style (data);
+              free (data);
+            }
+          fclose (fp);
+        }
+      free (f);
+    }
+  return style;
 }
 
 static error_t 

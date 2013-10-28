@@ -26,4 +26,5 @@ struct lu_comment_style_t * lu_lookup_comment_style (char *arg);
 int lu_is_a_comment_style (char *arg);
 char * lu_list_of_comment_styles();
 struct lu_comment_style_t * auto_detect_comment_blocks (char *filename, FILE *fp, char **argz, size_t *len, char **hashbang);
+struct lu_comment_style_t * lu_get_current_commenting_style();
 #endif

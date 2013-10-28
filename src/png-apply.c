@@ -28,6 +28,7 @@
 #include "copy-file.h"
 #include "error.h"
 #include "util.h"
+#include "preview.h"
 
 static struct argp_option argp_options[] = 
 {
@@ -257,9 +258,18 @@ lu_png_apply (struct lu_state_t *state, struct lu_png_apply_options_t *options)
   snprintf (boilerplate, sizeof boilerplate, "/tmp/%s.XXXXXX", PACKAGE);
   int fd = mkstemp (boilerplate);
   close (fd);
-  char *generate_cmd = xasprintf ("%s preview --no-commenting-style > %s", 
-                                  INTERPRETER_PATH, boilerplate);
-  system (generate_cmd);
+  FILE *fp = fopen (boilerplate, "w");
+  if (!fp)
+    {
+      remove (boilerplate);
+      return -2;
+    }
+  struct lu_preview_options_t preview_options;
+  memset (&preview_options, 0, sizeof (preview_options));
+  preview_options.state = state;
+  preview_options.no_style = 1;
+  err = generate_boilerplate (state, &preview_options, fp);
+  fclose (fp);
 
   FILE *fileptr = fopen (boilerplate, "r");
   size_t data_len = 0;

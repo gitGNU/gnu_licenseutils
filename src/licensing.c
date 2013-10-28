@@ -40,6 +40,7 @@
 #include "png-boilerplate.h"
 #include "png-apply.h"
 #include "warranty.h"
+#include "new-boilerplate.h"
 #include "help.h"
 #include "welcome.h"
 #include "copyright.h"
@@ -58,6 +59,7 @@
 #include "isc.h"
 #include "styles.h"
 #include "prepend.h"
+#include "preview.h"
 
 enum 
 {
@@ -65,26 +67,6 @@ enum
   COPYRIGHT, CBB, COMMENT, UNCOMMENT, PREPEND, CHOOSE, TOP, PROJECT,
   PREVIEW, APPLY, NEW_BOILERPLATE, ALL_PERMISSIVE, BSD, APACHE, MIT, 
   EXTRA, PNG_BOILERPLATE, PNG_APPLY, ISC, THE_END
-};
-
-struct lu_command_t new_boilerplate = 
-{
-  .name         = N_("new-boilerplate"),
-  .doc          = 
-    N_("Clear the current working boilerplate."),
-  .flags        = DO_NOT_SHOW_IN_HELP | SAVE_IN_HISTORY,
-  .argp         = NULL,
-  .parser       = NULL 
-};
-
-struct lu_command_t preview = 
-{
-  .name         = N_("preview"),
-  .doc          = 
-    N_("Show the current working boilerplate."),
-  .flags        = SHOW_IN_HELP | SAVE_IN_HISTORY,
-  .argp         = NULL,
-  .parser       = NULL 
 };
 
 struct lu_command_t notice = 
@@ -515,3 +497,4 @@ is_a_file (char *filename)
     }
   return 1;
 }
+
