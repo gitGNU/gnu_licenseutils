@@ -39,6 +39,7 @@ struct lu_copyright_options_t
   char *remove;
   size_t remove_len;
   int remove_all;
+  int accept_year_args;
 };
 
 int lu_copyright_parse_argp (struct lu_state_t *, int argc, char **argv);

@@ -544,7 +544,7 @@ $ licensing copyright Yoyodyne, Inc. 2001,2003-2005
 Copyright (C) 2001, 2003, 2004, 2005 Yoyodyne, Inc.
 Added.
 @end example 
-When the years happen to be supplied with an incorrect ordering, (e.g. 2003 before 2001) the @command{copyright} command will sort them properly.
+When the years happen to be supplied with an incorrect ordering, (e.g. 2003 before 2001) the @command{copyright} command will sort them properly.  When a year is not supplied, the current year will be shown.
 
 The @option{--abbreviate-years} option (@option{-a}) will abbreviate the years as expected:
 @example
@@ -591,6 +591,8 @@ The @option{--quiet} option will prevent the @samp{Added.} message and the copyr
 There are two options for controlling the appearance of the @samp{(C)}.  The @option{--small-c} option will display @samp{(c)} instead, while the @option{--unicode-sign} option will display @samp{©} instead.
 
 The @option{--dry-run} option simply shows the new copyright line without changing the current working boilerplate.
+
+When the names of copyright holders have numbers in their names that look like years, the @option{--year} (@option{-y}) option can be used.  Using this option will cause the numbers in the arguments to be treated as a name.
 
 Long lines can sometimes be created by the @command{copyright} command.
 

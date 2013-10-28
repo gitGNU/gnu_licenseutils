@@ -42,6 +42,7 @@ static struct argp_option argp_options[] =
     {"remove", 'r', "LINENO", OPTION_ARG_OPTIONAL, 
       N_("remove copyright from the working boilerplate")},
     {"quiet", 'q', NULL, 0, N_("don't show diagnostic messages")},
+    {"years", 'y', "YEARSPEC", OPTION_HIDDEN, N_("specify the years")},
     {0}
 };
 
@@ -273,6 +274,18 @@ parse_opt (int key, char *arg, struct argp_state *state)
     opt = (struct lu_copyright_options_t*) state->input;
   switch (key)
     {
+    case 'y':
+      if (parse_yearspec (arg, opt->years) == 0)
+        {
+          opt->yearspec = arg;
+          opt->accept_year_args = 0;
+        }
+      else
+        {
+          argp_failure (state, 0, 0, N_("Malformed yearspec"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
+      break;
     case 'q':
       opt->quiet = 1;
       break;
@@ -318,7 +331,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->abbreviate_years = 1;
       break;
     case ARGP_KEY_ARG:
-      if (strlen (arg) >= 4 && strspn (arg, "0123456789-,") == strlen (arg))
+      if (strlen (arg) >= 4 && strspn (arg, "0123456789-,") == strlen (arg) &&
+          opt->accept_year_args)
         {
           if (parse_yearspec (arg, opt->years) == 0)
             opt->yearspec = arg;
@@ -345,6 +359,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->remove = NULL;
       opt->remove_len = 0;
       opt->remove_all = 0;
+      opt->accept_year_args = 1;
       break;
     case ARGP_KEY_FINI:
       if (opt->yearspec == NULL)
