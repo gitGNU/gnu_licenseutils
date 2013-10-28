@@ -257,9 +257,7 @@ the user could be copying-in code, and the licenses cannot be combined like that
  or the user could be dual-licensing the entirety of the work under two incompatible licenses.
 
 
-Maybe also added a written-by command too.  for when copyright is owned by another entity and it's just generally useful to know who wrote the code.
+Maybe also added a written-by command too.  for when copyright is owned by another entity and it's just generally useful to know who wrote the code.  The extra command can suffice, but a sometimes people want it at the bottom of the boilerplate.
 
-
-various commands say something like "Try `choose --help'" in their error messaging.  this doesn't quite make sense for users running the bash shell instead of the lush shell.  it should say "Try licensing `choose --help'" instead when it's supposed to do that.
 
 The help command in the lush shell cannot be autocompleted because there's another completion script `help' that matches first.
