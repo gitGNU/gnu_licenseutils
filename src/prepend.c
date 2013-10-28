@@ -192,17 +192,34 @@ lu_prepend (struct lu_state_t *state, struct lu_prepend_options_t *options)
       fclose (out);
 
       err = chmod (tmp, st.st_mode);
-      if (options->backup)
-        {
-          char *backup = xasprintf ("%s.bak", options->dest);
-          err = rename (options->dest, backup);
-          free (backup);
-        }
-      else
-        remove (options->dest);
+      if (err)
+        error (0, errno, N_("couldn't chmod %s"), tmp);
 
       if (!err)
-        err = qcopy_file_preserving (tmp, options->dest);
+        {
+          if (options->backup)
+            {
+              char *backup = xasprintf ("%s.bak", options->dest);
+              err = rename (options->dest, backup);
+              if (err)
+                error (0, errno, N_("couldn't move %s -> %s"), options->dest, 
+                       backup);
+              free (backup);
+            }
+          else
+            {
+              err = remove (options->dest);
+              if (err)
+                error (0, errno, N_("couldn't remove `%s'"), options->dest);
+            }
+        }
+
+      if (!err)
+        {
+          err = qcopy_file_preserving (tmp, options->dest);
+          if (err)
+            error (0, errno, N_("couldn't copy %s -> %s"), tmp, options->dest);
+        }
     }
   free (source);
   free (dest);

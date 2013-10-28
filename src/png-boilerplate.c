@@ -298,18 +298,26 @@ lu_remove_comment (struct lu_state_t *state, struct lu_png_boilerplate_options_t
         {
           err = rename (f, new_filename);
           if (err)
+            error (0, errno, N_("couldn't move %s -> %s"), f, new_filename);
+          else
             {
-              error (0, errno, N_("couldn't move %s -> %s"), f, new_filename);
-              return err;
+              err = qcopy_file_preserving (tmp, f);
+              if (err)
+                error (0, errno, N_("couldn't copy %s -> %s"), tmp, f);
             }
-          err = qcopy_file_preserving (tmp, f);
         }
     }
   else
     {
       err = remove (f);
       if (!err)
-        err = rename (tmp, f);
+        {
+          err = rename (tmp, f);
+          if (!err)
+            error (0, errno, N_("couldn't move %s - > %s"), tmp, f);
+        }
+      else
+        error (0, errno, N_("couldn't remove `%s'"), f);
     }
   return err;
 }

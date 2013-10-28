@@ -352,10 +352,28 @@ remove_lu_boilerplate (struct lu_state_t *state, struct lu_boilerplate_options_t
       if (!from_stdout)
         fclose (out);
       err = chmod (swpfilename, st.st_mode);
-      rename (filename, bakfilename);
-      rename (swpfilename, filename);
+      if (err)
+        error (0, errno, N_("could not chmod `%s'"), swpfilename);
+      else
+        {
+          err = rename (filename, bakfilename);
+          if (err)
+            error (0, errno, N_("could not move %s -> %s"), filename, 
+                   bakfilename);
+          else
+            {
+              err = rename (swpfilename, filename);
+              if (err)
+                error (0, errno, N_("could not move %s -> %s"), swpfilename,
+                       filename);
+            }
+        }
       if (from_stdout || options->no_backups)
-        remove (bakfilename);
+        {
+          err = remove (bakfilename);
+          if (err)
+            error (0, errno, N_("could not remove `%s'"), bakfilename);
+        }
     }
   else
     err = -1;

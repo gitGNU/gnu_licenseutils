@@ -28,6 +28,7 @@
 #include "read-file.h"
 #include "trim.h"
 #include "error.h"
+#include "copy-file.h"
 #include "styles.h"
 
 static struct argp_option argp_options[] = 
@@ -366,10 +367,9 @@ write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *o
           //install it
           if (!err)
             {
-              remove (f);
-              char *cmd = xasprintf ("mv %s %s\n", tmp, f);
-              system (cmd);
-              free (cmd);
+              err = qcopy_file_preserving (tmp, f);
+              if (err)
+                error (0, errno, N_("could not copy %s -> %s"), tmp, f);
             }
         }
       free (f);
