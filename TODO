@@ -2,13 +2,4 @@
 any time we call uncomment twice on some text, it probably won't have the desired result.  this happens in pascal and groff styles.
   use gnulib modules progname and error, throughout.
 
-how do we know when to change our program name?
-
-choose still has a system mv in it.  replace with qcopy_file_preserving
-
 help COMMAND should check to see if COMMAND really exists.
-              
-add these when rename fails
-error (0, errno, N_("couldn't move %s -> %s"), f, new_filename);
-
-ensure all Selecteds, Addeds, and Removeds all go to the stderr
