@@ -1,0 +1,35 @@
+#!/bin/sh
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+#here is what we expect
+expected=`mktemp $builddir/licensing.XXXXXX`
+cat << EOF > $expected
+EOF
+
+tmpdir=`mktemp -d $builddir/licensing.XXXXXX`
+cat << EOF > $tmpdir/tmp.c
+#include <stdio.h>
+#include <stdlib.h>
+int 
+main (int argc, char **argv)
+{
+  printf("hello world\n");
+}
+EOF
+#generating our results
+$licensing boilerplate --quiet $tmpdir/tmp.c
+
+#0003.log is simultaneously created as this script runs.
+diff -uNrd $expected $builddir/0003.log
+retval=$?
+
+#cleanup
+rm $expected
+rm $tmpdir/tmp.c
+rmdir $tmpdir
+exit $retval

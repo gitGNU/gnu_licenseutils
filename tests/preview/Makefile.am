@@ -6,10 +6,12 @@
 # without any warranty.
 AM_COLOR_TESTS=no
 AM_TESTS_ENVIRONMENT=export licensing=${top_builddir}/src/licensing; \
-		     export builddir=${builddir};
+		     export builddir=${builddir}; \
+		     export top_builddir=${top_builddir}; \
+		     export HOME=${builddir};
 
-boilerplate_tests=0001 0002 0003
-TESTS=${boilerplate_tests}
-check_SCRIPTS=${boilerplate_tests}
+preview_tests=0001
+TESTS=${preview_tests}
+check_SCRIPTS=${preview_tests}
 
-EXTRA_DIST=${boilerplate_tests}
+EXTRA_DIST=${preview_tests}

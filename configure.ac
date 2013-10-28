@@ -147,7 +147,9 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  tests/choose/Makefile
                  tests/comment/Makefile
                  tests/copyright/Makefile
+                 tests/extra/Makefile
                  tests/prepend/Makefile
+                 tests/preview/Makefile
                  tests/project/Makefile
                  tests/top/Makefile
                  tests/uncomment/Makefile

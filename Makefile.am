@@ -92,6 +92,7 @@ $(srcdir)/tests/Makefile.am \
 $(srcdir)/tests/boilerplate/Makefile.am \
 $(srcdir)/tests/boilerplate/0001 \
 $(srcdir)/tests/boilerplate/0002 \
+$(srcdir)/tests/boilerplate/0003 \
 $(srcdir)/tests/cbb/Makefile.am \
 $(srcdir)/tests/cbb/0001 \
 $(srcdir)/tests/choose/Makefile.am \
@@ -101,8 +102,12 @@ $(srcdir)/tests/comment/Makefile.am \
 $(srcdir)/tests/comment/0001 \
 $(srcdir)/tests/copyright/Makefile.am \
 $(srcdir)/tests/copyright/0001 \
+$(srcdir)/tests/extra/Makefile.am \
+$(srcdir)/tests/extra/0001 \
 $(srcdir)/tests/prepend/Makefile.am \
 $(srcdir)/tests/prepend/0001 \
+$(srcdir)/tests/preview/Makefile.am \
+$(srcdir)/tests/preview/0001 \
 $(srcdir)/tests/project/Makefile.am \
 $(srcdir)/tests/project/0001 \
 $(srcdir)/tests/top/Makefile.am \
