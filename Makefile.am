@@ -88,7 +88,6 @@ $(srcdir)/src/preview.c         $(srcdir)/src/preview.h \
 $(srcdir)/src/comment-style.h \
 $(srcdir)/src/main.c \
 $(srcdir)/src/lush.in \
-$(srcdir)/src/preview.in \
 $(srcdir)/src/notice.in \
 $(srcdir)/tests/Makefile.am \
 $(srcdir)/tests/boilerplate/Makefile.am \
