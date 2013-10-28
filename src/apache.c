@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -100,6 +101,8 @@ show_lu_apache(struct lu_state_t *state, struct lu_apache_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -112,11 +115,9 @@ show_lu_apache(struct lu_state_t *state, struct lu_apache_options_t *options)
 
   replace_html_entities (data);
   if (options->full)
-    show_lines_after (state, data, "<pre>", 202, 1, 
-                      "<pre>", "");
+    err = show_lines_after (state, data, "<pre>", 202, 1, "<pre>", "");
   else
-    show_lines_after (state, data, "   Licensed under the Apache License", 11, 0, 
-                      NULL, NULL);
+    err = show_lines_after (state, data, "   Licensed under the Apache License", 11, 0, NULL, NULL);
   free (data);
   return err;
 }

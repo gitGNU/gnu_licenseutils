@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -90,6 +91,8 @@ show_lu_all_permissive(struct lu_state_t *state, struct lu_all_permissive_option
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -100,8 +103,8 @@ show_lu_all_permissive(struct lu_state_t *state, struct lu_all_permissive_option
   fclose (fileptr);
   remove (tmp);
 
-  show_lines_after (state, data, "<pre class=\"smallexample\">", 4, 1, 
-                                 "<pre class=\"smallexample\">", "");
+  err = show_lines_after (state, data, "<pre class=\"smallexample\">", 4, 1, 
+                          "<pre class=\"smallexample\">", "");
   free (data);
   return err;
 }

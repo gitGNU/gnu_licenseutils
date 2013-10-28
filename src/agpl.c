@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -126,6 +127,8 @@ show_lu_agpl(struct lu_state_t *state, struct lu_agpl_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -139,9 +142,10 @@ show_lu_agpl(struct lu_state_t *state, struct lu_agpl_options_t *options)
   if (options->full || options->html)
     luprintf (state, "%s\n", data);
   else
-    show_lines_after (state, data, "    This program is free software:", 12,
-                      !options->future_versions, 
-                      "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+    err = show_lines_after (state, data, 
+                            "    This program is free software:", 12,
+                            !options->future_versions, 
+                            "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
   free (data);
   return err;
 }

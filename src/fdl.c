@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 enum lgpl_version_opts
@@ -154,6 +155,8 @@ show_lu_fdl(struct lu_state_t *state, struct lu_fdl_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -171,17 +174,21 @@ show_lu_fdl(struct lu_state_t *state, struct lu_fdl_options_t *options)
       switch (options->version)
         {
         case 1:
-          show_lines_after (state, data, 
-                            "      Permission is granted to copy,", 7, replace,
-                            "or any later version", "of the License as");
+          err = show_lines_after 
+            (state, data, "      Permission is granted to copy,", 7, replace,
+             "or any later version", "of the License as");
           break;
         case 2:
-          show_lines_after (state, data, "    Permission is granted to copy,", 
-                            6, replace, "or any later version", "of the License as");
+          err = show_lines_after (state, data, 
+                                  "    Permission is granted to copy,", 
+                                  6, replace, "or any later version", 
+                                  "of the License as");
           break;
         case 3:
-          show_lines_after (state, data, "    Permission is granted to copy,", 
-                            6, replace, "or any later version", "of the License as");
+          err = show_lines_after (state, data, 
+                                  "    Permission is granted to copy,", 
+                                  6, replace, "or any later version", 
+                                  "of the License as");
           break;
         }
     }

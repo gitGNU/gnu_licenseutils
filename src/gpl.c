@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -149,6 +150,8 @@ show_lu_gpl(struct lu_state_t *state, struct lu_gpl_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -166,19 +169,22 @@ show_lu_gpl(struct lu_state_t *state, struct lu_gpl_options_t *options)
       switch (options->version)
         {
         case 1:
-          show_lines_after (state, data, 
-                            "    This program is free software;", 13, replace,
-                            "either version 1, or (at your option)\n    any later version.", "version 1 of the License.");
+          err = show_lines_after (state, data, 
+                                  "    This program is free software;", 13, 
+                                  replace, 
+                                  "either version 1, or (at your option)\n    any later version.", "version 1 of the License.");
           break;
         case 2:
-          show_lines_after (state, data, 
-                            "    This program is free software;", 13, replace,
-                            "either version 2 of the License, or\n    (at your option) any later version.", "version 2 of the License.");
+          err = show_lines_after (state, data, 
+                                  "    This program is free software;", 13, 
+                                  replace,
+                                  "either version 2 of the License, or\n    (at your option) any later version.", "version 2 of the License.");
           break;
         case 3:
-          show_lines_after (state, data, 
-                            "    This program is free software:", 12, replace,
-                            "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+          err = show_lines_after (state, data, 
+                                  "    This program is free software:", 12, 
+                                  replace,
+                                  "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
           break;
         }
     }

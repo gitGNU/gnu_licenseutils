@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -90,6 +91,8 @@ show_lu_mit(struct lu_state_t *state, struct lu_mit_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -101,8 +104,8 @@ show_lu_mit(struct lu_state_t *state, struct lu_mit_options_t *options)
   remove (tmp);
 
   replace_html_entities (data);
-  show_lines_after (state, data, "Permission is hereby granted", 18, 0, 
-                    NULL, NULL);
+  err = show_lines_after (state, data, "Permission is hereby granted", 18, 0, 
+                          NULL, NULL);
   free (data);
   return err;
 }

@@ -27,6 +27,8 @@
 #include "trim.h"
 #include "read-file.h"
 #include "xvasprintf.h"
+#include "gettext-more.h"
+#include "error.h"
 #include "styles.h"
 
 static int
@@ -72,13 +74,21 @@ show_lines_after (struct lu_state_t *state, char *text, const char *match, int l
               memmove (orlater+strlen(replace), orlater, strlen (orlater)+1);
               memcpy (orlater, replace, strlen(replace));
             }
+          else
+            {
+              error (0, 0, N_("can't find replacement text on webpage."));
+              err = -2;
+            }
           luprintf (state, "%s\n", &text[start]);
         }
       else
         luprintf (state, "%s\n", &text[start]);
     }
   else
-    err = -1;
+    {
+      error (0, 0, N_("can't find start of boilerplate on webpage."));
+      err = -1;
+    }
   return err;
 }
 

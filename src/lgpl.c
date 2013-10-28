@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 enum lgpl_version_opts
@@ -187,6 +188,8 @@ show_lu_lgpl(struct lu_state_t *state, struct lu_lgpl_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -204,15 +207,16 @@ show_lu_lgpl(struct lu_state_t *state, struct lu_lgpl_options_t *options)
       switch (options->version)
         {
         case 0:
-          show_lines_after (state, data, 
-                            "    This library is free software;", 13, replace,
-
-                            "either\n    version 2 of the License, or (at your option) any later version.", "version 2\n    of the License.");
+          err = show_lines_after (state, data, 
+                                  "    This library is free software;", 13, 
+                                  replace, 
+                                  "either\n    version 2 of the License, or (at your option) any later version.", "version 2\n    of the License.");
           break;
         case 1:
-          show_lines_after (state, data, 
-                            "    This library is free software;", 13, replace,
-                            "either\n    version 2.1 of the License, or (at your option) any later version.", "version 2.1\n    of the License.");
+          err = show_lines_after (state, data, 
+                                  "    This library is free software;", 13, 
+                                  replace,
+                                  "either\n    version 2.1 of the License, or (at your option) any later version.", "version 2.1\n    of the License.");
           break;
         case 3:
           show_lgplv3_boilerplate (state, replace);

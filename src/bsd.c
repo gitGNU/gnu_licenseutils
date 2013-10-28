@@ -23,6 +23,7 @@
 #include "gettext-more.h"
 #include "xvasprintf.h"
 #include "read-file.h"
+#include "error.h"
 #include "util.h"
 
 static struct argp_option argp_options[] = 
@@ -110,6 +111,8 @@ show_lu_bsd(struct lu_state_t *state, struct lu_bsd_options_t *options)
   if (response != 200)
     {
       remove (tmp);
+      error (0, 0, N_("got unexpected response code %d from %s"), response,
+             url);
       err = 1;
       return err;
     }
@@ -123,14 +126,17 @@ show_lu_bsd(struct lu_state_t *state, struct lu_bsd_options_t *options)
   replace_html_entities (data);
 
   if (options->clause == 3)
-    show_lines_after (state, data, "Redistribution and use in source and ", 
-                      27, 0, NULL, NULL);
+    err = show_lines_after (state, data, 
+                            "Redistribution and use in source and ", 
+                            27, 0, NULL, NULL);
   else if (options->clause == 2)
-    show_lines_after (state, data, "Redistribution and use in source and ", 
-                      21, 0, NULL, NULL);
+    err = show_lines_after (state, data, 
+                            "Redistribution and use in source and ", 
+                            21, 0, NULL, NULL);
   else
-    show_lines_after (state, data, "Redistribution and use in source and ", 
-                      27, 0, NULL, NULL);
+    err = show_lines_after (state, data, 
+                            "Redistribution and use in source and ", 
+                            27, 0, NULL, NULL);
   free (url);
   free (data);
   return err;

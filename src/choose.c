@@ -347,8 +347,6 @@ write_selected_licenses (struct lu_state_t *state, struct lu_choose_options_t *o
               err = lu_parse_command (state, cmd);
               if (err)
                 {
-                  error (0, 0, N_("failed to select license `%s' "
-                                  "(network down or missing webpage?"), l);
                   state->out = old_out;
                   break;
                 }
