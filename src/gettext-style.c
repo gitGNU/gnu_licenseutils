@@ -69,7 +69,7 @@ uncomment (char **argz, size_t *len, int trim)
 static int
 get_comment (FILE *fp, char **argz, size_t *len, char **hashbang)
 {
-  return get_comment_blocks (fp, argz, len, hashbang, "(^\\# .*[\\r\\n])*");
+  return get_comment_blocks (fp, argz, len, hashbang, "(^\\#\\ .*[\\r\\n])*");
 }
 
 struct lu_comment_style_t gettext_style=
@@ -79,6 +79,6 @@ struct lu_comment_style_t gettext_style=
   .get_initial_comment = get_comment,
   .comment             = comment,
   .uncomment           = uncomment,
-  .support_file_exts   = NULL, // support all file extensions
+  .support_file_exts   = ".pot .po",
   .avoid_file_exts     = NULL, // avoid no file extensions
 };
