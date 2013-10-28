@@ -250,7 +250,7 @@ there is the idea of using the current selected commenting style in comment, unc
 
 we don't support ada, but haskell comments of "--" are the same.  auto-detection can't easily detect the difference between ada and haskell. vhdl is also "--"
 
-the copyright command goes to lengths to wrap lines, and to not put a newline in a person's name.  but then we go ahead and run the copyright file through fmt, which could do that.  we do this so that many years get wrapped, and we don't really want to write the code that formats the years in C.
+the copyright command goes to lengths to wrap lines, and to not put a newline in a person's name.  this means that there can be long lines.  we tried wrapping long lines through fmt but that wrapped short lines too.
 
 perhaps we need a warning when we combine licenses that shouldn't be combined.
 the user could be copying-in code, and the licenses cannot be combined like that.
