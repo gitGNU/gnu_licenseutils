@@ -5,6 +5,23 @@
 # notice and this notice are preserved.  This file is offered as-is,
 # without any warranty.
 
+To build this software from a git clone:
+
+Install run-time dependencies:
+libpng >= version 1.2.49
+libcurl >= version 7.10.0
+GNU coreutils (it needs the fmt command at runtime),
+and GNU bash (the interactive licensing shell is based on bash)
+
+Install build dependencies:
+GNU autoconf, GNU automake, GNU libtool, GNU gettext, GNU Texinfo, 
+GNU Help2man, GNU make, GNU gcc
+
+$ ./bootstrap
+$ ./configure
+$ make
+
+
 To add a new command to this program:
 
 1. complete source files foo.c foo.h.  use project.c as an example.
@@ -29,6 +46,7 @@ or alternatively if your new command is a script:
 The command name must start with a lowercase character.
 The command must not have a space in it, or any other special character.
 
+If the command is a script there will be difficulties in integrating it into the test suite because the licensing binary will expect it to live in the pkglibexecdir, but in make distcheck the installdir doesn't have the scripts (yet).   This also has the consequence of lush scripts not working the test suite.  Care needs to be taken to call the script as it exists in the builddir.  It won't even be executable yet, so you will have to explicitly call your script with the interpreter.
 
 
 
@@ -123,3 +141,4 @@ the preview command assembles the boilerplate from these files.
 
 the test suite changes ${HOME} to point elsewhere so that make distcheck can complete successfully.
 
+the licensing binary depends on the Coreutils `fmt' command being present on the system and in the user's path.
