@@ -1,5 +1,8 @@
-<!--#include virtual="/server/header.html" -->
+<html>
+<head>
 <title>%%TITLE%%</title>
+</head>
+<body>
 <h2>%%TITLE%%</h2>
 
 <address>last updated %%DATE%%</address>
@@ -49,9 +52,11 @@
     (%%TEXI_TGZ_SIZE%%K bytes gzipped tar file).</a></li>
 </ul>
 
-<p>Copyright &copy; 2013 Ben Asselstine</p>
+<p>%%TITLE%% manual is Copyright &copy; 2013 Ben Asselstine</p>
 
-<p>Verbatim copying and distribution of this entire article are
+<p>This individual webpage is Copyright &copy; 2013 Free Software Foundation, Inc.</p>
+
+<p>Verbatim copying and distribution of this individual webpage are
 permitted worldwide, without royalty, in any medium, provided this
 notice, and the copyright notice, are preserved.</p>
 
