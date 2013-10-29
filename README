@@ -17,21 +17,21 @@ for a variety of different programming languages.
 
 This software does not autodetect licenses in source code files.
 
-licenseutils consists of a program `licensing', and a shell `lush'.
+licenseutils consists of a program `licensing', and a shell `lu-sh'.
 
 The `licensing' program has many commands that are called like so:
 $ licensing COMMAND
 
-When you run the licenseutils shell `lush', the `licensing' part is 
+When you run the licenseutils shell `lu-sh', the `licensing' part is 
 not required to run commands.
 
 For example:
 --
-#!/usr/bin/env lush
+#!/usr/bin/env lu-sh
 welcome
 exit 0
 --
-This lush script is equivalent to running the command: `licensing welcome`
+This lu-sh script is equivalent to running the command: `licensing welcome`
 
 Licenseutils lets you quickly fashion a standard-looking boilerplate and 
 then apply it to one or more source code files.
@@ -41,10 +41,10 @@ that includes identifying information, copyright notices and license
 notices.
 
 
-Here is an example of how to use lush to add boilerplate to the 
+Here is an example of how to use lu-sh to add boilerplate to the 
 beginning of a source code file.
 
-   $ lush
+   $ lu-sh
    licenseutils 0.0.1
    Copyright (C) 2013 Ben Asselstine
    This is free software with ABSOLUTELY NO WARRANTY.
@@ -53,7 +53,7 @@ beginning of a source code file.
    licensing> choose gplv3+ c
    Selected.
 
-This starts the `lush' shell.  The prompt changes to "licensing>" after 
+This starts the `lu-sh' shell.  The prompt changes to "licensing>" after 
 showing some initial text.
 This `choose' command goes to gnu.org and downloads the license notice 
 for the gpl version 3.  The `c' part means that the new boilerplate will 
@@ -105,7 +105,7 @@ The current working boilerplate is complete enough to apply to a file.
    apply: yoyodyne.c -> Boilerplate applied.
    /* gplv3+ */>
 
-Yes, bash commands also work in lush!  lush acts similarly to a bash shell 
+Yes, bash commands also work in lu-sh!  lu-sh acts similarly to a bash shell 
 except `licensing' does not have to be put in front of licensing commands.
 
 The apply command prepends the current working boilerplate to yoyodyne.c.
@@ -260,4 +260,4 @@ the user could be copying-in code, and the licenses cannot be combined like that
 Maybe also added a written-by command too.  for when copyright is owned by another entity and it's just generally useful to know who wrote the code.  The extra command can suffice, but a sometimes people want it at the bottom of the boilerplate.
 
 
-The help command in the lush shell cannot be autocompleted because there's another completion script `help' that matches first.
+The help command in the lu-sh shell cannot be autocompleted because there's another completion script `help' that matches first.

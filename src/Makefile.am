@@ -6,7 +6,7 @@
 # without any warranty.
 localedir = $(datadir)/locale
 EXTRA_DIST=styles.am
-bin_SCRIPTS=lush
+bin_SCRIPTS=lu-sh
 bin_PROGRAMS=licensing
 pkglibexec_SCRIPTS=notice
 DEFS += -DLOCALEDIR=\"$(localedir)\" -DPROGRAM=\"$(PROGRAM)\" -DPKGLIBEXECDIR=\"$(pkglibexecdir)\" -DINTERPRETER=\"$(INTERPRETER)\" -DINTERPRETER_PATH=\"$(bindir)/$(INTERPRETER)\" @DEFS@

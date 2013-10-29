@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if [[ "$BASH_ENV" == *\.lushrc* ]]; then
+if [[ "$BASH_ENV" == *\.lu-shrc* ]]; then
   progname=$(basename $0)
 else
   progname="licensing $(basename $0)"

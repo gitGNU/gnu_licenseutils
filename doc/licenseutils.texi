@@ -150,7 +150,7 @@ Programming languages generally support copyright and license notices through th
 
 Free software depends on copyright and license notices being present because individual files have a way of propagating independently from their parent project..  Adding these notices can be time-consuming even for small projects.
 
-licenseutils consists of a program @command{licensing}, and a shell called @command{lush}.  Together they provide a set of commands to quickly and easily modifying files to include a standard-looking free software boilerplate for various different programming languages.
+licenseutils consists of a program @command{licensing}, and a shell called @command{lu-sh}.  Together they provide a set of commands to quickly and easily modifying files to include a standard-looking free software boilerplate for various different programming languages.
 
 @menu
 * licensing invocation::    Licensing utility program.
@@ -302,23 +302,23 @@ Shows help on all of these commands.
 See @ref{help invocation}.
 @end table
 
-@subsection Starting the lush shell
-When a command is not given as an argument to @command{licensing}, the interactive @command{lush} shell is started.  The @option{--quiet} option prevents the welcome message from being displayed in the lush shell.
+@subsection Starting the lu-sh shell
+When a command is not given as an argument to @command{licensing}, the interactive @command{lu-sh} shell is started.  The @option{--quiet} option prevents the welcome message from being displayed in the lu-sh shell.
 
-The lush shell is an extended bash shell.  The initialization file for lush is automatically generated, and lives in @file{~/.lushrc}.
+The lu-sh shell is an extended bash shell.  The initialization file for lu-sh is automatically generated, and lives in @file{~/.lu-shrc}.
 
 The program state (e.g. the current working boilerplate) is kept in @file{~/.licensutils/}.
 
-All of the @command{licensing} commands work in the lush shell without a @command{licensing} command prefixed to it.  
+All of the @command{licensing} commands work in the lu-sh shell without a @command{licensing} command prefixed to it.  
 
 For example:
 @example
-#!/usr/bin/env lush
+#!/usr/bin/env lu-sh
 welcome
 exit 0
 @end example
 
-This lush script is equivalent to running the command: @command{licensing welcome}.  Although this example shows a lush script, the shell is most often used interactively.
+This lu-sh script is equivalent to running the command: @command{licensing welcome}.  Although this example shows a lu-sh script, the shell is most often used interactively.
 
 @node Scanning for boilerplate
 @chapter Scanning for boilerplate
@@ -512,7 +512,7 @@ Tab completion will display the available commenting styles and licenses.  Alter
 
 Although all of the available licenses are compatible with the GPL, some of them are not recommended.  To select one of the unrecommended licenses, the @command{choose} command must be called with the @command{--force} option.
 
-When @command{choose} is executed in the @command{lush} shell, the prompt changes to reflect the selected licenses and commenting style.
+When @command{choose} is executed in the @command{lu-sh} shell, the prompt changes to reflect the selected licenses and commenting style.
 
 The @option{--quiet} option prevents the final @samp{Selected.} message from appearing.
 
@@ -1171,17 +1171,17 @@ The @command{apply} and @command{png-apply} commands rely on the @command{previe
 @section @command{welcome}: Show the welcome message
 @pindex welcome
 
-The @command{welcome} command is displayed when the @command{lush} shell is started in interactive-mode.  It looks like this:
+The @command{welcome} command is displayed when the @command{lu-sh} shell is started in interactive-mode.  It looks like this:
 
 @example
-licenseutils 0.0.6
+licenseutils @value{VERSION}
 Copyright (C) 2013 Ben Asselstine
 This is free software with ABSOLUTELY NO WARRANTY.
 For warranty details type `warranty'.
 For a list of commands type `help'.
 @end example
 
-To start the @command{lush} shell without the welcome message, run @samp{licensing --quiet}.
+To start the @command{lu-sh} shell without the welcome message, run @samp{licensing --quiet}.
 
 @node warranty invocation
 @section @command{warranty}: Show the warranty message

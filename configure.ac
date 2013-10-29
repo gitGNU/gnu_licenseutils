@@ -82,7 +82,7 @@ dnl Internationalization macros.
 AM_GNU_GETTEXT_VERSION([0.18.2])
 AM_GNU_GETTEXT([external])
 
-INTERPRETER=lush
+INTERPRETER=lu-sh
 AC_SUBST(INTERPRETER)
 
 AC_SUBST(bash_completiondir)
@@ -135,7 +135,7 @@ echo "supported comment styles: $enable_commenting_styles"
 AC_CONFIG_FILES([Makefile po/Makefile.in
                  lib/Makefile
                  src/Makefile
-                 src/lush
+                 src/lu-sh
                  src/notice
                  doc/Makefile
                  doc/version.texi

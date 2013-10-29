@@ -22,8 +22,8 @@ fi
 if [[ $# -eq 0 ]]; then
   $run welcome
 fi
-if [ ! -f ~/.lushrc ]; then
-  $run --generate-bashrc > ~/.lushrc
+if [ ! -f ~/.lu-shrc ]; then
+  $run --generate-bashrc > ~/.lu-shrc
 fi
-export BASH_ENV=~/.lushrc
-/bin/bash --init-file ~/.lushrc $*
+export BASH_ENV=~/.lu-shrc
+/bin/bash --init-file ~/.lu-shrc $*

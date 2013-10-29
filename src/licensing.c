@@ -160,7 +160,7 @@ make_command_line (char *cmd, int *argc, char ***argv)
       free (s1);
 
       char *bash_env = getenv("BASH_ENV");
-      if (bash_env && strstr (bash_env, ".lushrc"))
+      if (bash_env && strstr (bash_env, ".lu-shrc"))
         set_program_name (strdup((*argv)[0]));
       else
         set_program_name (xasprintf ("%s %s", PROGRAM, (*argv)[0]));
