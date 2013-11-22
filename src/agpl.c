@@ -64,6 +64,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case ARGP_KEY_INIT:
       opt->html = 0;
       opt->full = 0;
+      opt->future_versions = 1;
       break;
     case ARGP_KEY_FINI:
       if (opt->future_versions == 0 && opt->html)
