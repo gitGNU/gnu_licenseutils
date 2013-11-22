@@ -7,17 +7,22 @@
 # without any warranty.
 
 result=`mktemp $builddir/licensing.XXXXXX`
-cp 0001.png $result 2>/dev/null >/dev/null
+cp $srcdir/0001.png $result 2>/dev/null >/dev/null
 
 $licensing new-boilerplate --quiet
 $licensing choose lgpl --quiet
 $licensing copyright Ben 2013 --quiet
 $licensing png-apply $result --quiet --no-backup
 
-cmp $result 0001-expected-result.png --quiet
+cmp $result $srcdir/0001-expected-result.png --quiet
 retval=$?
 
 #cleanup
 rm $result
+rm ${HOME}/.licenseutils/copyright-holders
+rm ${HOME}/.licenseutils/license-notice
+rm ${HOME}/.licenseutils/selected-licenses
+rmdir ${HOME}/.licenseutils
+
 
 exit $retval

@@ -6,7 +6,9 @@
 # without any warranty.
 AM_COLOR_TESTS=no
 AM_TESTS_ENVIRONMENT=export licensing=${top_builddir}/src/licensing; \
-		     export builddir=${builddir};
+		     export builddir=${builddir}; \
+                     export HOME=${builddir};
+
 
 png_apply_tests=0001
 TESTS=${png_apply_tests}
