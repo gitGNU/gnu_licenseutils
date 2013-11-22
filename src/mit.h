@@ -25,7 +25,6 @@
 struct lu_mit_options_t
 {
   struct lu_state_t *state;
-  int full;
 };
 
 int lu_mit_parse_argp (struct lu_state_t *, int argc, char **argv);
