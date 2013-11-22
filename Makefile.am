@@ -105,6 +105,10 @@ $(srcdir)/tests/copyright/Makefile.am \
 $(srcdir)/tests/copyright/0001 \
 $(srcdir)/tests/extra/Makefile.am \
 $(srcdir)/tests/extra/0001 \
+$(srcdir)/tests/png-apply/Makefile.am \
+$(srcdir)/tests/png-apply/0001 \
+$(srcdir)/tests/png-apply/0001.png \
+$(srcdir)/tests/png-apply/0001-expected-result.png \
 $(srcdir)/tests/prepend/Makefile.am \
 $(srcdir)/tests/prepend/0001 \
 $(srcdir)/tests/preview/Makefile.am \
@@ -122,10 +126,8 @@ $(srcdir)/tests/uncomment/0004
 manifest:
 	@echo ${PREBOOTSTRAPFILES}
 
-.manifest:
+predist:
 	make srcdir="`eval basename ${PWD}`" --silent -f ${PWD}/Makefile manifest > ${builddir}/.manifest
-
-predist: ${builddir}/.manifest
 	rm -f ${PACKAGE}.tar.gz 2>/dev/null ;\
 	tar --dereference --directory=.. -zcvf ${PACKAGE}.tar.gz `cat ${builddir}/.manifest` && rm ${builddir}/.manifest
 
