@@ -142,8 +142,12 @@ save_comment (FILE *fp, FILE *out, char *data, size_t data_len)
       text_ptr->key = strdup ("Comment");
       text_ptr->text = data;
       text_ptr->text_length = data_len;
-      text_ptr->itxt_length = data_len;
-      text_ptr->compression = 1;
+      text_ptr->compression = PNG_TEXT_COMPRESSION_NONE;
+#ifdef PNG_iTXt_SUPPORTED
+      text_ptr->itxt_length = 0;
+      text_ptr->lang = NULL;
+      text_ptr->lang_key = NULL;
+#endif
       png_set_text (inpng, ininfo, text_ptr, num_text);
     }
   else
@@ -154,8 +158,12 @@ save_comment (FILE *fp, FILE *out, char *data, size_t data_len)
       text_ptr->key = strdup ("Comment");
       text_ptr->text = data;
       text_ptr->text_length = data_len;
-      text_ptr->itxt_length = data_len;
-      text_ptr->compression = 1;
+      text_ptr->compression = PNG_TEXT_COMPRESSION_NONE;
+#ifdef PNG_iTXt_SUPPORTED
+      text_ptr->itxt_length = 0;
+      text_ptr->lang = NULL;
+      text_ptr->lang_key = NULL;
+#endif
       png_set_text (inpng, ininfo, text_ptr, 1);
     }
   png_read_update_info (inpng, ininfo);
@@ -237,9 +245,11 @@ lu_save_comment (struct lu_state_t *state, struct lu_png_apply_options_t *option
       err = remove (f);
       if (!err)
         {
-          err = rename (tmp, f);
+          err = qcopy_file_preserving (tmp, f);
           if (err)
-            error (0, errno, N_("couldn't move %s -> %s"), tmp, f);
+            error (0, errno, N_("couldn't copy %s -> %s"), tmp, f);
+          else
+            err = remove (tmp);
         }
       else
         error (0, errno, N_("couldn't remove `%s'"), f);

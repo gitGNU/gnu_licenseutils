@@ -208,7 +208,7 @@ remove_comment (FILE *fp, FILE *out)
                 {
                   strcpy (comment->text, "\n");
                   comment->text_length = 1;
-                  comment->itxt_length = 1;
+                  //comment->itxt_length = 1;
                   break;
                 }
             }

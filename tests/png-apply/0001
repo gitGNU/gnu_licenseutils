@@ -1,0 +1,23 @@
+#!/bin/sh
+# Copyright (C) 2013 Ben Asselstine
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+result=`mktemp $builddir/licensing.XXXXXX`
+cp 0001.png $result 2>/dev/null >/dev/null
+
+$licensing new-boilerplate --quiet
+$licensing choose lgpl --quiet
+$licensing copyright Ben 2013 --quiet
+$licensing png-apply $result --quiet --no-backup
+
+cmp $result 0001-expected-result.png --quiet
+retval=$?
+
+#cleanup
+rm $result
+
+exit $retval
