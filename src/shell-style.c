@@ -63,7 +63,7 @@ uncomment (char **argz, size_t *len, int trim)
 }
 
 static int
-get_comment (FILE *fp, char **argz, size_t *len, char **hashbang, char *regex)
+get_comment (FILE *fp, char **argz, size_t *len, char **hashbang)
 {
   get_hashbang_or_rewind (fp, hashbang);
   return get_comment_blocks (fp, argz, len, hashbang, "(^\\#.*[\\r\\n])*");
