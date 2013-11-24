@@ -33,7 +33,7 @@ scriptversion=2010-05-14.09; # UTC
 nl='
 '
 grep "po/Makefile.in" configure.ac >/dev/null
-if [ "$?" == "1" ]; then
+if [ "$?" -eq "1" ]; then
 gettextize --no-changelog --po-dir=po
 fi
 
