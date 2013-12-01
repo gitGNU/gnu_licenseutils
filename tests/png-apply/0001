@@ -14,11 +14,35 @@ $licensing choose lgpl --quiet
 $licensing copyright Ben 2013 --quiet
 $licensing png-apply $result --quiet --no-backup
 
-cmp $result $srcdir/0001-expected-result.png --quiet
+expected=`mktemp $builddir/licensing.XXXXXX`
+cat << EOF > $expected
+Copyright (C) 2013 Ben
+
+This library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+EOF
+
+$licensing png-boilerplate $result
+
+#0001.log is simultaneously created as this script runs.
+diff -uNrd $expected $builddir/0001.log
 retval=$?
 
 #cleanup
 rm $result
+rm $expected
 rm ${HOME}/.licenseutils/copyright-holders
 rm ${HOME}/.licenseutils/license-notice
 rm ${HOME}/.licenseutils/selected-licenses

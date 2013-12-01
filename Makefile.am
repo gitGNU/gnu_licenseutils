@@ -108,7 +108,6 @@ $(srcdir)/tests/extra/0001 \
 $(srcdir)/tests/png-apply/Makefile.am \
 $(srcdir)/tests/png-apply/0001 \
 $(srcdir)/tests/png-apply/0001.png \
-$(srcdir)/tests/png-apply/0001-expected-result.png \
 $(srcdir)/tests/prepend/Makefile.am \
 $(srcdir)/tests/prepend/0001 \
 $(srcdir)/tests/preview/Makefile.am \

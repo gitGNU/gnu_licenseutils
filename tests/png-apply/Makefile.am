@@ -14,4 +14,4 @@ png_apply_tests=0001
 TESTS=${png_apply_tests}
 check_SCRIPTS=${png_apply_tests}
 
-EXTRA_DIST=${png_apply_tests} 0001.png 0001-expected-result.png
+EXTRA_DIST=${png_apply_tests} 0001.png
