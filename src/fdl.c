@@ -213,12 +213,12 @@ struct lu_command_t fdl =
   .parser       = lu_fdl_parse_argp,
   .licenses     =
     {
-      "fdlv13+ fdl --v3",
-      "fdlv13  fdl --v3 --jerkwad",
-      "fdlv12+ fdl --v2",
-      "fdlv12  fdl --v2 --jerkwad",
-      "fdlv11+ fdl --v1",
-      "fdlv11  fdl --v1 --jerkwad",
+      "fdlv13+ fdl --v1.3",
+      "fdlv13  fdl --v1.3 --jerkwad",
+      "fdlv12+ fdl --v1.2",
+      "fdlv12  fdl --v1.2 --jerkwad",
+      "fdlv11+ fdl --v1.1",
+      "fdlv11  fdl --v1.1 --jerkwad",
       NULL
     }
 };
