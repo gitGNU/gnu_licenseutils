@@ -7,7 +7,7 @@
 ACLOCAL_AMFLAGS = -I lib/m4 -I m4 
 SUBDIRS=lib src po tests doc
 EXTRA_DIST = bootstrap bootstrap.conf TODO build-aux/config.rpath \
-	     HACKING completion/licensing lu-sh.1 styles.ac
+	     HACKING completion/licensing lu-sh.1 notice.1 styles.ac
 
 if USE_BASH_COMPLETION
   bash_completion_DATA = completion/licensing
@@ -32,6 +32,7 @@ $(srcdir)/HACKING \
 $(srcdir)/INSTALL \
 $(srcdir)/ChangeLog \
 $(srcdir)/lu-sh.1 \
+$(srcdir)/notice.1 \
 $(srcdir)/po/POTFILES.in \
 $(srcdir)/po/LINGUAS \
 $(srcdir)/doc/Makefile.am \
@@ -134,7 +135,7 @@ CLEANFILES=.manifest licensing.1
 
 #this chunk of makery is about getting a man page to build,
 #despite a horribly broken help2man, and a non-standard --help in licensing.
-man1_MANS=licensing.1 lu-sh.1
+man1_MANS=licensing.1 lu-sh.1 notice.1
 
 licensing.1: $(builddir)/src/licensing
 	$(HELP2MAN) --output=$(builddir)/$@ --name='a program for adding license notices to files' --source licenseutils --libtool  $(builddir)/src/licensing

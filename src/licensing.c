@@ -188,7 +188,7 @@ lu_parse_command (struct lu_state_t *state, char *line)
         err = cmd->parser(state, argc, argv);
       else
         {
-          char *c = xasprintf ("%s/%s", PKGLIBEXECDIR, line);
+          char *c = xasprintf ("%s/%s", BINDIR, line);
           err = system (c);
           free (c);
         }

@@ -1,3 +1,7 @@
 
 * version 0.0.7
 - renamed lush -> lu-sh
+* version 0.0.8
+- fixed bug in the fdl command that prevented the fdl license notice from being displayed.
+- added a manpage for the notice command
+- moved lu-sh commands that are scripts from pkglibexec to bindir

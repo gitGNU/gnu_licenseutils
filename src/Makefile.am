@@ -6,10 +6,9 @@
 # without any warranty.
 localedir = $(datadir)/locale
 EXTRA_DIST=styles.am
-bin_SCRIPTS=lu-sh
+bin_SCRIPTS=lu-sh notice
 bin_PROGRAMS=licensing
-pkglibexec_SCRIPTS=notice
-DEFS += -DLOCALEDIR=\"$(localedir)\" -DPROGRAM=\"$(PROGRAM)\" -DPKGLIBEXECDIR=\"$(pkglibexecdir)\" -DINTERPRETER=\"$(INTERPRETER)\" -DINTERPRETER_PATH=\"$(bindir)/$(INTERPRETER)\" @DEFS@
+DEFS += -DLOCALEDIR=\"$(localedir)\" -DPROGRAM=\"$(PROGRAM)\" -DBINDIR=\"$(bindir)\" -DINTERPRETER=\"$(INTERPRETER)\" -DINTERPRETER_PATH=\"$(bindir)/$(INTERPRETER)\" @DEFS@
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
 lib_LTLIBRARIES=liblicenseutils.la 
 
