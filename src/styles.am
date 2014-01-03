@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Ben Asselstine
+# Copyright (C) 2013, 2014 Ben Asselstine
 # 
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -8,55 +8,55 @@
 
 if SUPPORT_C_STYLE
   DEFS+=-DSUPPORT_C_STYLE
-  liblicenseutils_la_SOURCES+=c-style.c c-style.h
+  licensing_SOURCES+=c-style.c c-style.h
 endif
 
 if SUPPORT_CPLUSPLUS_STYLE
   DEFS+=-DSUPPORT_CPLUSPLUS_STYLE
-  liblicenseutils_la_SOURCES+=c++-style.c c++-style.h
+  licensing_SOURCES+=c++-style.c c++-style.h
 endif
 
 if SUPPORT_FORTRAN_STYLE
   DEFS+=-DSUPPORT_FORTRAN_STYLE
-  liblicenseutils_la_SOURCES+=fortran-style.c fortran-style.h
+  licensing_SOURCES+=fortran-style.c fortran-style.h
 endif
 
 if SUPPORT_GETTEXT_STYLE
   DEFS+=-DSUPPORT_GETTEXT_STYLE
-  liblicenseutils_la_SOURCES+=gettext-style.c gettext-style.h
+  licensing_SOURCES+=gettext-style.c gettext-style.h
 endif
 
 if SUPPORT_GROFF_STYLE
   DEFS+=-DSUPPORT_GROFF_STYLE
-  liblicenseutils_la_SOURCES+=groff-style.c groff-style.h
+  licensing_SOURCES+=groff-style.c groff-style.h
 endif
 
 if SUPPORT_HASKELL_STYLE
   DEFS+=-DSUPPORT_HASKELL_STYLE
-  liblicenseutils_la_SOURCES+=haskell-style.c haskell-style.h
+  licensing_SOURCES+=haskell-style.c haskell-style.h
 endif
 
 if SUPPORT_M4_STYLE
   DEFS+=-DSUPPORT_M4_STYLE
-  liblicenseutils_la_SOURCES+=m4-style.c m4-style.h
+  licensing_SOURCES+=m4-style.c m4-style.h
 endif
 
 if SUPPORT_PASCAL_STYLE
   DEFS+=-DSUPPORT_PASCAL_STYLE
-  liblicenseutils_la_SOURCES+=pascal-style.c pascal-style.h
+  licensing_SOURCES+=pascal-style.c pascal-style.h
 endif
 
 if SUPPORT_SCHEME_STYLE
   DEFS+=-DSUPPORT_SCHEME_STYLE
-  liblicenseutils_la_SOURCES+=scheme-style.c scheme-style.h
+  licensing_SOURCES+=scheme-style.c scheme-style.h
 endif
 
 if SUPPORT_SHELL_STYLE
   DEFS+=-DSUPPORT_SHELL_STYLE
-  liblicenseutils_la_SOURCES+=shell-style.c shell-style.h
+  licensing_SOURCES+=shell-style.c shell-style.h
 endif
 
 if SUPPORT_TEXINFO_STYLE
   DEFS+=-DSUPPORT_TEXINFO_STYLE
-  liblicenseutils_la_SOURCES+=texinfo-style.c texinfo-style.h
+  licensing_SOURCES+=texinfo-style.c texinfo-style.h
 endif
