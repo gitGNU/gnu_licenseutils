@@ -10,7 +10,6 @@ bin_SCRIPTS=lu-sh notice
 bin_PROGRAMS=licensing
 DEFS += -DLOCALEDIR=\"$(localedir)\" -DPROGRAM=\"$(PROGRAM)\" -DBINDIR=\"$(bindir)\" -DINTERPRETER=\"$(INTERPRETER)\" -DINTERPRETER_PATH=\"$(bindir)/$(INTERPRETER)\" @DEFS@
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
-include styles.am
 
 licensing_SOURCES=main.c opts.c opts.h  licensing.c gettext-more.h \
 		  licensing_priv.h gpl.c lgpl.c agpl.c fdl.c boilerplate.c \
@@ -25,6 +24,7 @@ licensing_SOURCES=main.c opts.c opts.h  licensing.c gettext-more.h \
 		  all-permissive.h bsd.h apache.h mit.h extra.h \
 		  png-boilerplate.h png-apply.h isc.h prepend.h \
 		  new-boilerplate.h preview.h
+include styles.am
 
 licensing_LDADD= @LIBINTL@ $(top_builddir)/lib/libgnu.la $(GLIB_LIBS) $(LIBPNG_LIBS)
 
