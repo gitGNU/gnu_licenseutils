@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -78,6 +78,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->full = 0;
       opt->version = 3;
       opt->future_versions = 1;
+      opt->fsf_address = 0;
+      state->child_inputs[0] = &opt->fsf_address;
       break;
     case ARGP_KEY_FINI:
       if (opt->future_versions == 0 && opt->html)
@@ -92,6 +94,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         N_("--jerkwad cannot be used with --full"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
+      else if (opt->fsf_address && opt->full)
+        {
+          argp_failure (state, 0, 0, 
+                        N_("cannot use an address option with --full"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
       break;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -99,10 +107,17 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+static const struct argp_child
+parsers[] =
+{
+    {&fsf_addresses_argp},
+    { 0 },
+};
+
 #undef GPL_DOC
 #define GPL_DOC N_("Show the GNU General Public License notice.")
 
-static struct argp argp = { argp_options, parse_opt, "",  GPL_DOC};
+static struct argp argp = { argp_options, parse_opt, "",  GPL_DOC, parsers};
 
 int 
 lu_gpl_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -165,28 +180,41 @@ show_lu_gpl(struct lu_state_t *state, struct lu_gpl_options_t *options)
     luprintf (state, "%s\n", data);
   else
     {
-      int replace = !options->future_versions;
+      char *chunk = NULL;
       switch (options->version)
         {
         case 1:
-          err = show_lines_after (state, data, 
-                                  "    This program is free software;", 13, 
-                                  replace, 
-                                  "either version 1, or (at your option)\n    any later version.", "version 1 of the License.");
+          chunk = get_lines (data, "    This program is free software;", 13);
           break;
         case 2:
-          err = show_lines_after (state, data, 
-                                  "    This program is free software;", 13, 
-                                  replace,
-                                  "either version 2 of the License, or\n    (at your option) any later version.", "version 2 of the License.");
+          chunk = get_lines (data, "    This program is free software;", 13);
           break;
         case 3:
-          err = show_lines_after (state, data, 
-                                  "    This program is free software:", 12, 
-                                  replace,
-                                  "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+          chunk = get_lines (data, "    This program is free software:", 12);
           break;
         }
+
+      if (!options->future_versions)
+        {
+          switch (options->version)
+            {
+            case 1:
+              err = text_replace (chunk, "either version 1, or (at your option)\n    any later version.", "version 1 of the License.");
+              break;
+            case 2:
+              err = text_replace (chunk, "either version 2 of the License, or\n    (at your option) any later version.", "version 2 of the License.");
+              break;
+            case 3:
+              err = text_replace (chunk, "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+              break;
+            }
+        }
+
+      if (options->fsf_address)
+        replace_fsf_address (&chunk, options->fsf_address, "", 4);
+
+      luprintf (state, "%s\n", chunk);
+      free (chunk);
     }
   free (data);
   return err;
@@ -215,6 +243,14 @@ struct lu_command_t gpl =
       "gplv2  gpl --v2 --jerkwad",
       "gplv1+ gpl --v1",
       "gplv1  gpl --v1 --jerkwad",
+      "gplv1mass  gpl --v1 --jerkwad --mass",
+      "gplv1+mass  gpl --v1 --mass",
+      "gplv2temple  gpl --v2 --jerkwad --temple",
+      "gplv2+temple gpl --v2 --temple",
+      "gplv2franklin gpl --v2 --jerkwad --franklin",
+      "gplv2+franklin gpl --v2 --franklin",
+      "gplv3franklin gpl --v3 --jerkwad --franklin",
+      "gplv3+franklin gpl --v3 --franklin",
       NULL
     }
 };

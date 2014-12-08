@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013, 2014 Ben Asselstine
+/*  Copyright (C) 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,24 +15,18 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   02110-1301, USA.
 */
-#ifndef LU_AGPL_H
-#define LU_AGPL_H 1
+#ifndef LU_FSF_ADDRESSES_H
+#define LU_FSF_ADDRESSES_H 1
 
-#include <config.h>
-#include <argp.h>
-#include "licensing.h"
-#include "fsf-addresses.h"
+char * get_address (int address, char *license, int num_spaces);
 
-struct lu_agpl_options_t
+extern struct argp fsf_addresses_argp;
+enum fsf_addresses_t
 {
-  struct lu_state_t *state;
-  int html;
-  int full;
-  int future_versions;
-  int fsf_address;
+  FSF_ADDRESS_LINK = 0x01,
+  FSF_ADDRESS_FRANKLIN = 0x02,
+  FSF_ADDRESS_TEMPLE = 0x04,
+  FSF_ADDRESS_MASS = 0x08,
 };
 
-int lu_agpl_parse_argp (struct lu_state_t *, int argc, char **argv);
-int lu_agpl (struct lu_state_t *, struct lu_agpl_options_t *);
-extern struct lu_command_t agpl;
 #endif

@@ -1016,6 +1016,8 @@ The @option{--jerkwad} option removes the @emph{Or any later version} clause fro
 
 This command downloads the license from @url{www.gnu.org/licenses/gpl.txt}.
 
+The address options @option{--address-link}, @option{--address-franklin}, @option{--address-temple}, and @option{--address-mass} are used to modify the final paragraph of the license notice to point to the website, the current address, or an old address of the Free Software Foundation.  The old addresses are added for license notice matching on old source files which may not have updated their addresses.
+
 @node lgpl invocation
 @section @command{lgpl}: Show the GNU Lesser General Public License notice
 @pindex lgpl

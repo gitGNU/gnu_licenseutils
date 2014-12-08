@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -32,4 +32,7 @@ char * create_line_comment (char *text, char *delimiter);
 void get_hashbang_or_rewind (FILE *fp, char **hashbang);
 int get_comment_blocks (FILE *fp, char **argz, size_t *len, char **hashbang, char *regex);
 char * get_comments_and_whitespace (FILE *fp, char *file, struct lu_comment_style_t *style);
+char * get_lines (char *text, const char *match, int lines);
+int text_replace (char *text, char *search, char *replace);
+void replace_fsf_address (char **chunk, int fsf_address, char *license, int num_spaces);
 #endif

@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -65,6 +65,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->html = 0;
       opt->full = 0;
       opt->future_versions = 1;
+      opt->fsf_address = 0;
+      state->child_inputs[0] = &opt->fsf_address;
       break;
     case ARGP_KEY_FINI:
       if (opt->future_versions == 0 && opt->html)
@@ -79,6 +81,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         N_("--jerkwad cannot be used with --full"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
+      else if (opt->fsf_address && opt->full)
+        {
+          argp_failure (state, 0, 0, 
+                        N_("cannot use an address option with --full"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
       break;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -86,9 +94,16 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+static const struct argp_child
+parsers[] =
+{
+    {&fsf_addresses_argp},
+    { 0 },
+};
+
 #undef AGPL_DOC
 #define AGPL_DOC N_("Show the GNU Affero General Public License notice.")
-static struct argp argp = { argp_options, parse_opt, "", AGPL_DOC};
+static struct argp argp = { argp_options, parse_opt, "", AGPL_DOC, parsers};
 
 int 
 lu_agpl_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -143,10 +158,16 @@ show_lu_agpl(struct lu_state_t *state, struct lu_agpl_options_t *options)
   if (options->full || options->html)
     luprintf (state, "%s\n", data);
   else
-    err = show_lines_after (state, data, 
-                            "    This program is free software:", 12,
-                            !options->future_versions, 
-                            "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+    {
+      char *chunk = NULL;
+      chunk = get_lines (data, "    This program is free software:", 12);
+      if (!options->future_versions)
+        err = text_replace (chunk, "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
+      if (options->fsf_address)
+        replace_fsf_address (&chunk, options->fsf_address, "Affero ", 4);
+      luprintf (state, "%s\n", chunk);
+      free (chunk);
+    }
   free (data);
   return err;
 }
@@ -170,6 +191,10 @@ struct lu_command_t agpl =
     { 
       "agplv3+ agpl",
       "agplv3  agpl --jerkwad",
+      "agplv3+temple agpl --temple",
+      "agplv3temple  agpl --jerkwad --temple",
+      "agplv3+franklin agpl --franklin",
+      "agplv3franklin agpl --jerkwad --franklin",
       NULL
     }
 };

@@ -53,6 +53,46 @@ find_start_of_matching_text (char *text, const char *match)
   return found;
 }
 
+//get LINES lines in TEXT after MATCH, and return as a new string.
+char *
+get_lines (char *text, const char *match, int lines)
+{
+  int start = find_start_of_matching_text (text, match);
+  if (start)
+    {
+      char *ptr = &text[start];
+      for (int i = 0; i < lines; i++)
+        ptr = strchr (++ptr, '\n');
+
+      ptr[0] = '\0';
+      char *result = xasprintf ("%s", &text[start]);
+      ptr[0]='\n';
+      return result;
+    }
+  return NULL;
+}
+
+//search must be longer than replace
+int
+text_replace (char *text, char *search, char *replace)
+{
+  int err = 0;
+  int start = 0;
+  char *orlater = strstr (&text[start], search);
+  if (orlater)
+    {
+      memmove (orlater, orlater+strlen(search), strlen(orlater+strlen(search)-1));
+      memmove (orlater+strlen(replace), orlater, strlen (orlater)+1);
+      memcpy (orlater, replace, strlen(replace));
+    }
+  else
+    {
+      error (0, 0, N_("can't find replacement text on webpage."));
+      err = -2;
+    }
+  return err;
+}
+
 int
 show_lines_after (struct lu_state_t *state, char *text, const char *match, int lines, int replace_flag, char *search, char *replace)
 {
@@ -441,4 +481,25 @@ get_comments_and_whitespace (FILE *fp, char *file, struct lu_comment_style_t *st
   fseek (fp, pos, SEEK_SET);
 
   return comments;
+}
+
+void 
+replace_fsf_address (char **chunk, int fsf_address, char *license, int num_spaces)
+{
+  char *address = get_address (fsf_address, license, num_spaces);
+  if (address)
+    {
+      char * l =  strstr (*chunk, "You should have received");
+      if (l)
+        {
+          while (*l != '\n')
+            l--;
+          *l='\0';
+        }
+      //snip at last para and append.
+      char *s = xasprintf ("%s\n%s", *chunk, address);
+      free (*chunk);
+      *chunk = s;
+      free (address);
+    }
 }

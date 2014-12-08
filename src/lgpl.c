@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -84,6 +84,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       opt->full = 0;
       opt->version = 3;
       opt->future_versions = 1;
+      opt->fsf_address = 0;
+      state->child_inputs[0] = &opt->fsf_address;
       break;
     case ARGP_KEY_FINI:
       if (opt->future_versions == 0 && opt->html)
@@ -98,6 +100,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
                         N_("--jerkwad cannot be used with --full"));
           argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
         }
+      else if (opt->fsf_address && opt->full)
+        {
+          argp_failure (state, 0, 0, 
+                        N_("cannot use an address option with --full"));
+          argp_state_help (state, stderr, ARGP_HELP_STD_ERR);
+        }
       break;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -105,9 +113,16 @@ parse_opt (int key, char *arg, struct argp_state *state)
   return 0;
 }
 
+static const struct argp_child
+parsers[] =
+{
+    {&fsf_addresses_argp},
+    { 0 },
+};
+
 #undef LGPL_DOC
 #define LGPL_DOC N_("Show the GNU Lesser General Public License notice.")
-static struct argp argp = { argp_options, parse_opt, "", LGPL_DOC};
+static struct argp argp = { argp_options, parse_opt, "", LGPL_DOC, parsers};
 
 int 
 lu_lgpl_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -123,38 +138,23 @@ lu_lgpl_parse_argp (struct lu_state_t *state, int argc, char **argv)
     return err;
 }
 
-static void 
-show_lgplv3_boilerplate (struct lu_state_t *state, int replace)
+static char *
+get_lgplv3_boilerplate ()
 {
-  if (replace)
-    luprintf (state, "%s",
+    return xasprintf ("%s",
               "\
-This library is free software: you can redistribute it and/or modify\n\
-it under the terms of the GNU Lesser General Public License as published\n\
-by the Free Software Foundation, version 3 of the License.\n\
+    This library is free software: you can redistribute it and/or modify\n\
+    it under the terms of the GNU Lesser General Public License as published\n\
+    by the Free Software Foundation, either version 3 of the License, or\n\
+    (at your option) any later version.\n\
 \n\
-This program is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
+    This program is distributed in the hope that it will be useful,\n\
+    but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+    GNU General Public License for more details.\n\
 \n\
-You should have received a copy of the GNU Lesser General Public License\n\
-along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
-  else
-    luprintf (state, "%s",
-              "\
-This library is free software: you can redistribute it and/or modify\n\
-it under the terms of the GNU Lesser General Public License as published\n\
-by the Free Software Foundation, either version 3 of the License, or\n\
-(at your option) any later version.\n\
-\n\
-This program is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
-\n\
-You should have received a copy of the GNU Lesser General Public License\n\
-along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
+    You should have received a copy of the GNU Lesser General Public License\n\
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.");
 }
 
 int
@@ -204,25 +204,39 @@ show_lu_lgpl(struct lu_state_t *state, struct lu_lgpl_options_t *options)
     luprintf (state, "%s\n", data);
   else
     {
-      int replace = ! options->future_versions;
+      char *chunk = NULL;
       switch (options->version)
         {
         case 0:
-          err = show_lines_after (state, data, 
-                                  "    This library is free software;", 13, 
-                                  replace, 
-                                  "either\n    version 2 of the License, or (at your option) any later version.", "version 2\n    of the License.");
+          chunk = get_lines (data, "    This library is free software;", 13);
           break;
         case 1:
-          err = show_lines_after (state, data, 
-                                  "    This library is free software;", 13, 
-                                  replace,
-                                  "either\n    version 2.1 of the License, or (at your option) any later version.", "version 2.1\n    of the License.");
+          chunk = get_lines (data, "    This library is free software;", 13);
           break;
         case 3:
-          show_lgplv3_boilerplate (state, replace);
+          chunk = get_lgplv3_boilerplate (state);
           break;
         }
+
+      if (!options->future_versions)
+        {
+          switch (options->version)
+            {
+            case 0:
+              err = text_replace (chunk, "either\n    version 2 of the License, or (at your option) any later version.", "version 2\n    of the License.");
+              break;
+            case 1:
+              err = text_replace (chunk, "either\n    version 2.1 of the License, or (at your option) any later version.", "version 2.1\n    of the License.");
+              break;
+            case 3:
+              err = text_replace (chunk, "either version 3 of the License, or\n(at your option) any later version.", "version 3 of the License.");
+              break;
+            }
+        }
+      if (options->fsf_address)
+        replace_fsf_address (&chunk, options->fsf_address, "Lesser ", 4);
+      luprintf (state, "%s\n", chunk);
+      free (chunk);
     }
   free (data);
   return err;
@@ -250,6 +264,12 @@ struct lu_command_t lgpl =
       "lgplv2 lgpl --v2.1 --jerkwad",
       "lgplv1+ lgpl --v2",
       "lgplv1 lgpl --v2 --jerkwad",
+      "lgplv1+temple lgpl --v2 --temple",
+      "lgplv1temple lgpl --v2 --jerkwad --temple",
+      "lgplv2+temple lgpl --v2.1 --temple",
+      "lgplv2temple lgpl --v2.1 --jerkwad --temple",
+      "lgplv3+franklin lgpl --v3 --franklin",
+      "lgplv3franklin lgpl --v3 --jerkwad --franklin",
       NULL
     }
 };

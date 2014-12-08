@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <config.h>
 #include <argp.h>
 #include "licensing.h"
+#include "fsf-addresses.h"
 
 struct lu_lgpl_options_t
 {
@@ -29,6 +30,7 @@ struct lu_lgpl_options_t
   int full;
   int version;
   int future_versions;
+  int fsf_address;
 };
 
 int lu_lgpl_parse_argp (struct lu_state_t *, int argc, char **argv);
