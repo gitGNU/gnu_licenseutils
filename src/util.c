@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -396,7 +396,7 @@ get_comment_blocks (FILE *fp, char **argz, size_t *len, char **hashbang, char *r
   char *data = fread_file (fp, &data_len);
   size_t length = 0;
   char *c;
-  size_t whitespace = strspn (&data[length], "\n\t \v");
+  size_t whitespace = strspn (&data[length], "\r\n\t \v");
   if (whitespace)
     length += whitespace;
   while ((c = get_comment_by_regex (&data[length], regex)))
@@ -404,12 +404,13 @@ get_comment_blocks (FILE *fp, char **argz, size_t *len, char **hashbang, char *r
       argz_add (argz, len, c);
       length += strlen (c);
       fseek (fp, startpos+length, SEEK_SET);
-      whitespace = strspn (&data[length], "\n\t \v");
+      whitespace = strspn (&data[length], "\r\n\t \v");
       if (whitespace)
         {
           length += whitespace;
           fseek (fp, startpos+length, SEEK_SET);
         }
+      //printf("data is now: '%s'\n", &data[length]);
     }
   free (data);
   return *len > 0;
