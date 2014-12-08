@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ static struct argp_option argp_options[] =
 {
     {"remove", 'r', NULL, 0, 
       N_("remove boilerplate from FILE instead of showing")},
-    {"force", 'f', NULL, 0, N_("force the removal copyright notices")},
+    {"force", 'f', NULL, 0, N_("used with -r to force removal copyright notices")},
     {"blocks", 'b', "LIST", 0, 
       N_("select these comment blocks to show or remove")},
     {"no-backup", 'n', NULL, 0, N_("don't save .bak files when removing boilerplate")},
