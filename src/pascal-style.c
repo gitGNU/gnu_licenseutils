@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ get_comment (FILE *fp, char **argz, size_t *len, char **hashbang)
 {
   return get_comment_blocks 
     (fp, argz, len, hashbang, 
-     "({\\*([^*]|[\\r\\n]|(\\*+([^*}]|[\\r\\n])))*\\*+}|\\(\\*([^*]|[\\r\\n]|(\\*+([^*\\)]|[\\r\\n])))*\\*+\\)|^//.*)");
+     "(\\{([.*]|[\\r\\n]|[^*\\}])*\\}|\\(\\*([^*]|[\\r\\n]|(\\*+([^*\\)]|[\\r\\n])))*\\*+\\)|^//.*)");
 }
 
 struct lu_comment_style_t pascal_style=
