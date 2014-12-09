@@ -1225,6 +1225,7 @@ These commands just display text of one sort or another.
 
 @menu
 * forget invocation::           Clear the downloaded-files cache
+* detect invocation::           Determine which license notice a file has
 @end menu
 
 @node forget invocation
@@ -1234,6 +1235,18 @@ These commands just display text of one sort or another.
 @cindex clearing the cache
 
 When a license command runs for the first time, the license is downloaded from the internet from its canonical source.  These web pages end up in a cache, and the @command{forget} command erases the cache.
+
+@node detect invocation
+@section @command{detect}: Determine the license notice in a file
+@pindex detect
+@cindex detecting the license notice in a file
+@cindex detecting licenses
+
+This command checks to see how similar the uncommented boilerplate of a file is to all of the licenses that licenseutils knows about.  This command generates a list of percentages, one line for every license.
+
+Each generated percentage means that the particular license is a given prcentage similar to the uncommented boilerplate.  It does @emph{not} mean that licenseutils is certain of a match!
+
+The first license in the list may or not actually be the license in the file.  This command fails when there is a large comment with lots of copyright notices or code explanation (which drives down the percentage), or there are several licenses present, or just some randomly similar legalese, or a license licenseutils doesn't know about.  It also fails if someone has made their own license notice that is similar to the GPL.
 
 @node Common Commenting-style options
 @chapter Common command-line options for commenting-style detection

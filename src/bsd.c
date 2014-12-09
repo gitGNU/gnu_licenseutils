@@ -112,7 +112,6 @@ show_lu_bsd(struct lu_state_t *state, struct lu_bsd_options_t *options)
     err = show_lines_after (state, data, 
                             "Redistribution and use in source and ", 
                             27, 0, NULL, NULL);
-  free (url);
   free (data);
   return err;
 }

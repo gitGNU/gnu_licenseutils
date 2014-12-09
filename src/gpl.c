@@ -213,12 +213,12 @@ struct lu_command_t gpl =
   .parser       = lu_gpl_parse_argp,
   .licenses     =
     {
-      "gplv3+ gpl --v3",
-      "gplv3 gpl --v3 --jerkwad",
-      "gplv2+ gpl --v2",
-      "gplv2 gpl --v2 --jerkwad",
-      "gplv1+ gpl --v1",
-      "gplv1 gpl --v1 --jerkwad",
+      "gplv3+ gpl --v3 --link",
+      "gplv3 gpl --v3 --jerkwad --link",
+      "gplv2+ gpl --v2 --link",
+      "gplv2 gpl --v2 --jerkwad --link",
+      "gplv1+ gpl --v1 --link",
+      "gplv1 gpl --v1 --jerkwad --link",
       "gplv1mass gpl --v1 --jerkwad --mass",
       "gplv1+mass gpl --v1 --mass",
       "gplv2temple gpl --v2 --jerkwad --temple",

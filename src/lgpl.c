@@ -204,7 +204,7 @@ show_lu_lgpl(struct lu_state_t *state, struct lu_lgpl_options_t *options)
               err = text_replace (chunk, "either\n    version 2.1 of the License, or (at your option) any later version.", "version 2.1\n    of the License.");
               break;
             case 3:
-              err = text_replace (chunk, "either version 3 of the License, or\n(at your option) any later version.", "version 3 of the License.");
+              err = text_replace (chunk, "either version 3 of the License, or\n    (at your option) any later version.", "version 3 of the License.");
               break;
             }
         }
@@ -233,12 +233,12 @@ struct lu_command_t lgpl =
   .parser       = lu_lgpl_parse_argp,
   .licenses     =
     {
-      "lgplv3+ lgpl --v3",
-      "lgplv3 lgpl --v3 --jerkwad",
-      "lgplv2+ lgpl --v2.1",
-      "lgplv2 lgpl --v2.1 --jerkwad",
-      "lgplv1+ lgpl --v2",
-      "lgplv1 lgpl --v2 --jerkwad",
+      "lgplv3+ lgpl --v3 --link",
+      "lgplv3 lgpl --v3 --jerkwad --link",
+      "lgplv2+ lgpl --v2.1 --link",
+      "lgplv2 lgpl --v2.1 --jerkwad --link",
+      "lgplv1+ lgpl --v2 --link",
+      "lgplv1 lgpl --v2 --jerkwad --link",
       "lgplv1+temple lgpl --v2 --temple",
       "lgplv1temple lgpl --v2 --jerkwad --temple",
       "lgplv2+temple lgpl --v2.1 --temple",
