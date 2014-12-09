@@ -15,7 +15,7 @@ and license notices in a collection of source code files.  This
 software will help you accomplish this in a standard-looking way,
 for a variety of different programming languages.
 
-This software does not autodetect licenses in source code files.
+This software can also analyze source code files for licenses.
 
 licenseutils consists of a program `licensing', and a shell `lu-sh'.
 
@@ -214,7 +214,8 @@ To show a message in the scheme commenting style:
 To remove Pascal commenting from a string:
   licensing> echo " (* foo *) " | uncomment --pascal-style
 
-
+To detect which license appears at the top of foo.c:
+  licensing> detect foo.c
 
 Rough edges:
 
