@@ -25,6 +25,7 @@
 #include "read-file.h"
 #include "error.h"
 #include "util.h"
+#include "url-downloader.h"
 
 static struct argp_option argp_options[] = 
 {
@@ -147,35 +148,10 @@ show_lu_gpl(struct lu_state_t *state, struct lu_gpl_options_t *options)
                          options->html ? "-standalone" : "",
                          options->html ? "html" : "txt");
   free (file);
-  int err = 0;
-  char tmp[sizeof(PACKAGE) + 13];
-  snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
-  int fd = mkstemp(tmp);
-  close (fd);
-  FILE *fileptr = fopen (tmp, "wb");
-  curl_easy_setopt (state->curl, CURLOPT_HTTPGET, 1);
-  curl_easy_setopt (state->curl, CURLOPT_URL, url);
-  curl_easy_setopt (state->curl, CURLOPT_WRITEDATA, fileptr);
-  curl_easy_perform(state->curl);
-  fflush (fileptr);
-  fsync (fileno (fileptr));
-  fclose (fileptr);
-  int response = 0;
-  curl_easy_getinfo (state->curl, CURLINFO_RESPONSE_CODE, &response);
-  if (response != 200)
-    {
-      remove (tmp);
-      error (0, 0, N_("got unexpected response code %d from %s"), response,
-             url);
-      err = 1;
-      return err;
-    }
+  char *data = NULL;
+  int err = download (state, url, &data);
   free (url);
-  fileptr = fopen (tmp, "r");
-  size_t data_len = 0;
-  char *data = fread_file (fileptr, &data_len);
-  fclose (fileptr);
-  remove (tmp);
+
   if (options->full || options->html)
     luprintf (state, "%s\n", data);
   else
@@ -238,14 +214,14 @@ struct lu_command_t gpl =
   .licenses     =
     {
       "gplv3+ gpl --v3",
-      "gplv3  gpl --v3 --jerkwad",
+      "gplv3 gpl --v3 --jerkwad",
       "gplv2+ gpl --v2",
-      "gplv2  gpl --v2 --jerkwad",
+      "gplv2 gpl --v2 --jerkwad",
       "gplv1+ gpl --v1",
-      "gplv1  gpl --v1 --jerkwad",
-      "gplv1mass  gpl --v1 --jerkwad --mass",
-      "gplv1+mass  gpl --v1 --mass",
-      "gplv2temple  gpl --v2 --jerkwad --temple",
+      "gplv1 gpl --v1 --jerkwad",
+      "gplv1mass gpl --v1 --jerkwad --mass",
+      "gplv1+mass gpl --v1 --mass",
+      "gplv2temple gpl --v2 --jerkwad --temple",
       "gplv2+temple gpl --v2 --temple",
       "gplv2franklin gpl --v2 --jerkwad --franklin",
       "gplv2+franklin gpl --v2 --franklin",

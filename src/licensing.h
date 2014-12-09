@@ -1,4 +1,4 @@
-/*  Copyright (C) 2011 Ben Asselstine
+/*  Copyright (C) 2011, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -68,5 +68,6 @@ struct lu_command_t
 };
 char *lu_list_of_license_keyword_commands();
 char * lu_list_of_license_keywords();
+char * lu_dump_command_to_file (struct lu_state_t *state, char *command);
 #define GNU_SITE             "www.gnu.org" //no prefix, no slashes.
 #endif

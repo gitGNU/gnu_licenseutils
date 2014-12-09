@@ -1,7 +1,8 @@
-/*  Copyright (C) 2011, 2013 Ben Asselstine
+/*  Copyright (C) 2011, 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
+
   the Free Software Foundation; either version 3 of the License, or
   (at your option) any later version.
 
@@ -60,13 +61,15 @@
 #include "styles.h"
 #include "prepend.h"
 #include "preview.h"
+#include "detect.h"
+#include "forget.h"
 
 enum 
 {
   NOTICE = 0, GPL, LGPL, AGPL, FDL, BOILERPLATE, HELP, WARRANTY, WELCOME, 
   COPYRIGHT, CBB, COMMENT, UNCOMMENT, PREPEND, CHOOSE, TOP, PROJECT,
   PREVIEW, APPLY, NEW_BOILERPLATE, ALL_PERMISSIVE, BSD, APACHE, MIT, 
-  EXTRA, PNG_BOILERPLATE, PNG_APPLY, ISC, THE_END
+  EXTRA, PNG_BOILERPLATE, PNG_APPLY, ISC, DETECT, FORGET, THE_END
 };
 
 struct lu_command_t notice = 
@@ -109,6 +112,8 @@ struct lu_command_t* lu_commands[]=
   [EXTRA]           = &extra,
   [ISC]             = &isc,
   [NOTICE]          = &notice,
+  [DETECT]          = &detect,
+  [FORGET]          = &forget,
   [THE_END]     = NULL
 };
 
@@ -130,6 +135,7 @@ static struct lu_command_t *get_command (char *line)
     }
   return command;
 }
+
 int
 lu_is_command (char *line)
 {
@@ -200,7 +206,7 @@ lu_parse_command (struct lu_state_t *state, char *line)
     {
       char *cmd = NULL;
       sscanf (state->command, "%ms", &cmd);
-      luprintf (state, _("%s: unrecognized command `%s'\n"), PROGRAM, cmd);
+      fprintf (stderr, _("%s: unrecognized command `%s'\n"), PROGRAM, cmd);
       fprintf (stderr, "Try '%s help' for more information.\n", PROGRAM);
       free (cmd);
     }
@@ -498,3 +504,19 @@ is_a_file (char *filename)
   return 1;
 }
 
+char *
+lu_dump_command_to_file (struct lu_state_t *state, char *command)
+{
+  char tmp[sizeof(PACKAGE) + 13];
+  snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
+  int fd = mkstemp(tmp);
+  close (fd);
+  FILE *fileptr = fopen (tmp, "w");
+  FILE *oldout = state->out;
+  state->out = fileptr;
+  lu_parse_command (state, command);
+  fflush (fileptr);
+  fclose (fileptr);
+  state->out = oldout;
+  return strdup (tmp);
+}

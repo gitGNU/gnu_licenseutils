@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "read-file.h"
 #include "error.h"
 #include "util.h"
+#include "url-downloader.h"
 
 static struct argp_option argp_options[] = 
 {
@@ -93,35 +94,9 @@ show_lu_bsd(struct lu_state_t *state, struct lu_bsd_options_t *options)
     url = strdup ("http://directory.fsf.org/wiki?title=License:FreeBSD");
   else 
     url = strdup ("http://directory.fsf.org/wiki/License:BSD_3Clause");
-  int err = 0;
-  char tmp[sizeof(PACKAGE) + 13];
-  snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
-  int fd = mkstemp(tmp);
-  close (fd);
-  FILE *fileptr = fopen (tmp, "wb");
-  curl_easy_setopt (state->curl, CURLOPT_HTTPGET, 1);
-  curl_easy_setopt (state->curl, CURLOPT_URL, url);
-  curl_easy_setopt (state->curl, CURLOPT_WRITEDATA, fileptr);
-  curl_easy_perform(state->curl);
-  fflush (fileptr);
-  fsync (fileno (fileptr));
-  fclose (fileptr);
-  int response = 0;
-  curl_easy_getinfo (state->curl, CURLINFO_RESPONSE_CODE, &response);
-  if (response != 200)
-    {
-      remove (tmp);
-      error (0, 0, N_("got unexpected response code %d from %s"), response,
-             url);
-      err = 1;
-      return err;
-    }
+  char *data = NULL;
+  int err = download (state, url, &data);
   free (url);
-  fileptr = fopen (tmp, "r");
-  size_t data_len = 0;
-  char *data = fread_file (fileptr, &data_len);
-  fclose (fileptr);
-  remove (tmp);
 
   replace_html_entities (data);
 

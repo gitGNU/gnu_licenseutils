@@ -23,7 +23,9 @@ licensing_SOURCES=main.c opts.c opts.h  licensing.c gettext-more.h \
 		  uncomment.h choose.h top.h project.h apply.h \
 		  all-permissive.h bsd.h apache.h mit.h extra.h \
 		  png-boilerplate.h png-apply.h isc.h prepend.h \
-		  new-boilerplate.h preview.h fsf-addresses.c fsf-addresses.h
+		  new-boilerplate.h preview.h fsf-addresses.c fsf-addresses.h \
+		  detect.c detect.h url-downloader.c url-downloader.h \
+		  forget.c forget.h
 include styles.am
 
 licensing_LDADD= @LIBINTL@ $(top_builddir)/lib/libgnu.la $(GLIB_LIBS) $(LIBPNG_LIBS)

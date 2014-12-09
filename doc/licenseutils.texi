@@ -76,6 +76,7 @@ Free Documentation License''.
 * License commands::             gpl lgpl agpl fdl bsd apache mit isc 
                                  all-permissive
 * Informational commands::       preview welcome warranty help
+* Other commands::               forget
 * Common Commenting-style options:: Command-line options for commenting-styles
 * GNU Free Documentation License:: Copying and sharing this manual
 * Concept index::                General index
@@ -132,6 +133,10 @@ Informational Commands
 * welcome invocation::           Show the welcome message
 * warranty invocation::          Show the warranty message
 * help invocation::              Get help on commands
+
+Other Commands    
+
+* forget invocation::            Clear the downloaded-files cache
 
 Copying This Manual
 
@@ -1211,6 +1216,24 @@ Show the GNU All-Permissive License.
       --usage                give a short usage message
 @end example
 This example displays the help for the @command{all-permissive} command.  It is equivalent to running @samp{licensing all-permissive --help}.
+
+@node Other commands
+@chapter Other commands
+@cindex other commands
+
+These commands just display text of one sort or another.
+
+@menu
+* forget invocation::           Clear the downloaded-files cache
+@end menu
+
+@node forget invocation
+@section @command{forget}: Clear the downloaded-files cache
+@pindex forget
+@cindex clear the downloaded-files cache
+@cindex clearing the cache
+
+When a license command runs for the first time, the license is downloaded from the internet from its canonical source.  These web pages end up in a cache, and the @command{forget} command erases the cache.
 
 @node Common Commenting-style options
 @chapter Common command-line options for commenting-style detection

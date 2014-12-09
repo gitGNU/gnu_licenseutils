@@ -86,6 +86,10 @@ $(srcdir)/src/texinfo-style.c   $(srcdir)/src/texinfo-style.h \
 $(srcdir)/src/styles.c          $(srcdir)/src/styles.h \
 $(srcdir)/src/new-boilerplate.c $(srcdir)/src/new-boilerplate.h \
 $(srcdir)/src/preview.c         $(srcdir)/src/preview.h \
+$(srcdir)/src/detect.c          $(srcdir)/src/detect.h \
+$(srcdir)/src/forget.c          $(srcdir)/src/forget.h \
+$(srcdir)/src/fsf-addresses.c   $(srcdir)/src/fsf-addresses.h \
+$(srcdir)/src/url-downloader.c  $(srcdir)/src/url-downloader.h \
 $(srcdir)/src/comment-style.h \
 $(srcdir)/src/main.c \
 $(srcdir)/src/lu-sh.in \

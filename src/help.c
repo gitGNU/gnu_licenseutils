@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -93,10 +93,10 @@ lu_help (struct lu_state_t *state, struct lu_help_options_t *options)
   else
     {
       fprintf (state->out, _("List of Commands that show Licenses and License Notices:\n"));
-      char *lines = lu_list_of_commands_for_help(3);
+      char *lines = lu_list_of_commands_for_help (3);
       fprintf (state->out, "%s\n\n", lines);
       free (lines);
-      lines = lu_list_of_commands_for_help(2);
+      lines = lu_list_of_commands_for_help (2);
       fprintf (state->out, _("List of Commands:\n"));
       fprintf (state->out, "%s\n", lines);
       free (lines);

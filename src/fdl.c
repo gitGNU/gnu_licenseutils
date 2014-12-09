@@ -1,4 +1,4 @@
-/*  Copyright (C) 2013 Ben Asselstine
+/*  Copyright (C) 2013, 2014 Ben Asselstine
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "read-file.h"
 #include "error.h"
 #include "util.h"
+#include "url-downloader.h"
 
 enum lgpl_version_opts
 {
@@ -137,36 +138,9 @@ show_lu_fdl(struct lu_state_t *state, struct lu_fdl_options_t *options)
   char *url = xasprintf ("%s/licenses/%s%s.%s", GNU_SITE, file,
                          options->html ? "-standalone" : "",
                          options->html ? "html" : "txt");
-  free (file);
-  int err = 0;
-  char tmp[sizeof(PACKAGE) + 13];
-  snprintf (tmp, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
-  int fd = mkstemp(tmp);
-  close (fd);
-  FILE *fileptr = fopen (tmp, "wb");
-  curl_easy_setopt (state->curl, CURLOPT_HTTPGET, 1);
-  curl_easy_setopt (state->curl, CURLOPT_URL, url);
-  curl_easy_setopt (state->curl, CURLOPT_WRITEDATA, fileptr);
-  curl_easy_perform(state->curl);
-  fflush (fileptr);
-  fsync (fileno (fileptr));
-  fclose (fileptr);
-  int response = 0;
-  curl_easy_getinfo (state->curl, CURLINFO_RESPONSE_CODE, &response);
-  if (response != 200)
-    {
-      remove (tmp);
-      error (0, 0, N_("got unexpected response code %d from %s"), response,
-             url);
-      err = 1;
-      return err;
-    }
+  char *data = NULL;
+  int err = download (state, url, &data);
   free (url);
-  fileptr = fopen (tmp, "r");
-  size_t data_len = 0;
-  char *data = fread_file (fileptr, &data_len);
-  fclose (fileptr);
-  remove (tmp);
   if (options->html || options->full)
     luprintf (state, "%s\n", data);
   else
@@ -214,11 +188,11 @@ struct lu_command_t fdl =
   .licenses     =
     {
       "fdlv13+ fdl --v1.3",
-      "fdlv13  fdl --v1.3 --jerkwad",
+      "fdlv13 fdl --v1.3 --jerkwad",
       "fdlv12+ fdl --v1.2",
-      "fdlv12  fdl --v1.2 --jerkwad",
+      "fdlv12 fdl --v1.2 --jerkwad",
       "fdlv11+ fdl --v1.1",
-      "fdlv11  fdl --v1.1 --jerkwad",
+      "fdlv11 fdl --v1.1 --jerkwad",
       NULL
     }
 };

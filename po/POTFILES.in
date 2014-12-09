@@ -27,3 +27,7 @@ src/extra.c
 src/apply.c
 src/preview.c
 src/new-boilerplate.c
+src/detect.c
+src/forget.c
+src/fsf-addresses.c
+src/url-downloader.c
