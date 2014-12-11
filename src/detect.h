@@ -26,6 +26,8 @@ struct lu_detect_options_t
 {
   struct lu_state_t *state;
   char *input_file;
+  int show;
+  char *diff_program;
 };
 
 int lu_detect_parse_argp (struct lu_state_t *, int argc, char **argv);

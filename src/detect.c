@@ -31,6 +31,20 @@
 #include "error.h"
 #include "copy-file.h"
 #include "fstrcmp.h"
+#include "findprog.h"
+
+enum detect_options_enum_t
+{
+  OPT_DIFF_PROGRAM = -333,
+};
+
+static struct argp_option argp_options[] = 
+{
+    { "show-diff", 's', 0, 0, N_("show the differences between the most similar license notice and the uncommented boilerplate of FILE")},
+    { "diff-program", OPT_DIFF_PROGRAM, "PROGRAM", 0, 
+      N_("use PROGRAM to show comparisons (default 'diff')") },
+    { 0 }
+};
 
 static error_t 
 parse_opt (int key, char *arg, struct argp_state *state)
@@ -40,6 +54,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
     opt = (struct lu_detect_options_t*) state->input;
   switch (key)
     {
+    case 's':
+      opt->show = 1;
+      break;
+    case OPT_DIFF_PROGRAM:
+      opt->diff_program = arg;
+      break;
     case ARGP_KEY_ARG:
       if (opt->input_file)
         {
@@ -51,10 +71,14 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
     case ARGP_KEY_INIT:
       opt->input_file = NULL;
+      opt->diff_program = getenv ("LU_DIFF");
+      opt->show = 0;
       break;
     case ARGP_KEY_FINI:
       if (opt->input_file == NULL)
         opt->input_file = strdup ("-");
+      if (!opt->diff_program)
+        opt->diff_program = "diff";
       break;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -65,9 +89,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 #undef DETECT_DOC
 #define DETECT_DOC \
   N_("Statistically determine the license notice of a file.") "\v"\
-  N_("With no FILE, or when FILE is -, it is read from standard input.\n") \
-  N_("When FILE is given on the command line it is passed through the boilerplate command, and the uncomment command, while the standard input is not.")
-static struct argp argp = { NULL, parse_opt, "[FILE]", DETECT_DOC};
+  N_("With no FILE, or when FILE is -, it is read from standard input.") "  " \
+  N_("When FILE is given on the command line it is passed through the boilerplate command, and the uncomment command, while the standard input is not.") "  " \
+  N_("The LU_DIFF environment variable overrides the default value of --diff-program.") "  " \
+  N_("To pass options to diff, use the LU_DIFF_OPTS environment variable.")
+static struct argp argp = { argp_options, parse_opt, "[FILE]", DETECT_DOC};
 
 int 
 lu_detect_parse_argp (struct lu_state_t *state, int argc, char **argv)
@@ -85,6 +111,7 @@ lu_detect_parse_argp (struct lu_state_t *state, int argc, char **argv)
 struct license_result_t
 {
   char *license;
+  char *cmd;
   float result;
 };
 
@@ -141,6 +168,29 @@ sherlock (char *license_filename, char *filename)
   return results;
 }
 
+static int 
+visual_diff (char *diff_program, char *diff_options, char* license_filename, char *filename)
+{
+  const char *prog;
+  if (strchr (diff_program, '/'))
+    prog = strdup (diff_program);
+  else
+    prog = find_in_path (diff_program);
+
+  if (!prog)
+    return 0;
+  char *opts = "";
+  if (strcmp (diff_program, "diff") == 0 && diff_options == NULL)
+    opts = "-uNrd";
+  else if (diff_options)
+    opts = diff_options;
+  char *cmd = xasprintf ("%s %s %s %s", prog, opts, license_filename, filename);
+  free ( (char *) prog);
+  system (cmd);
+  free (cmd);
+  return 0;
+}
+
 static int
 detect_licenses (struct lu_state_t *state, struct lu_detect_options_t *options, char *filename)
 {
@@ -165,6 +215,8 @@ detect_licenses (struct lu_state_t *state, struct lu_detect_options_t *options, 
       cmd = strchr (license, ' ');
       *cmd = '\0';
       m[i].license = strdup (license);
+      m[i].cmd = strdup (++cmd);
+      --cmd;
       m[i].result = results;
       *cmd = ' ';
       i++;
@@ -172,17 +224,34 @@ detect_licenses (struct lu_state_t *state, struct lu_detect_options_t *options, 
   free (argz);
   free (licenses);
   //sort and display results
-  qsort (m, n, sizeof (struct license_result_t), compare_license_results);
-  for (i = 0; i < n; i++)
+  if (n)
     {
-      if (m[i].result == 0.0)
-        break;
-      if (m[i].license)
-        luprintf (state, "%s: %6.3f%%\n", m[i].license, m[i].result);
+      qsort (m, n, sizeof (struct license_result_t), compare_license_results);
+      if (options->show)
+        {
+          char *license_filename = lu_dump_command_to_file (state, m[0].cmd);
+
+          visual_diff (options->diff_program, getenv ("LU_DIFF_OPTS"),
+                       license_filename, filename);
+          remove (license_filename);
+        }
+      else
+        {
+          for (i = 0; i < n; i++)
+            {
+              if (m[i].result == 0.0)
+                break;
+              if (m[i].license)
+                luprintf (state, "%s: %6.3f%%\n", m[i].license, m[i].result);
+            }
+        }
     }
 
   for (i = 0; i < n; i++)
-    free (m[i].license);
+    {
+      free (m[i].license);
+      free (m[i].cmd);
+    }
   free (m);
   return 0;
 }
