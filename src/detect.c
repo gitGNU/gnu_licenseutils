@@ -138,19 +138,21 @@ squeeze (char *s)
   result[0] = '\0';
   for (letter = &s[0]; *letter != '\0'; letter++)
     {
-      if (!isspace (*letter) && !ispunct (*letter))
-        {
-          result[i] = *letter;
-          i++;
-        }
-
+      if (isspace (*letter))
+        continue;
+      if (ispunct (*letter))
+        continue;
+      result[i] = *letter;
+      i++;
     }
+  result[i] = '\0';
   return result;
 }
 
 static float
 sherlock (char *license_filename, char *filename)
 {
+  double results;
   size_t s1_len, s2_len;
   FILE *f1 = fopen (license_filename, "r");
   FILE *f2 = fopen (filename, "r");
@@ -162,7 +164,10 @@ sherlock (char *license_filename, char *filename)
   char *ss2 = squeeze (s2);
   free (s1);
   free (s2);
-  double results = fstrcmp (ss1, ss2);
+  if (strstr (ss2, ss1) == NULL)
+    results = fstrcmp (ss1, ss2);
+  else
+    results = 1;
   free (ss1);
   free (ss2);
   return results;
@@ -242,7 +247,7 @@ detect_licenses (struct lu_state_t *state, struct lu_detect_options_t *options, 
               if (m[i].result == 0.0)
                 break;
               if (m[i].license)
-                luprintf (state, "%s: %6.3f%%\n", m[i].license, m[i].result);
+                luprintf (state, "%-20s %6.3f%%\n", m[i].license, m[i].result);
             }
         }
     }
@@ -308,7 +313,7 @@ detect_uncommented_boilerplate (struct lu_state_t *state, struct lu_detect_optio
 
   struct lu_uncomment_options_t uncomment_options;
   memset (&uncomment_options, 0, sizeof (uncomment_options));
-  argz_add (&uncomment_options.input_files, &uncomment_options.input_files_len, tmp);
+  argz_add (&uncomment_options.input_files, &uncomment_options.input_files_len, tmpext);
   char tmp2[sizeof(PACKAGE) + 13];
   snprintf (tmp2, sizeof tmp, "/tmp/%s.XXXXXX", PACKAGE);
   fd = mkstemp(tmp2);
@@ -320,7 +325,7 @@ detect_uncommented_boilerplate (struct lu_state_t *state, struct lu_detect_optio
   state->out = oldout;
   fclose (fileptr);
 
-  detect_licenses (state, options, tmpext);
+  detect_licenses (state, options, tmp2);
   remove (tmpext);
   free (tmpext);
   remove (tmp2);
