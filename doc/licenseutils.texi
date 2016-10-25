@@ -353,7 +353,7 @@ The boilerplate command will automatically determine what kind of comment-style 
 
 
 @subsection Rules For Automatic-detection of Comments
-Automatic detection of commenting-styles is a heursitic that checks for commenting-styles in a certain order, sometimes avoids paritcular file extensions, and sometimes only operates on certain supported file extensions.  The order for automatic detection is: C, C++, shell, scheme, texinfo, m4, haskell, groff, gettext, fortran, pascal.
+Automatic detection of commenting-styles is a heursitic that checks for commenting-styles in a certain order, sometimes avoids paritcular file extensions, and sometimes only operates on certain supported file extensions.  The order for automatic detection is: C, C++, javacsript, shell, scheme, texinfo, m4, haskell, groff, gettext, fortran, pascal.
 
 C style comments are featured in other languages: Java, PHP, Javascript, Go, and many more.  Shell style commenting is used in python, make, perl, and more.
 
@@ -1262,6 +1262,8 @@ These options appear in the @command{boilerplate}, @command{cbb}, @command{comme
 For @command{boilerplate} and @command{cbb}, this option detects comments at the start of the file in blocks like: @samp{/* this */}, or whole-line comments like @samp {// this}.
 @item --c++-style
 Same as @samp{--c-style}.
+@item --javascript-style
+For @command{boilerplate} and @command{cbb}, this option detects comments at the start of the file in blocks like: @samp{/* this */}, or whole-line comments like @samp {// this}.
 @item --shell-style
 For @command{boilerplate}, @command{uncomment}, and @command{cbb}, this option detects comments at the start of the file in whole-line comments that look like @samp{# this}.
 @item --scheme-style
