@@ -15,7 +15,7 @@ and GNU bash (the interactive licensing shell is based on bash)
 
 Install build dependencies:
 GNU autoconf, GNU automake, GNU libtool, GNU gettext, GNU Texinfo, 
-GNU Help2man, GNU make, GNU gcc
+GNU Help2man, GNU make, GNU gcc, GNU m4, GNU autopoint
 
 $ ./bootstrap
 $ ./configure
