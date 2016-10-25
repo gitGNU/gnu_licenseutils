@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2014 Ben Asselstine
+# Copyright (C) 2013, 2014, 2016 Ben Asselstine
 # 
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -59,4 +59,9 @@ endif
 if SUPPORT_TEXINFO_STYLE
   DEFS+=-DSUPPORT_TEXINFO_STYLE
   licensing_SOURCES+=texinfo-style.c texinfo-style.h
+endif
+
+if SUPPORT_JAVASCRIPT_STYLE
+  DEFS+=-DSUPPORT_JAVASCRIPT_STYLE
+  licensing_SOURCES+=javascript-style.c javascript-style.h
 endif

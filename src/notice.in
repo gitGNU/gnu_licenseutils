@@ -36,8 +36,8 @@ lgplv3 lgplv2+ lgplv2 lgplv1+ lgplv1 agpl agplv3+ agplv3 fdl fdlv13+ fdlv13
 fdlv12+ fdlv12 fdlv11+ fdlv11 all-permissive bsd bsd3clause bsd2clause apache
 apachev2 mit isc openbsd
 
-Supported Comment Styles: c c++ shell scheme texinfo m4 haskell groff gettext
-fortran pascal
+Supported Comment Styles: c c++ javascript shell scheme texinfo m4 haskell
+groff gettext fortran pascal
 
   -c NAME-AND-YEAR           specify the copyright holder
   -l LICENSE                 specify the license

@@ -1,4 +1,4 @@
-dnl Copyright (C) 2013 Ben Asselstine
+dnl Copyright (C) 2013, 2016 Ben Asselstine
 dnl 
 dnl Copying and distribution of this file, with or without modification,
 dnl are permitted in any medium without royalty provided the copyright
@@ -18,7 +18,7 @@ AC_ARG_ENABLE([commenting-styles],
 
 [
     if test "$enable_commenting_styles" = "default"; then
-      enable_commenting_styles="c c++ fortran gettext groff haskell m4 pascal scheme shell texinfo"
+      enable_commenting_styles="c c++ fortran gettext groff haskell javascript m4 pascal scheme shell texinfo"
     fi
 #here we have one case per commenting style.
     for commenting_style in $enable_commenting_styles; do
@@ -45,6 +45,8 @@ AC_ARG_ENABLE([commenting-styles],
             [define to 1 if we want to support shell style comments])[;;
        'texinfo')support_texinfo_style=1]AC_DEFINE([SUPPORT_TEXINFO_STYLE],[1],
             [define to 1 if we want to support texinfo style comments])[;;
+       'javascript')support_javascript_style=1]AC_DEFINE([SUPPORT_JAVASCRIPT_STYLE],[1],
+            [define to 1 if we want to support javascript style comments])[;;
        *)]
          AC_MSG_ERROR([invalid commenting style `$commenting_style'.]
            [from --commenting-styles="$enable_commenting_styles".])
@@ -64,3 +66,4 @@ AM_CONDITIONAL(SUPPORT_PASCAL_STYLE, test "x${support_pascal_style}" != "x")
 AM_CONDITIONAL(SUPPORT_SCHEME_STYLE, test "x${support_scheme_style}" != "x")
 AM_CONDITIONAL(SUPPORT_SHELL_STYLE, test "x${support_shell_style}" != "x")
 AM_CONDITIONAL(SUPPORT_TEXINFO_STYLE, test "x${support_texinfo_style}" != "x")
+AM_CONDITIONAL(SUPPORT_JAVASCRIPT_STYLE, test "x${support_javascript_style}" != "x")

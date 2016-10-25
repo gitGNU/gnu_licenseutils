@@ -43,6 +43,9 @@
 #ifdef SUPPORT_HASKELL_STYLE
 #include "haskell-style.h"
 #endif
+#ifdef SUPPORT_JAVASCRIPT_STYLE
+#include "javascript-style.h"
+#endif
 #ifdef SUPPORT_M4_STYLE
 #include "m4-style.h"
 #endif
@@ -69,6 +72,9 @@ struct lu_comment_style_t* lu_styles[]=
 #endif
 #ifdef SUPPORT_CPLUSPLUS_STYLE
     &cplusplus_style,
+#endif
+#ifdef SUPPORT_JAVASCRIPT_STYLE
+    &javascript_style,
 #endif
 #ifdef SUPPORT_SHELL_STYLE
     &shell_style,
